@@ -1,0 +1,7 @@
+package com.money_track.demo.repositories;
+
+import com.money_track.demo.entities.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User,Long> {
+}
