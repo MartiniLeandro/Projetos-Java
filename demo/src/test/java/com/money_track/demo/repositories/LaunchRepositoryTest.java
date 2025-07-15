@@ -32,7 +32,7 @@ public class LaunchRepositoryTest {
 
     @BeforeEach
     void setup(){
-        user = new User("user@email.com","user123", Roles.ROLE_USER);
+        user = new User("user","236.422.330-07","user@email.com","user123", Roles.ROLE_USER);
         category = new Category("salário", TypeValue.REVENUE);
         launch = new Launch("teste",category,1800.0, LocalDate.of(2025,3,12),user);
     }

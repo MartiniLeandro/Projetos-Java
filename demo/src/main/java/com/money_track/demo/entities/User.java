@@ -3,6 +3,7 @@ package com.money_track.demo.entities;
 import com.money_track.demo.entities.enums.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,13 @@ public class User implements UserDetails {
     private Long id;
 
     @NotBlank
+    private String name;
+
+    @CPF
+    @NotBlank
+    private String cpf;
+
+    @NotBlank
     private String email;
 
     @NotBlank
@@ -32,7 +40,9 @@ public class User implements UserDetails {
     private List<Launch> launches;
 
     public User(){}
-    public User(String email, String password, Roles role) {
+    public User(String name, String cpf, String email, String password, Roles role) {
+        this.name = name;
+        this.cpf = cpf;
         this.email = email;
         this.password = password;
         this.role = role;
@@ -41,6 +51,22 @@ public class User implements UserDetails {
 
     public Long getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getEmail() {

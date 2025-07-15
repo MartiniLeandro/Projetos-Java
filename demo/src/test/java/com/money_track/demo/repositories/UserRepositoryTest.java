@@ -19,8 +19,8 @@ public class UserRepositoryTest {
 
     @BeforeEach
     void setup(){
-        user = new User("user@email.com","user123", Roles.ROLE_USER);
-        admin = new User("admin@email.com","admin123", Roles.ROLE_ADMIN);
+        user = new User("user","702.413.770-30","user@email.com","user123", Roles.ROLE_USER);
+        admin = new User("admin","730.136.230-71","admin@email.com","admin123", Roles.ROLE_ADMIN);
     }
 
     @Test
