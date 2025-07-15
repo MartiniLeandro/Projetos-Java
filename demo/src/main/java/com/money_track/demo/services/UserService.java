@@ -22,7 +22,7 @@ public class UserService {
     }
 
     public UserDTO findUserById(Long id){
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("erro"));
         return new UserDTO(user);
     }
 
@@ -32,7 +32,7 @@ public class UserService {
     }
 
     public UserDTO updateUser(User user, Long id){
-        User updatedUser = userRepository.findById(id).orElseThrow();
+        User updatedUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("erro"));
         updatedUser.setName(user.getName());
         updatedUser.setCpf(user.getCpf());
         updatedUser.setEmail(user.getEmail());
@@ -44,6 +44,10 @@ public class UserService {
     }
 
     public void deleteUser(Long id){
-        userRepository.deleteById(id);
+        try{
+            userRepository.deleteById(id);
+        }catch (RuntimeException e){
+            throw new RuntimeException("erro");
+        }
     }
 }

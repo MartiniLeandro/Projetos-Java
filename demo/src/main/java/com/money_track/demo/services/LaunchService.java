@@ -21,7 +21,7 @@ public class LaunchService {
     }
 
     public LaunchDTO findLaunchById(Long id){
-        Launch launch = launchRepository.findById(id).orElseThrow();
+        Launch launch = launchRepository.findById(id).orElseThrow(() -> new RuntimeException("erro"));
         return new LaunchDTO(launch);
     }
 
@@ -32,7 +32,7 @@ public class LaunchService {
     }
 
     public LaunchDTO updateLaunch(Long id, Launch launch){
-        Launch updatedLaunch = launchRepository.findById(id).orElseThrow();
+        Launch updatedLaunch = launchRepository.findById(id).orElseThrow(() -> new RuntimeException("erro"));
         updatedLaunch.setCategory(launch.getCategory());
         updatedLaunch.setDate(launch.getDate());
         updatedLaunch.setDescription(launch.getDescription());

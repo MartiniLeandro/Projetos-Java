@@ -22,7 +22,7 @@ public class CategoryService {
     }
 
     public CategoryDTO findCategoryById(Long id){
-        Category category = categoryRepository.findById(id).orElseThrow();
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("erro"));
         return new CategoryDTO(category);
     }
 
@@ -32,7 +32,7 @@ public class CategoryService {
     }
 
     public CategoryDTO updateCategory(Category category,Long id){
-        Category updatedCategory = categoryRepository.findById(id).orElseThrow();
+        Category updatedCategory = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("erro"));
         updatedCategory.setName(category.getName());
         updatedCategory.setTypeValue(category.getTypeValue());
         categoryRepository.save(updatedCategory);
@@ -40,6 +40,10 @@ public class CategoryService {
     }
 
     public void deleteCategoryById(Long id){
-        categoryRepository.deleteById(id);
+        try{
+            categoryRepository.deleteById(id);
+        }catch (RuntimeException e){
+            throw new RuntimeException("erro");
+        }
     }
 }
