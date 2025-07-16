@@ -43,6 +43,10 @@ public class LaunchService {
     }
 
     public void deleteLaunchById(Long id){
-        launchRepository.deleteById(id);
+        try{
+            launchRepository.deleteById(id);
+        }catch (RuntimeException e){
+            throw new RuntimeException("erro");
+        }
     }
 }
