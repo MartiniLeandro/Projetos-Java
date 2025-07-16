@@ -1,0 +1,47 @@
+package com.money_track.demo.controllers;
+
+import com.money_track.demo.entities.DTO.UserDTO;
+import com.money_track.demo.entities.User;
+import com.money_track.demo.services.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/admin/users")
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> findAllUsers(){
+        return ResponseEntity.ok().body(userService.findAllUsers());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> findUserById(@PathVariable Long id){
+        return ResponseEntity.ok().body(userService.findUserById(id));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<UserDTO> createUser(@RequestBody User user){
+        return ResponseEntity.ok().body(userService.createUser(user));
+    }
+
+    @PostMapping("update/{id}")
+    public ResponseEntity<UserDTO> updateUser(@RequestBody User user, @PathVariable Long id){
+        return ResponseEntity.ok().body(userService.updateUser(user,id));
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
+        userService.deleteUser(id);
+        return ResponseEntity.ok().build();
+    }
+
+}
