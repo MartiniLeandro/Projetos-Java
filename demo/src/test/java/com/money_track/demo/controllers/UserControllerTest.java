@@ -19,6 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
@@ -58,6 +59,7 @@ public class UserControllerTest {
         when(userService.findAllUsers()).thenReturn(List.of(userDTO,adminDTO));
 
         mockMvc.perform(get("/admin/users"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].email").value("user@email.com"))
                 .andExpect(jsonPath("$[1].email").value("admin@email.com"));
@@ -70,6 +72,7 @@ public class UserControllerTest {
         when(userService.findUserById(1L)).thenReturn(userDTO);
 
         mockMvc.perform(get("/admin/users/{id}",1L))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("user@email.com"))
                 .andExpect(jsonPath("$.name").value("user"));
@@ -89,6 +92,7 @@ public class UserControllerTest {
         mockMvc.perform(post("/admin/users/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(adminDTO)))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("admin@email.com"))
                 .andExpect(jsonPath("$.role").value("ROLE_ADMIN"));
@@ -109,6 +113,7 @@ public class UserControllerTest {
         mockMvc.perform(put("/admin/users/update/{id}",id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(adminDTO)))
+                .andDo(print())
                 .andExpect(jsonPath("$.email").value("admin@email.com"))
                 .andExpect(jsonPath("$.role").value("ROLE_ADMIN"));
     }
@@ -120,6 +125,7 @@ public class UserControllerTest {
         doNothing().when(userService).deleteUser(anyLong());
 
         mockMvc.perform(delete("/admin/users/delete/{id}",1L))
+                .andDo(print())
                 .andExpect(status().isNoContent());
     }
 }
