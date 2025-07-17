@@ -4,17 +4,13 @@ import com.money_track.demo.entities.enums.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.br.CPF;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
+public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +36,17 @@ public class User implements UserDetails {
     private List<Launch> launches;
 
     public User(){}
+
+    public User(Long id, String name, String cpf, String email, String password, Roles role) {
+        this.id = id;
+        this.name = name;
+        this.cpf = cpf;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.launches = new ArrayList<>();
+    }
+
     public User(String name, String cpf, String email, String password, Roles role) {
         this.name = name;
         this.cpf = cpf;
@@ -55,6 +62,10 @@ public class User implements UserDetails {
 
     public String getName() {
         return name;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setName(String name) {
@@ -97,19 +108,4 @@ public class User implements UserDetails {
         this.launches = launches;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == Roles.ROLE_ADMIN) return List.of(new SimpleGrantedAuthority(Roles.ROLE_ADMIN.name()), new SimpleGrantedAuthority(Roles.ROLE_USER.name()));
-        return List.of(new SimpleGrantedAuthority(Roles.ROLE_USER.name()));
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
 }
