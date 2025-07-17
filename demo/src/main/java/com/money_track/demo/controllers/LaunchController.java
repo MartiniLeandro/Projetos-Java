@@ -33,7 +33,7 @@ public class LaunchController {
         return ResponseEntity.ok().body(launchService.createLaunch(launch));
     }
 
-    @PostMapping("update/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<LaunchDTO> updateLaunch(@RequestBody Launch launch, @PathVariable Long id){
         return ResponseEntity.ok().body(launchService.updateLaunch(id,launch));
     }
@@ -41,7 +41,7 @@ public class LaunchController {
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> deleteLaunch(@PathVariable Long id){
         launchService.deleteLaunchById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }
