@@ -33,7 +33,7 @@ public class CategoryController {
         return ResponseEntity.ok().body(categoryService.createCategory(category));
     }
 
-    @PostMapping("update/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody Category category, @PathVariable Long id){
         return ResponseEntity.ok().body(categoryService.updateCategory(category,id));
     }
@@ -41,6 +41,6 @@ public class CategoryController {
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id){
         categoryService.deleteCategoryById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

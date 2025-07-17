@@ -37,16 +37,6 @@ public class User{
 
     public User(){}
 
-    public User(Long id, String name, String cpf, String email, String password, Roles role) {
-        this.id = id;
-        this.name = name;
-        this.cpf = cpf;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-        this.launches = new ArrayList<>();
-    }
-
     public User(String name, String cpf, String email, String password, Roles role) {
         this.name = name;
         this.cpf = cpf;
@@ -58,6 +48,10 @@ public class User{
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id){
+        this.id = id;
     }
 
     public String getName() {

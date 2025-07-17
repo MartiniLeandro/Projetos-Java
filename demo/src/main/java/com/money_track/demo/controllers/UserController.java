@@ -33,7 +33,7 @@ public class UserController {
         return ResponseEntity.ok().body(userService.createUser(user));
     }
 
-    @PostMapping("update/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody User user, @PathVariable Long id){
         return ResponseEntity.ok().body(userService.updateUser(user,id));
     }
@@ -41,7 +41,7 @@ public class UserController {
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id){
         userService.deleteUser(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }
