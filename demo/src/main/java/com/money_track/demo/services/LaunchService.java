@@ -1,11 +1,17 @@
 package com.money_track.demo.services;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.money_track.demo.entities.DTO.LaunchDTO;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.User;
+import com.money_track.demo.exceptions.IsNotYoursException;
+import com.money_track.demo.exceptions.NegativeNumberException;
+import com.money_track.demo.exceptions.NotFoundException;
+import com.money_track.demo.repositories.CategoryRepository;
 import com.money_track.demo.repositories.LaunchRepository;
 import com.money_track.demo.repositories.UserRepository;
 import com.money_track.demo.security.TokenService;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +23,13 @@ public class LaunchService {
     private final LaunchRepository launchRepository;
     private final TokenService tokenService;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
-    public LaunchService(LaunchRepository launchRepository, TokenService tokenService, UserRepository userRepository) {
+    public LaunchService(LaunchRepository launchRepository, TokenService tokenService, UserRepository userRepository, CategoryRepository categoryRepository) {
         this.launchRepository = launchRepository;
         this.tokenService = tokenService;
         this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public List<LaunchDTO> findAllLaunches(String authHeader){
@@ -32,11 +40,11 @@ public class LaunchService {
 
     public LaunchDTO findLaunchById(String authHeader,Long id){
         User user = findUserByToken(authHeader);
-        Launch launch = launchRepository.findById(id).orElseThrow(() -> new RuntimeException("erro"));
+        Launch launch = launchRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe launch com este ID"));
         if(user.getLaunches().contains(launch)){
             return new LaunchDTO(launch);
         }else{
-            throw new RuntimeException("erro 2");
+            throw new IsNotYoursException("este launch não pertence a você");
         }
     }
 
@@ -44,20 +52,23 @@ public class LaunchService {
     public LaunchDTO createLaunch(Launch launch,String authHeader){
         User user = findUserByToken(authHeader);
         launch.setUser(user);
+        if(launch.getValue() < 0) throw new NegativeNumberException("Value não pode ser negativo");
         launchRepository.save(launch);
         return new LaunchDTO(launch);
     }
 
     public LaunchDTO updateLaunch(Long id, Launch launch,String authHeader){
         User user = findUserByToken(authHeader);
-        Launch updatedLaunch = launchRepository.findById(id).orElseThrow(() -> new RuntimeException("erro"));
+        Launch updatedLaunch = launchRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe launch com este ID"));
         if(!user.getLaunches().contains(updatedLaunch)){
-            throw new RuntimeException("erro");
+            throw new IsNotYoursException("Este launch não pertence a você");
         }
         updatedLaunch.setUser(user);
+        if(!categoryRepository.existsByName(launch.getCategory().getName())) throw new NotFoundException("Não existe category com este name");
         updatedLaunch.setCategory(launch.getCategory());
         updatedLaunch.setDate(launch.getDate());
         updatedLaunch.setDescription(launch.getDescription());
+        if(launch.getValue() < 0) throw new NegativeNumberException("Value não pode ser negativo");
         updatedLaunch.setValue(launch.getValue());
         launchRepository.save(updatedLaunch);
         return new LaunchDTO(updatedLaunch);
@@ -65,19 +76,20 @@ public class LaunchService {
 
     public void deleteLaunchById(Long id,String authHeader){
         User user = findUserByToken(authHeader);
-        Launch deletedLaunch = launchRepository.findById(id).orElseThrow(() -> new RuntimeException("erro"));
+        Launch deletedLaunch = launchRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe launch com este ID"));
         if(!user.getLaunches().contains(deletedLaunch)){
-            throw new RuntimeException("erro");
+            throw new IsNotYoursException("Este launch não pertence a você");
         }
         try{
             launchRepository.deleteById(id);
-        }catch (RuntimeException e){
-            throw new RuntimeException("erro");
+        }catch (EmptyResultDataAccessException e){
+            throw new NotFoundException("Não existe launch com este ID");
         }
     }
 
     public User findUserByToken(String authHeader){
         String token = authHeader.replace("Bearer ","");
+        if(token.isEmpty()) throw new JWTVerificationException("Token nulo");
         String email = tokenService.validateToken(token);
         return userRepository.findUserByEmail(email);
     }

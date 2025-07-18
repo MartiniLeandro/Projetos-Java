@@ -2,6 +2,7 @@ package com.money_track.demo.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,7 +30,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
                         auth.requestMatchers("/authentication/**").permitAll();
-                        auth.requestMatchers("/login").permitAll();
+                        auth.requestMatchers("categories/**").authenticated();
+                        auth.requestMatchers("user/launches").authenticated();
+                        auth.requestMatchers("/admin/**").hasRole("ADMIN");
                         auth.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityFilter,UsernamePasswordAuthenticationFilter.class)

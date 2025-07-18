@@ -2,7 +2,10 @@ package com.money_track.demo.services;
 
 import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.CategoryDTO;
+import com.money_track.demo.exceptions.AlreadyExistsException;
+import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.repositories.CategoryRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,17 +25,19 @@ public class CategoryService {
     }
 
     public CategoryDTO findCategoryById(Long id){
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("erro"));
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe categoria com este ID"));
         return new CategoryDTO(category);
     }
 
     public CategoryDTO createCategory(Category category){
+        if(categoryRepository.existsByName(category.getName())) throw new AlreadyExistsException("Já existe uma category com este nome");
         categoryRepository.save(category);
         return new CategoryDTO(category);
     }
 
     public CategoryDTO updateCategory(Category category,Long id){
-        Category updatedCategory = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("erro"));
+        Category updatedCategory = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe categoria com este ID"));
+        if(categoryRepository.existsByName(category.getName()) && !updatedCategory.getName().equals(category.getName())) throw new AlreadyExistsException("Já existe uma category com este nome");
         updatedCategory.setName(category.getName());
         updatedCategory.setTypeValue(category.getTypeValue());
         categoryRepository.save(updatedCategory);
@@ -42,8 +47,8 @@ public class CategoryService {
     public void deleteCategoryById(Long id){
         try{
             categoryRepository.deleteById(id);
-        }catch (RuntimeException e){
-            throw new RuntimeException("erro");
+        }catch (EmptyResultDataAccessException e){
+            throw new NotFoundException("Não existe categoria com este ID");
         }
     }
 }
