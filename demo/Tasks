@@ -1,0 +1,6 @@
+*adicionar token e security nos services e controllers dos Users e Categories
+*ajustar os testes com security
+*tratamento de exceções personalizadas
+*adicionar mais métodos do que pode ser feito no projeto
+
+*fazer o FRONT-END
