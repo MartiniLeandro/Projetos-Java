@@ -7,6 +7,7 @@ import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
 import com.money_track.demo.repositories.UserRepository;
 import com.money_track.demo.security.TokenService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +35,7 @@ public class AuthenticateController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginDTO loginDTO){
+    public ResponseEntity<String> loginUser(@RequestBody @Valid LoginDTO loginDTO){
         UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(loginDTO.email(),loginDTO.password());
         Authentication auth = authenticationManager.authenticate(usernamePassword);
 
@@ -44,7 +45,7 @@ public class AuthenticateController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody RegisterDTO registerDTO){
+    public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid RegisterDTO registerDTO){
         String passwordEncoded = passwordEncoder.encode(registerDTO.password());
         User newUser = new User(registerDTO.name(), registerDTO.cpf(),registerDTO.email(),passwordEncoded, Roles.ROLE_USER);
         userRepository.save(newUser);

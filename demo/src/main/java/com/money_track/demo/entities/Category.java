@@ -4,6 +4,8 @@ import com.money_track.demo.entities.enums.TypeValue;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "categories")
 public class Category {
@@ -46,5 +48,17 @@ public class Category {
 
     public void setTypeValue(TypeValue typeValue) {
         this.typeValue = typeValue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return Objects.equals(id, category.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

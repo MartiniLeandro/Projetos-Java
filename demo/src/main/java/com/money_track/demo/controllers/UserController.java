@@ -3,6 +3,7 @@ package com.money_track.demo.controllers;
 import com.money_track.demo.entities.DTO.UserDTO;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,22 +25,22 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> findUserById(@PathVariable Long id){
+    public ResponseEntity<UserDTO> findUserById(@PathVariable @Valid Long id){
         return ResponseEntity.ok().body(userService.findUserById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UserDTO> createUser(@RequestBody User user){
+    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid User user){
         return ResponseEntity.ok().body(userService.createUser(user));
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody User user, @PathVariable Long id){
+    public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid User user, @PathVariable @Valid Long id){
         return ResponseEntity.ok().body(userService.updateUser(user,id));
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
+    public ResponseEntity<Void> deleteUser(@PathVariable @Valid Long id){
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
