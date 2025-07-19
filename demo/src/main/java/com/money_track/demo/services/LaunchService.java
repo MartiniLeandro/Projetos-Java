@@ -1,6 +1,7 @@
 package com.money_track.demo.services;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.LaunchDTO;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.User;
@@ -15,6 +16,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,7 +51,6 @@ public class LaunchService {
             throw new IsNotYoursException("este launch não pertence a você");
         }
     }
-
 
     public LaunchDTO createLaunch(Launch launch,String authHeader){
         User user = findUserByToken(authHeader);
@@ -85,6 +88,19 @@ public class LaunchService {
         }catch (EmptyResultDataAccessException e){
             throw new NotFoundException("Não existe launch com este ID");
         }
+    }
+
+    public List<LaunchDTO> filterLaunchByCategory(Category category, String authHeader){
+        User user = findUserByToken(authHeader);
+        List<Launch> launchesByCategory = user.getLaunches().stream().filter(launch -> launch.getCategory().getId().equals(category.getId())).toList();
+        return launchesByCategory.stream().map(LaunchDTO::new).toList();
+    }
+
+    public List<LaunchDTO> filterLaunchByDate(LocalDate initialDate, LocalDate finalDate, String authHeader){
+        User user = findUserByToken(authHeader);
+        List<Launch> launchesByDate = launchRepository.findByUserAndDataBetween(user,initialDate,finalDate);
+        return launchesByDate.stream().map(LaunchDTO::new).toList();
+
     }
 
     public User findUserByToken(String authHeader){
