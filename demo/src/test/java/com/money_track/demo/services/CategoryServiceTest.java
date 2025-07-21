@@ -3,6 +3,7 @@ package com.money_track.demo.services;
 import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.CategoryDTO;
 import com.money_track.demo.entities.enums.TypeValue;
+import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.repositories.CategoryRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,9 +65,9 @@ public class CategoryServiceTest {
     @Test
     void testFindCategoryByIdFailed(){
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> categoryService.findCategoryById(1L));
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> categoryService.findCategoryById(1L));
 
-        Assertions.assertEquals("erro", exception.getMessage());
+        Assertions.assertEquals("Não existe categoria com este ID", exception.getMessage());
     }
 
     @DisplayName("test create Category SUCCESS")
@@ -95,9 +96,9 @@ public class CategoryServiceTest {
     void testUpdateCategoryFailed(){
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> categoryService.updateCategory(category2,1L));
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> categoryService.updateCategory(category2,1L));
 
-        Assertions.assertEquals("erro", exception.getMessage());
+        Assertions.assertEquals("Não existe categoria com este ID", exception.getMessage());
     }
 
     @DisplayName("test delete Category SUCCESS")
@@ -111,10 +112,10 @@ public class CategoryServiceTest {
     @DisplayName("test delete category FAILED")
     @Test
     void testDeleteCategoryFailed(){
-        doThrow(RuntimeException.class).when(categoryRepository).deleteById(anyLong());
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> categoryService.deleteCategoryById(1L));
+        doThrow(new NotFoundException("Não existe categoria com este ID")).when(categoryRepository).deleteById(anyLong());
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> categoryService.deleteCategoryById(1L));
 
         verify(categoryRepository).deleteById(1L);
-        Assertions.assertEquals("erro",exception.getMessage());
+        Assertions.assertEquals("Não existe categoria com este ID",exception.getMessage());
     }
 }

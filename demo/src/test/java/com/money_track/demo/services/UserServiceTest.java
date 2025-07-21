@@ -3,6 +3,7 @@ package com.money_track.demo.services;
 import com.money_track.demo.entities.DTO.UserDTO;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
+import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.repositories.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,9 @@ public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private UserService userService;
 
@@ -35,8 +40,6 @@ public class UserServiceTest {
     void setup(){
         user = new User("user","702.413.770-30","user@email.com","user123", Roles.ROLE_USER);
         admin = new User("admin","730.136.230-71","admin@email.com","admin123", Roles.ROLE_ADMIN);
-        userRepository.save(user);
-        userRepository.save(admin);
     }
 
     @DisplayName("test find all users SUCCESS")
@@ -68,13 +71,14 @@ public class UserServiceTest {
 
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> userService.findUserById(1L));
-        Assertions.assertEquals("erro", exception.getMessage());
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> userService.findUserById(1L));
+        Assertions.assertEquals("não existe User com este ID", exception.getMessage());
     }
 
     @DisplayName("test create user SUCCESS")
     @Test
     void testCreateUser(){
+        when(passwordEncoder.encode(anyString())).thenReturn("senha-criptografada");
         when(userRepository.save(any())).thenReturn(admin);
         UserDTO newUser = userService.createUser(admin);
 
@@ -86,6 +90,7 @@ public class UserServiceTest {
     @Test
     void testUpdateUserSuccess(){
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        when(passwordEncoder.encode(anyString())).thenReturn("senha-criptografada");
         when(userRepository.save(any())).thenReturn(user);
 
         UserDTO updatedUser = userService.updateUser(admin,1L);
@@ -100,9 +105,9 @@ public class UserServiceTest {
     void testUpdateUserFailed(){
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> userService.updateUser(admin,1L));
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> userService.updateUser(admin,1L));
 
-        Assertions.assertEquals("erro", exception.getMessage());
+        Assertions.assertEquals("Não existe user com este ID", exception.getMessage());
     }
 
     @DisplayName("test delete user SUCCESS")
@@ -117,10 +122,10 @@ public class UserServiceTest {
     @DisplayName("test delete user FAILED")
     @Test
     void testeDeleteUserFailed() {
-        doThrow(new RuntimeException()).when(userRepository).deleteById(any());
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> userService.deleteUser(1L));
+        doThrow(new NotFoundException("Não existe user com este ID")).when(userRepository).deleteById(any());
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> userService.deleteUser(1L));
 
         verify(userRepository).deleteById(1L);
-        Assertions.assertEquals("erro",exception.getMessage());
+        Assertions.assertEquals("Não existe user com este ID",exception.getMessage());
     }
 }

@@ -39,6 +39,9 @@ public class LaunchServiceTest {
     @Mock
     private TokenService tokenService;
 
+    @Mock
+    private CategoryRepository categoryRepository;
+
     @InjectMocks
     private LaunchService launchService;
 
@@ -97,9 +100,10 @@ public class LaunchServiceTest {
     @DisplayName("test update launch SUCCESS")
     @Test
     void testUpdateLaunchSuccess(){
-        when(tokenService.validateToken(anyString())).thenReturn("user@email.com");
-        when(userRepository.findUserByEmail("user@email.com")).thenReturn(user1);
+        when(launchService.findUserByToken("fake-token")).thenReturn(user1);
+        user1.setLaunches(List.of(launch1));
         when(launchRepository.findById(anyLong())).thenReturn(Optional.of(launch1));
+        when(categoryRepository.existsByName(anyString())).thenReturn(true);
         when(launchRepository.save(any())).thenReturn(launch1);
         LaunchDTO launch = launchService.updateLaunch(1L,launch2,"fake-token");
 
