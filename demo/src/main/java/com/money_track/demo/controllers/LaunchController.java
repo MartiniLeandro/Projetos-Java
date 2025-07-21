@@ -1,5 +1,6 @@
 package com.money_track.demo.controllers;
 
+import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.LaunchDTO;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.services.LaunchService;
@@ -7,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -28,6 +30,17 @@ public class LaunchController {
     public ResponseEntity<LaunchDTO> findLaunchById(@PathVariable @Valid Long id,@RequestHeader("Authorization") String authHeader){
         return ResponseEntity.ok().body(launchService.findLaunchById(authHeader,id));
     }
+
+    @GetMapping("filterByCategories")
+    public ResponseEntity<List<LaunchDTO>> findByCategory(@RequestHeader("Authorization") String authHeader, Category category){
+        return ResponseEntity.ok().body(launchService.filterLaunchByCategory(category,authHeader))
+    }
+
+    @GetMapping("filterByDate")
+    public ResponseEntity<List<LaunchDTO>> findByDate(@RequestHeader("Authorization") String authHeader, LocalDate initialDate, LocalDate finalDate){
+        return ResponseEntity.ok().body(launchService.filterLaunchByDate(initialDate,finalDate, authHeader));
+    }
+
 
     @PostMapping("/create")
     public ResponseEntity<LaunchDTO> createLaunch(@RequestBody @Valid Launch launch,@RequestHeader("Authorization") String authHeader){
