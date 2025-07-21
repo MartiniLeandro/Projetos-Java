@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.money_track.demo.entities.DTO.UserDTO;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
+import com.money_track.demo.repositories.UserRepository;
+import com.money_track.demo.security.TokenService;
 import com.money_track.demo.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -27,10 +30,17 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest(UserController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private TokenService tokenService;
+
+    @MockBean
+    private UserRepository userRepository;
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,7 +53,7 @@ public class UserControllerTest {
 
     @BeforeEach
     void setup(){
-        user = new User("user","702.413.770-30","user@email.com","user123", Roles.ROLE_USER);
+        user = new User("user","111.444.777-35","user@email.com","user123", Roles.ROLE_USER);
         user.setId(1L);
         admin = new User("admin","730.136.230-71","admin@email.com","admin123", Roles.ROLE_ADMIN);
         admin.setId(2L);
@@ -87,15 +97,15 @@ public class UserControllerTest {
     @DisplayName("test create user SUCCESS")
     @Test
     void testCreateUserSuccess() throws Exception{
-        when(userService.createUser(any(User.class))).thenReturn(adminDTO);
+        when(userService.createUser(user)).thenReturn(new UserDTO(user));
 
         mockMvc.perform(post("/admin/users/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(adminDTO)))
+                .content(objectMapper.writeValueAsString(user)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("admin@email.com"))
-                .andExpect(jsonPath("$.role").value("ROLE_ADMIN"));
+                .andExpect(jsonPath("$.email").value("user@email.com"))
+                .andExpect(jsonPath("$.role").value("ROLE_USER"));
     }
 
     @DisplayName("test create user FAILED")

@@ -43,7 +43,7 @@ public class CategoryController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("admin/deleteCategory/delete/{id}")
+    @DeleteMapping("admin/deleteCategory/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable @Valid Long id){
         categoryService.deleteCategoryById(id);
         return ResponseEntity.noContent().build();
