@@ -4,14 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.CategoryDTO;
 import com.money_track.demo.entities.enums.TypeValue;
+import com.money_track.demo.repositories.UserRepository;
+import com.money_track.demo.security.TokenService;
 import com.money_track.demo.services.CategoryService;
+import config.SecurityTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -26,10 +31,17 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest(CategoryController.class)
+@Import(SecurityTestConfig.class)
 public class CategoryControllerTest {
 
     @MockBean
     private CategoryService categoryService;
+
+    @MockBean
+    private UserRepository userRepository;
+
+    @MockBean
+    private TokenService tokenService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -55,7 +67,7 @@ public class CategoryControllerTest {
     void testFindAllCategoriesSuccess() throws Exception {
         when(categoryService.findAllCategories()).thenReturn(List.of(category1DTO,category2DTO));
 
-        mockMvc.perform(get("/admin/categories"))
+        mockMvc.perform(get("/categories"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("salary"))
@@ -68,7 +80,7 @@ public class CategoryControllerTest {
 
         when(categoryService.findCategoryById(anyLong())).thenReturn(category2DTO);
 
-        mockMvc.perform(get("/admin/categories/{id}",2L))
+        mockMvc.perform(get("/categories/{id}",2L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("school"));
@@ -80,7 +92,7 @@ public class CategoryControllerTest {
 
         when(categoryService.createCategory(any(Category.class))).thenReturn(category1DTO);
 
-        mockMvc.perform(post("/admin/categories/create")
+        mockMvc.perform(post("/categories/admin/createCategory")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(category1DTO)))
                 .andDo(print())
@@ -99,7 +111,7 @@ public class CategoryControllerTest {
 
         when(categoryService.updateCategory(any(Category.class),anyLong())).thenReturn(category3DTO);
 
-        mockMvc.perform(put("/admin/categories/update/{id}",3L)
+        mockMvc.perform(put("/categories/admin/updateCategory/{id}",3L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(category3DTO)))
                 .andDo(print())
@@ -114,7 +126,7 @@ public class CategoryControllerTest {
 
         doNothing().when(categoryService).deleteCategoryById(anyLong());
 
-        mockMvc.perform(delete("/admin/categories/delete/{id}",2L))
+        mockMvc.perform(delete("/categories/admin/deleteCategory/{id}",2L))
                 .andDo(print())
                 .andExpect(status().isNoContent());
     }
