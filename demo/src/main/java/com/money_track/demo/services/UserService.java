@@ -34,6 +34,7 @@ public class UserService {
 
     public UserDTO createUser(User user){
         if(userRepository.existsByEmail(user.getEmail())) throw new AlreadyExistsException("Este email já está cadastrado");
+        if(userRepository.existsByCpf(user.getCpf())) throw new AlreadyExistsException("Este CPF já está cadastrado");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return new UserDTO(user);

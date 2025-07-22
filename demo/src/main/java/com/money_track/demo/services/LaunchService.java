@@ -54,6 +54,8 @@ public class LaunchService {
 
     public LaunchDTO createLaunch(Launch launch,String authHeader){
         User user = findUserByToken(authHeader);
+        Category category = categoryRepository.findById(launch.getCategory().getId()).orElseThrow(() -> new NotFoundException("Não existe category com este ID"));
+        launch.setCategory(category);
         launch.setUser(user);
         if(launch.getValue() < 0) throw new NegativeNumberException("Value não pode ser negativo");
         launchRepository.save(launch);
@@ -67,8 +69,8 @@ public class LaunchService {
             throw new IsNotYoursException("Este launch não pertence a você");
         }
         updatedLaunch.setUser(user);
-        if(!categoryRepository.existsByName(launch.getCategory().getName())) throw new NotFoundException("Não existe category com este name");
-        updatedLaunch.setCategory(launch.getCategory());
+        if(!categoryRepository.existsById(launch.getCategory().getId())) throw new NotFoundException("Não existe esta category");
+        updatedLaunch.setCategory(categoryRepository.findById(launch.getCategory().getId()).orElseThrow(() -> new NotFoundException("Não existe category com este ID")));
         updatedLaunch.setDate(launch.getDate());
         updatedLaunch.setDescription(launch.getDescription());
         if(launch.getValue() < 0) throw new NegativeNumberException("Value não pode ser negativo");
@@ -98,7 +100,7 @@ public class LaunchService {
 
     public List<LaunchDTO> filterLaunchByDate(LocalDate initialDate, LocalDate finalDate, String authHeader){
         User user = findUserByToken(authHeader);
-        List<Launch> launchesByDate = launchRepository.findByUserAndDataBetween(user,initialDate,finalDate);
+        List<Launch> launchesByDate = launchRepository.findByUserAndDateBetween(user,initialDate,finalDate);
         return launchesByDate.stream().map(LaunchDTO::new).toList();
 
     }

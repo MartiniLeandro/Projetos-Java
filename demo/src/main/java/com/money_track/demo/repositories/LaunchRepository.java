@@ -8,5 +8,5 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface LaunchRepository extends JpaRepository<Launch,Long> {
-    List<Launch> findByUserAndDataBetween(User user, LocalDate initialDate, LocalDate finalDate);
+    List<Launch> findByUserAndDateBetween(User user, LocalDate initialDate, LocalDate finalDate);
 }

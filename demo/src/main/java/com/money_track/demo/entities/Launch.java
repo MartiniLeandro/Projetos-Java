@@ -40,6 +40,12 @@ public class Launch {
         this.date = date;
         this.user = user;
     }
+    public Launch(String description, Category category, Double value, LocalDate date) {
+        this.description = description;
+        this.category = category;
+        this.value = value;
+        this.date = date;
+    }
 
     public Long getId() {
         return id;

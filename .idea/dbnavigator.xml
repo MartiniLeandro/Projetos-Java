@@ -6,7 +6,7 @@
   </component>
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DatabaseAssistantManager">
@@ -31,7 +31,9 @@
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="3f86e2c6-1da7-4da3-92f2-354da8a3c53d" object-ref="schemas/public/tables/categories" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="3f86e2c6-1da7-4da3-92f2-354da8a3c53d" />
@@ -40,7 +42,9 @@
     <filter-actions connection-id="3f86e2c6-1da7-4da3-92f2-354da8a3c53d" dataset="public.users" active-filter-id="30dcaf02-cd4e-4373-a44c-3e151a1c492f">
       <filter id="30dcaf02-cd4e-4373-a44c-3e151a1c492f" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
-    <filter-actions connection-id="3f86e2c6-1da7-4da3-92f2-354da8a3c53d" dataset="public.categories" active-filter-id="" />
+    <filter-actions connection-id="3f86e2c6-1da7-4da3-92f2-354da8a3c53d" dataset="public.categories" active-filter-id="0a3642c7-2c06-49af-8fc0-5582b948a648">
+      <filter id="0a3642c7-2c06-49af-8fc0-5582b948a648" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
   </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />

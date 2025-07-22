@@ -31,13 +31,13 @@ public class LaunchController {
         return ResponseEntity.ok().body(launchService.findLaunchById(authHeader,id));
     }
 
-    @GetMapping("filterByCategories")
-    public ResponseEntity<List<LaunchDTO>> findByCategory(@RequestHeader("Authorization") String authHeader, Category category){
+    @GetMapping("/filterByCategory")
+    public ResponseEntity<List<LaunchDTO>> findByCategory(@RequestHeader("Authorization") String authHeader, @RequestParam Category category){
         return ResponseEntity.ok().body(launchService.filterLaunchByCategory(category,authHeader));
     }
 
-    @GetMapping("filterByDate")
-    public ResponseEntity<List<LaunchDTO>> findByDate(@RequestHeader("Authorization") String authHeader, LocalDate initialDate, LocalDate finalDate){
+    @GetMapping("/filterByDate")
+    public ResponseEntity<List<LaunchDTO>> findByDate(@RequestHeader("Authorization") String authHeader,@RequestParam LocalDate initialDate,@RequestParam LocalDate finalDate){
         return ResponseEntity.ok().body(launchService.filterLaunchByDate(initialDate,finalDate, authHeader));
     }
 

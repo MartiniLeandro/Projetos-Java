@@ -30,14 +30,14 @@ public class CategoryService {
     }
 
     public CategoryDTO createCategory(Category category){
-        if(categoryRepository.existsByName(category.getName())) throw new AlreadyExistsException("Já existe uma category com este nome");
+        if(categoryRepository.existsByNameAndTypeValue(category.getName(),category.getTypeValue())) throw new AlreadyExistsException("Já existe uma category com este nome e tipo");
         categoryRepository.save(category);
         return new CategoryDTO(category);
     }
 
     public CategoryDTO updateCategory(Category category,Long id){
         Category updatedCategory = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe categoria com este ID"));
-        if(categoryRepository.existsByName(category.getName()) && !updatedCategory.getName().equals(category.getName())) throw new AlreadyExistsException("Já existe uma category com este nome");
+        if(categoryRepository.existsByNameAndTypeValue(category.getName(),category.getTypeValue()) && !updatedCategory.getName().equals(category.getName())) throw new AlreadyExistsException("Já existe uma category com este nome e tipo");
         updatedCategory.setName(category.getName());
         updatedCategory.setTypeValue(category.getTypeValue());
         categoryRepository.save(updatedCategory);
