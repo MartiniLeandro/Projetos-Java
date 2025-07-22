@@ -103,7 +103,7 @@ public class LaunchServiceTest {
         when(launchService.findUserByToken("fake-token")).thenReturn(user1);
         user1.setLaunches(List.of(launch1));
         when(launchRepository.findById(anyLong())).thenReturn(Optional.of(launch1));
-        when(categoryRepository.existsByName(anyString())).thenReturn(true);
+        when(categoryRepository.existsByNameAndTypeValue(anyString(),any())).thenReturn(true);
         when(launchRepository.save(any())).thenReturn(launch1);
         LaunchDTO launch = launchService.updateLaunch(1L,launch2,"fake-token");
 

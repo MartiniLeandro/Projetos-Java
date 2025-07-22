@@ -3,6 +3,7 @@ package com.money_track.demo.controllers;
 import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.LaunchDTO;
 import com.money_track.demo.entities.Launch;
+import com.money_track.demo.entities.enums.TypeValue;
 import com.money_track.demo.services.LaunchService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,10 @@ public class LaunchController {
         return ResponseEntity.ok().body(launchService.filterLaunchByDate(initialDate,finalDate, authHeader));
     }
 
+    @GetMapping("filterByTypeValue")
+    public ResponseEntity<List<LaunchDTO>> findByTypeValue(@RequestHeader("Authorization") String authHeader, @RequestParam TypeValue typeValue){
+        return ResponseEntity.ok().body(launchService.filterByTypeValue(authHeader,typeValue));
+    }
 
     @PostMapping("/create")
     public ResponseEntity<LaunchDTO> createLaunch(@RequestBody @Valid Launch launch,@RequestHeader("Authorization") String authHeader){

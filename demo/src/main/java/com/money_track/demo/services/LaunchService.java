@@ -5,6 +5,7 @@ import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.LaunchDTO;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.User;
+import com.money_track.demo.entities.enums.TypeValue;
 import com.money_track.demo.exceptions.IsNotYoursException;
 import com.money_track.demo.exceptions.NegativeNumberException;
 import com.money_track.demo.exceptions.NotFoundException;
@@ -13,11 +14,9 @@ import com.money_track.demo.repositories.LaunchRepository;
 import com.money_track.demo.repositories.UserRepository;
 import com.money_track.demo.security.TokenService;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,6 +102,12 @@ public class LaunchService {
         List<Launch> launchesByDate = launchRepository.findByUserAndDateBetween(user,initialDate,finalDate);
         return launchesByDate.stream().map(LaunchDTO::new).toList();
 
+    }
+
+    public List<LaunchDTO> filterByTypeValue(String authHeader, TypeValue typeValue){
+        User user = findUserByToken(authHeader);
+        List<Launch> launchesByTypeValue = launchRepository.findByUserAndCategory_TypeValue(user,typeValue);
+        return launchesByTypeValue.stream().map(LaunchDTO::new).toList();
     }
 
     public User findUserByToken(String authHeader){
