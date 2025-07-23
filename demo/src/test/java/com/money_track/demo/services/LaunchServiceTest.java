@@ -54,6 +54,8 @@ public class LaunchServiceTest {
         user1 = new User("user","702.413.770-30","user@email.com","user123", Roles.ROLE_USER);
         category1 = new Category("salary", TypeValue.REVENUE);
         category2 = new Category("school", TypeValue.EXPENSE);
+        category1.setId(1L);
+        category2.setId(2L);
 
         launch1 = new Launch("salary",category1,1500.0, LocalDate.of(2025,6,1),user1);
         launch2 = new Launch("school",category2,500.0, LocalDate.of(2025,6,2),user1);
@@ -91,6 +93,7 @@ public class LaunchServiceTest {
     void testCreateLaunch(){
         when(tokenService.validateToken(anyString())).thenReturn("user@email.com");
         when(userRepository.findUserByEmail("user@email.com")).thenReturn(user1);
+        when(categoryRepository.findById(any())).thenReturn(Optional.of(category1));
         when(launchRepository.save(any())).thenReturn(launch2);
         LaunchDTO launch = launchService.createLaunch(launch2,"fake-token");
 
@@ -100,15 +103,16 @@ public class LaunchServiceTest {
     @DisplayName("test update launch SUCCESS")
     @Test
     void testUpdateLaunchSuccess(){
-        when(launchService.findUserByToken("fake-token")).thenReturn(user1);
-        user1.setLaunches(List.of(launch1));
+        when(tokenService.validateToken(anyString())).thenReturn("user@email.com");
+        when(userRepository.findUserByEmail("user@email.com")).thenReturn(user1);
         when(launchRepository.findById(anyLong())).thenReturn(Optional.of(launch1));
-        when(categoryRepository.existsByNameAndTypeValue(anyString(),any())).thenReturn(true);
+        when(categoryRepository.existsById(anyLong())).thenReturn(true);
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(category1));
         when(launchRepository.save(any())).thenReturn(launch1);
-        LaunchDTO launch = launchService.updateLaunch(1L,launch2,"fake-token");
 
-        Assertions.assertNotNull(launch);
-        Assertions.assertEquals("school",launch.getCategory().getName());
+        LaunchDTO launchDTO = launchService.updateLaunch(1L,launch2,"fake-token");
+        Assertions.assertNotNull(launchDTO);
+        Assertions.assertEquals("school", launchDTO.getDescription());
 
     }
 
