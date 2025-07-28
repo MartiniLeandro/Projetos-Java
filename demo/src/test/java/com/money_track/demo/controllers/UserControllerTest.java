@@ -97,11 +97,11 @@ public class UserControllerTest {
     @DisplayName("test create user SUCCESS")
     @Test
     void testCreateUserSuccess() throws Exception{
-        when(userService.createUser(user)).thenReturn(new UserDTO(user));
+        when(userService.createUser(any(User.class))).thenReturn(userDTO);
 
         mockMvc.perform(post("/admin/users/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(user)))
+                .content(objectMapper.writeValueAsString(userDTO)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("user@email.com"))
@@ -118,12 +118,13 @@ public class UserControllerTest {
     @Test
     void testUpdateUserSuccess() throws Exception{
         Long id = 2L;
-        when(userService.updateUser(any(User.class), Mockito.eq(id))).thenReturn(adminDTO);
+        when(userService.updateUser(any(User.class), anyLong())).thenReturn(new UserDTO(user));
 
         mockMvc.perform(put("/admin/users/update/{id}",id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(adminDTO)))
+                .content(objectMapper.writeValueAsString(userDTO)))
                 .andDo(print())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("admin@email.com"))
                 .andExpect(jsonPath("$.role").value("ROLE_ADMIN"));
     }

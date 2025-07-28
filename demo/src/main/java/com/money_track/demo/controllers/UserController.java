@@ -34,12 +34,12 @@ public class UserController {
         return ResponseEntity.ok().body(userService.createUser(user));
     }
 
-    @PutMapping("update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid User user, @PathVariable @Valid Long id){
         return ResponseEntity.ok().body(userService.updateUser(user,id));
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable @Valid Long id){
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
