@@ -3,6 +3,7 @@ package com.money_track.demo.services;
 import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.CategoryDTO;
 import com.money_track.demo.entities.enums.TypeValue;
+import com.money_track.demo.exceptions.AlreadyExistsException;
 import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.repositories.CategoryRepository;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,20 +37,29 @@ public class CategoryServiceTest {
     @BeforeEach
     void setup(){
         category1 = new Category("salary", TypeValue.REVENUE);
+        category1.setId(1L);
         category2 = new Category("school", TypeValue.EXPENSE);
-        categoryRepository.save(category1);
-        categoryRepository.save(category2);
     }
 
     @DisplayName("test find all categories SUCCESS")
     @Test
-    void testFindAllCategories(){
+    void testFindAllCategoriesSuccess(){
         when(categoryRepository.findAll()).thenReturn(List.of(category1,category2));
         List<CategoryDTO> allCategories = categoryService.findAllCategories();
 
         Assertions.assertNotNull(allCategories);
         Assertions.assertEquals("salary",allCategories.getFirst().getName());
         Assertions.assertEquals("school",allCategories.get(1).getName());
+    }
+
+    @DisplayName("test find all categories FAILED")
+    @Test
+    void testFindAllCategoriesFailed(){
+        when(categoryRepository.findAll()).thenReturn(Collections.emptyList());
+        List<CategoryDTO> allCategories = categoryService.findAllCategories();
+
+        Assertions.assertNotNull(allCategories);
+        Assertions.assertTrue(allCategories.isEmpty());
     }
 
     @DisplayName("test find category by id SUCCESS")
@@ -80,6 +91,16 @@ public class CategoryServiceTest {
         Assertions.assertEquals("school", categoryDTO.getName());
     }
 
+    @DisplayName("test create Category FAILED")
+    @Test
+    void testCreateCategoryFailed(){
+        when(categoryRepository.existsByNameAndTypeValue(anyString(),any(TypeValue.class))).thenReturn(true);
+
+        AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> categoryService.createCategory(category1));
+        Assertions.assertEquals("Já existe uma category com este nome e tipo" ,exception.getMessage());
+    }
+
+
     @DisplayName("test update Category SUCCESS")
     @Test
     void testUpdateCategorySuccess(){
@@ -91,15 +112,30 @@ public class CategoryServiceTest {
         Assertions.assertEquals("school", updatedCategory.getName());
     }
 
-    @DisplayName("test update Category FAILED")
+    @DisplayName("test update Category FAILED case1")
     @Test
-    void testUpdateCategoryFailed(){
+    void testUpdateCategoryFailed1(){
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> categoryService.updateCategory(category2,1L));
 
         Assertions.assertEquals("Não existe categoria com este ID", exception.getMessage());
     }
+
+    @DisplayName("test update Category FAILED case2 - nome e tipo já existentes")
+    @Test
+    void testUpdateCategoryFailed2() {
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category1));
+        Category categoriaAtualizada = new Category("school", TypeValue.EXPENSE); // nome já existente
+        categoriaAtualizada.setId(1L);
+        when(categoryRepository.existsByNameAndTypeValue("school", TypeValue.EXPENSE)).thenReturn(true);
+        AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
+            categoryService.updateCategory(categoriaAtualizada, 1L);
+        });
+
+        Assertions.assertEquals("Já existe uma category com este nome e tipo", exception.getMessage());
+    }
+
 
     @DisplayName("test delete Category SUCCESS")
     @Test
