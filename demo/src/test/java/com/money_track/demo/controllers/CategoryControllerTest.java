@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.CategoryDTO;
 import com.money_track.demo.entities.enums.TypeValue;
+import com.money_track.demo.exceptions.AlreadyExistsException;
+import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.repositories.UserRepository;
 import com.money_track.demo.security.TokenService;
 import com.money_track.demo.services.CategoryService;
@@ -17,16 +19,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
-
-import static org.mockito.Mockito.when;
 
 @WebMvcTest(CategoryController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -84,6 +83,17 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$.name").value("school"));
     }
 
+    @DisplayName("test find category byId FAILED")
+    @Test
+    void testFindCategoryByIdFailed() throws Exception {
+        Long id = 1L;
+        when(categoryService.findCategoryById(anyLong())).thenThrow(new NotFoundException("Não existe categoria com este ID"));
+
+        mockMvc.perform(get("/categories/{id}", id))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
     @DisplayName("test create category SUCCESS")
     @Test
     void testCreateCategorySuccess() throws Exception{
@@ -97,6 +107,18 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("salary"))
                 .andExpect(jsonPath("$.typeValue").value("REVENUE"));
+    }
+
+    @DisplayName("test create category FAILED")
+    @Test
+    void testCreateCategoryFailed() throws Exception {
+        when(categoryService.createCategory(any(Category.class))).thenThrow(new AlreadyExistsException("Já existe uma category com este nome e tipo"));
+
+        mockMvc.perform(post("/categories/admin/createCategory")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(category1)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @DisplayName("test update category SUCCESS")
@@ -118,6 +140,33 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$.typeValue").value("EXPENSE"));
     }
 
+    @DisplayName("test update category FAILED case1")
+    @Test
+    void testUpdateCategoryFailed1() throws Exception {
+        Long id = 5L;
+        when(categoryService.updateCategory(any(Category.class),eq(id))).thenThrow(new NotFoundException("Não existe categoria com este ID"));
+
+        mockMvc.perform(put("/categories/admin/updateCategory/{id}",id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(category1DTO)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("test update category FAILED case2")
+    @Test
+    void testUpdateCategoryFailed2() throws Exception {
+        Long id = 5L;
+        when(categoryService.updateCategory(any(Category.class),eq(id))).thenThrow(new AlreadyExistsException("Já existe uma category com este nome e tipo"));
+
+        mockMvc.perform(put("/categories/admin/updateCategory/{id}",id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(category1DTO)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+
     @DisplayName("test delete category SUCCESS")
     @Test
     void testDeleteCategorySuccess() throws Exception {
@@ -127,6 +176,17 @@ public class CategoryControllerTest {
         mockMvc.perform(delete("/categories/admin/deleteCategory/{id}",2L))
                 .andDo(print())
                 .andExpect(status().isNoContent());
+    }
+
+    @DisplayName("test delete category FAILED")
+    @Test
+    void testDeleteCategoryFailed() throws Exception {
+        Long id = 5L;
+        doThrow(new NotFoundException("Não existe categoria com este ID")).when(categoryService).deleteCategoryById(eq(id));
+
+        mockMvc.perform(delete("/categories/admin/deleteCategory/{id}",id))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
 }
