@@ -62,7 +62,7 @@ public class UserControllerTest {
         adminDTO = new UserDTO(admin);
     }
 
-    @DisplayName("test find all users SUCCESS")
+    @DisplayName("test find all users")
     @Test
     void testFindAllUsersSuccess() throws Exception {
 

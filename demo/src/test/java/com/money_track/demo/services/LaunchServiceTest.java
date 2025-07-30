@@ -254,7 +254,8 @@ public class LaunchServiceTest {
     @DisplayName("test filter launch by category SUCCESS")
     @Test
     void testFilterLaunchByCategorySuccess(){
-        List<LaunchDTO> launchesByCategory = launchService.filterLaunchByCategory(category1,"fake-token");
+        when(categoryRepository.findByName(anyString())).thenReturn(category1);
+        List<LaunchDTO> launchesByCategory = launchService.filterLaunchByCategory(category1.getName(),"fake-token");
 
         Assertions.assertNotNull(launchesByCategory);
         Assertions.assertEquals(1,launchesByCategory.size());
@@ -265,7 +266,7 @@ public class LaunchServiceTest {
     @Test
     void testFilterLaunchByCategoryFailed(){
         user1.setLaunches(new ArrayList<>());
-        List<LaunchDTO> launchesByCategory = launchService.filterLaunchByCategory(category1,"fake-token");
+        List<LaunchDTO> launchesByCategory = launchService.filterLaunchByCategory(category1.getName(),"fake-token");
 
         Assertions.assertNotNull(launchesByCategory);
         Assertions.assertTrue(launchesByCategory.isEmpty());

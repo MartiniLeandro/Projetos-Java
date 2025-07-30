@@ -7,6 +7,9 @@ import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
 import com.money_track.demo.entities.enums.TypeValue;
+import com.money_track.demo.exceptions.IsNotYoursException;
+import com.money_track.demo.exceptions.NegativeNumberException;
+import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.security.SecurityFilter;
 import com.money_track.demo.security.TokenService;
 import com.money_track.demo.services.LaunchService;
@@ -22,15 +25,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
-
-import static org.mockito.Mockito.when;
+import java.util.Optional;
 
 @WebMvcTest(LaunchController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -75,7 +78,7 @@ public class LaunchControllerTest {
         launch2DTO = new LaunchDTO(launch2);
     }
 
-    @DisplayName("test find all launches SUCCESS")
+    @DisplayName("test find all launches")
     @Test
     void testFindAllLaunchesSuccess() throws Exception {
 
@@ -102,6 +105,18 @@ public class LaunchControllerTest {
                 .andExpect(jsonPath("$.description").value("school"));
     }
 
+    @DisplayName("test find launch by id FAILED")
+    @Test
+    void testFindLaunchByIdFailed() throws Exception {
+        Long id = 5L;
+        when(launchService.findLaunchById(any(), eq(id))).thenThrow(new NotFoundException("Não existe launch com este ID"));
+
+        mockMvc.perform(get("/user/launches/{id}", id)
+                .header("Authorization","fake-token"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
     @DisplayName("test create launch SUCCESS")
     @Test
     void testCreateLaunchSuccess() throws Exception{
@@ -115,6 +130,32 @@ public class LaunchControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.description").value("salary"));
+    }
+
+    @DisplayName("test create launch FAILED case1")
+    @Test
+    void testCreateLaunchFailed1() throws Exception{
+        when(launchService.createLaunch(any(Launch.class),anyString())).thenThrow(new NotFoundException("Não existe category com este ID"));
+
+        mockMvc.perform(post("/user/launches/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(launch1DTO))
+                .header("Authorization","fake-token"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("test create launch FAILED case2")
+    @Test
+    void testCreateLaunchFailed2() throws Exception{
+        when(launchService.createLaunch(any(Launch.class),anyString())).thenThrow(new NegativeNumberException("Value não pode ser negativo"));
+
+        mockMvc.perform(post("/user/launches/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(launch1DTO))
+                        .header("Authorization","fake-token"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @DisplayName("test update launch SUCCESS")
@@ -135,6 +176,76 @@ public class LaunchControllerTest {
                 .andExpect(jsonPath("$.description").value("academy"));
     }
 
+    @DisplayName("test update launch Failed case1")
+    @Test
+    void testUpdateLaunchFailed1() throws Exception{
+        Long id = 5L;
+        when(launchService.updateLaunch(eq(id),any(Launch.class),anyString())).thenThrow(new NotFoundException("Não existe launch com este ID"));
+
+        mockMvc.perform(put("/user/launches/update/{id}",id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(launch1DTO))
+                .header("Authorization","fake-token"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("test update launch Failed case2")
+    @Test
+    void testUpdateLaunchFailed2() throws Exception{
+        Long id = 5L;
+        when(launchService.updateLaunch(eq(id),any(Launch.class),anyString())).thenThrow(new IsNotYoursException("Este launch não pertence a você"));
+
+        mockMvc.perform(put("/user/launches/update/{id}",id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(launch1DTO))
+                        .header("Authorization","fake-token"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("test update launch Failed case3")
+    @Test
+    void testUpdateLaunchFailed3() throws Exception{
+        Long id = 5L;
+        when(launchService.updateLaunch(eq(id),any(Launch.class),anyString())).thenThrow(new NotFoundException("Não existe category com este ID"));
+
+        mockMvc.perform(put("/user/launches/update/{id}",id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(launch1DTO))
+                        .header("Authorization","fake-token"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("test update launch Failed case4")
+    @Test
+    void testUpdateLaunchFailed4() throws Exception{
+        Long id = 5L;
+        when(launchService.updateLaunch(eq(id),any(Launch.class),anyString())).thenThrow(new NotFoundException("Não existe esta category"));
+
+        mockMvc.perform(put("/user/launches/update/{id}",id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(launch1DTO))
+                        .header("Authorization","fake-token"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("test update launch Failed case5")
+    @Test
+    void testUpdateLaunchFailed5() throws Exception{
+        Long id = 5L;
+        when(launchService.updateLaunch(eq(id),any(Launch.class),anyString())).thenThrow(new NegativeNumberException("Value não pode ser negativo"));
+
+        mockMvc.perform(put("/user/launches/update/{id}",id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(launch1DTO))
+                        .header("Authorization","fake-token"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
     @DisplayName("test delete launch SUCCESS")
     @Test
     void testDeleteLaunchSuccess() throws Exception {
@@ -145,6 +256,67 @@ public class LaunchControllerTest {
                 .header("Authorization","fake-token"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
+    }
+
+    @DisplayName("test delete launch FAILED case1")
+    @Test
+    void testDeleteLaunchFailed1() throws Exception{
+        Long id = 5L;
+        doThrow(new NotFoundException("Não existe launch com este ID")).when(launchService).deleteLaunchById(eq(id),anyString());
+
+        mockMvc.perform(delete("/user/launches/delete/{id",id)
+                .header("Authorization","fake-token"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("test delete launch FAILED case2")
+    @Test
+    void testDeleteLaunchFailed2() throws Exception{
+        Long id = 5L;
+        doThrow(new IsNotYoursException("Este launch não pertence a você")).when(launchService).deleteLaunchById(eq(id),anyString());
+
+        mockMvc.perform(delete("/user/launches/delete/{id",id)
+                        .header("Authorization","fake-token"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("test filter launch by category")
+    @Test
+    void testFilterLaunchByCategory() throws Exception {
+        when(launchService.filterLaunchByCategory(anyString(),anyString())).thenReturn(List.of(launch1DTO,launch2DTO));
+
+        mockMvc.perform(get("/user/launches/filterByCategory")
+                        .header("Authorization","fake-token")
+                .param("category", category1.getName()))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("test filter launch byDate")
+    @Test
+    void testFilterLaunchByDate() throws Exception {
+        when(launchService.filterLaunchByDate(any(LocalDate.class),any(LocalDate.class),anyString())).thenReturn(List.of(launch1DTO,launch2DTO));
+
+        mockMvc.perform(get("/user/launches/filterByDate")
+                .header("Authorization","fake-token")
+                .param("initialDate", String.valueOf(LocalDate.of(2025,1,20)))
+                .param("finalDate", String.valueOf(LocalDate.of(2025,12,20))))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("test filter launch TypeValue")
+    @Test
+    void testFilterLaunchByTypeValue() throws Exception {
+        when(launchService.filterByTypeValue(anyString(),any(TypeValue.class))).thenReturn(List.of(launch1DTO));
+
+        mockMvc.perform(get("/user/launches/filterByTypeValue")
+                        .header("Authorization","fake-token")
+                        .param("typeValue", "REVENUE"))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
 }

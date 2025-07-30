@@ -59,7 +59,7 @@ public class CategoryControllerTest {
         category2DTO = new CategoryDTO(category2);
     }
 
-    @DisplayName("test find all categories SUCCESS")
+    @DisplayName("test find all categories")
     @Test
     void testFindAllCategoriesSuccess() throws Exception {
         when(categoryService.findAllCategories()).thenReturn(List.of(category1DTO,category2DTO));
