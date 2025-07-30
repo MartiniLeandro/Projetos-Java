@@ -91,9 +91,9 @@ public class LaunchService {
         }
     }
 
-    public List<LaunchDTO> filterLaunchByCategory(Category category, String authHeader){
+    public List<LaunchDTO> filterLaunchByCategory(String categoryName, String authHeader){
         User user = findUserByToken(authHeader);
-        List<Launch> launchesByCategory = user.getLaunches().stream().filter(launch -> launch.getCategory().getId().equals(category.getId())).toList();
+        List<Launch> launchesByCategory = user.getLaunches().stream().filter(launch -> launch.getCategory().getId().equals(categoryRepository.findByName(categoryName).getId())).toList();
         return launchesByCategory.stream().map(LaunchDTO::new).toList();
     }
 

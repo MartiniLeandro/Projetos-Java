@@ -33,7 +33,7 @@ public class LaunchController {
     }
 
     @GetMapping("/filterByCategory")
-    public ResponseEntity<List<LaunchDTO>> findByCategory(@RequestHeader("Authorization") String authHeader, @RequestParam Category category){
+    public ResponseEntity<List<LaunchDTO>> findByCategory(@RequestHeader("Authorization") String authHeader, @RequestParam String category){
         return ResponseEntity.ok().body(launchService.filterLaunchByCategory(category,authHeader));
     }
 
