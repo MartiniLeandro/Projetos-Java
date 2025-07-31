@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.money_track.demo.entities.DTO.UserDTO;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
+import com.money_track.demo.exceptions.AlreadyExistsException;
+import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.repositories.UserRepository;
 import com.money_track.demo.security.TokenService;
 import com.money_track.demo.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,16 +19,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
-
-import static org.mockito.Mockito.when;
 
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -90,8 +88,13 @@ public class UserControllerTest {
 
     @DisplayName("test find user byId FAILED")
     @Test
-    void testFindUserByIdFailed(){
+    void testFindUserByIdFailed() throws Exception{
+        Long id = 5L;
+        when(userService.findUserById(anyLong())).thenThrow(new NotFoundException("não existe User com este ID"));
 
+        mockMvc.perform(get("/admin/users/{id}", id))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @DisplayName("test create user SUCCESS")
@@ -108,25 +111,69 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.role").value("ROLE_USER"));
     }
 
-    @DisplayName("test create user FAILED")
+    @DisplayName("test create user FAILED case1")
     @Test
-    void testCreateUserFailed(){
+    void testCreateUserFailed1() throws Exception{
+        when(userService.createUser(any(User.class))).thenThrow(new AlreadyExistsException("Este email já está cadastrado"));
 
+        mockMvc.perform(post("/admin/users/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userDTO)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("test create user FAILED case2")
+    @Test
+    void testCreateUserFailed2() throws Exception{
+        when(userService.createUser(any(User.class))).thenThrow(new AlreadyExistsException("Este CPF já está cadastrado"));
+
+        mockMvc.perform(post("/admin/users/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userDTO)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @DisplayName("test update user SUCCESS")
     @Test
     void testUpdateUserSuccess() throws Exception{
-        Long id = 2L;
-        when(userService.updateUser(any(User.class), anyLong())).thenReturn(new UserDTO(user));
+        Long id = 1L;
+        when(userService.updateUser(any(User.class), eq(id))).thenReturn(userDTO);
 
         mockMvc.perform(put("/admin/users/update/{id}",id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userDTO)))
+                .content(objectMapper.writeValueAsString(user)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("admin@email.com"))
                 .andExpect(jsonPath("$.role").value("ROLE_ADMIN"));
+    }
+
+    @DisplayName("test update user FAILED case1")
+    @Test
+    void testUpdateUserFailed1() throws Exception{
+        Long id = 5L;
+        when(userService.updateUser(any(User.class),eq(id))).thenThrow(new NotFoundException("Não existe user com este ID"));
+
+        mockMvc.perform(put("/admin/users/update/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userDTO)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("test update user FAILED case2")
+    @Test
+    void testUpdateUserFailed2() throws Exception{
+        Long id = 5L;
+        when(userService.updateUser(any(User.class),eq(id))).thenThrow(new AlreadyExistsException("Este email já está cadastrado"));
+
+        mockMvc.perform(put("/admin/users/update/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userDTO)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @DisplayName("test delete user SUCCESS")
@@ -139,4 +186,15 @@ public class UserControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
     }
+
+    @DisplayName("test delete user FAILED")
+    @Test
+    void testDeleteUserFailed() throws Exception{
+        doThrow(new NotFoundException("Não existe user com este ID")).when(userService).deleteUser(anyLong());
+
+        mockMvc.perform(delete("/admin/users/delete/{id}", 1L))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
 }
