@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 @Table(name = "tasks")
 public class Task {
 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -16,7 +17,7 @@ public class Task {
     @Lob
     private String content;
 
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 

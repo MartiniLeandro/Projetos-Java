@@ -16,6 +16,7 @@ import java.util.List;
 @Table(name = "users")
 public class User implements UserDetails {
 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -38,11 +39,12 @@ public class User implements UserDetails {
     private List<Task> tasks;
 
     public User(){}
-    public User(String name, String email, String cpf, String password) {
+    public User(String name, String email, String cpf, String password, Roles role) {
         this.name = name;
         this.email = email;
         this.cpf = cpf;
         this.password = password;
+        this.roles = role;
         this.tasks = new ArrayList<>();
     }
 
