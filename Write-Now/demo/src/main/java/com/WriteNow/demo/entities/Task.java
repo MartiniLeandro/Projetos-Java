@@ -21,6 +21,7 @@ public class Task {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public Task(){};
     public Task(String title, String content, User user) {
         this.title = title;
         this.content = content;
