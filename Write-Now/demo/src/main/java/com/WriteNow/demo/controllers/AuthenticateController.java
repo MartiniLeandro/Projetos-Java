@@ -6,6 +6,7 @@ import com.WriteNow.demo.entities.DTOS.UserResponseDTO;
 import com.WriteNow.demo.entities.User;
 import com.WriteNow.demo.entities.enums.Roles;
 import com.WriteNow.demo.repositories.UserRepository;
+import com.WriteNow.demo.security.TokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,11 +21,13 @@ public class AuthenticateController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
 
-    public AuthenticateController(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public AuthenticateController(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenService tokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
     }
 
     @PostMapping("/register")
@@ -42,7 +45,7 @@ public class AuthenticateController {
         if(!userRepository.existsByEmail(data.email())) throw new RuntimeException("Não existe um User com este email");
         UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         Authentication auth = authenticationManager.authenticate(usernamePassword);
-        return ResponseEntity.ok().body("login feito");
-
+        String token = tokenService.generateToken((User) auth.getPrincipal());
+        return ResponseEntity.ok().body("JWT: " + token);
     }
 }

@@ -19,8 +19,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskResponseDTO>> findAll(){
-        return ResponseEntity.ok().body(taskService.findAllTasks());
+    public ResponseEntity<List<TaskResponseDTO>> findAll(@RequestHeader("Authorization") String authHeader){
+        return ResponseEntity.ok().body(taskService.findAllTasks(authHeader));
     }
 
     @GetMapping("/{id}")
