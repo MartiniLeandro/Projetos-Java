@@ -30,25 +30,37 @@ public class TaskService {
         return allTasks.stream().map(TaskResponseDTO::new).toList();
     }
 
-    public TaskResponseDTO findTaskById(Long id){
+    public TaskResponseDTO findTaskById(Long id, String authHeader){
+        User user = findUserByToken(authHeader);
         Task task = taskRepository.findById(id).orElseThrow();
-        return new TaskResponseDTO(task);
+        if(user.getTasks().contains(task)){
+            return new TaskResponseDTO(task);
+        };
+        throw new RuntimeException("Esta task não pertence a você");
     }
 
-    public TaskResponseDTO createTask(Task task){
+
+    public TaskResponseDTO createTask(Task task, String authHeader){
+        User user = findUserByToken(authHeader);
+        task.setUser(user);
         taskRepository.save(task);
         return new TaskResponseDTO(task);
     }
 
-    public TaskResponseDTO updateTask(Task task, Long id){
+    public TaskResponseDTO updateTask(Task task, Long id, String authHeader){
+        User user = findUserByToken(authHeader);
         Task updatedTask = taskRepository.findById(id).orElseThrow();
+        if(!user.getTasks().contains(updatedTask)) throw new RuntimeException("Erro");
         updatedTask.setTitle(task.getTitle());
         updatedTask.setContent(task.getContent());
         taskRepository.save(updatedTask);
         return new TaskResponseDTO(updatedTask);
     }
 
-    public void deleteTask(Long id){
+    public void deleteTask(Long id, String authHeader){
+        User user = findUserByToken(authHeader);
+        Task task = taskRepository.findById(id).orElseThrow();
+        if(!user.getTasks().contains(task)) throw new RuntimeException("Erro");
         taskRepository.deleteById(id);
     }
 

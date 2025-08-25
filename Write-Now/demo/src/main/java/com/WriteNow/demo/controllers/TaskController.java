@@ -24,23 +24,23 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponseDTO> findById(@PathVariable Long id){
-        return ResponseEntity.ok().body(taskService.findTaskById(id));
+    public ResponseEntity<TaskResponseDTO> findById(@PathVariable Long id, @RequestHeader("Authorization") String authHeader){
+        return ResponseEntity.ok().body(taskService.findTaskById(id,authHeader));
     }
 
     @PostMapping
-    public ResponseEntity<TaskResponseDTO> create(@RequestBody Task task){
-        return ResponseEntity.ok().body(taskService.createTask(task));
+    public ResponseEntity<TaskResponseDTO> create(@RequestBody Task task, @RequestHeader("Authorization") String authHeader){
+        return ResponseEntity.ok().body(taskService.createTask(task, authHeader));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskResponseDTO> update(@RequestBody Task task, @PathVariable Long id){
-        return ResponseEntity.ok().body(taskService.updateTask(task,id));
+    public ResponseEntity<TaskResponseDTO> update(@RequestBody Task task, @PathVariable Long id, @RequestHeader("Authorization") String authHeader){
+        return ResponseEntity.ok().body(taskService.updateTask(task,id,authHeader));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
-        taskService.deleteTask(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id, @RequestHeader("Authorization") String autHeader){
+        taskService.deleteTask(id,autHeader);
         return ResponseEntity.noContent().build();
     }
 }

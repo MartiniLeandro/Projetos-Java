@@ -14,7 +14,7 @@ public class Task {
     @NotBlank
     private String title;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @ManyToOne
