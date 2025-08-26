@@ -27,10 +27,11 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/login").permitAll();
+                    auth.requestMatchers("/swagger-ui/**").permitAll();
                     auth.requestMatchers("/register").permitAll();
-                    auth.requestMatchers("/tasks/**").permitAll();
-                    auth.requestMatchers("/users/**").permitAll();}
-                )
+                    auth.requestMatchers("/tasks/**").authenticated();
+                    auth.requestMatchers("/users/**").hasRole("ROLES_ADMIN");
+                })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
