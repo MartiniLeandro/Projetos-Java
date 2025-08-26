@@ -30,6 +30,9 @@ public class User implements UserDetails {
     private String cpf;
 
     @NotBlank
+    private String cep;
+
+    @NotBlank
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -39,10 +42,11 @@ public class User implements UserDetails {
     private List<Task> tasks;
 
     public User(){}
-    public User(String name, String email, String cpf, String password, Roles role) {
+    public User(String name, String email, String cpf, String cep, String password, Roles role) {
         this.name = name;
         this.email = email;
         this.cpf = cpf;
+        this.cep = cep;
         this.password = password;
         this.roles = role;
         this.tasks = new ArrayList<>();
@@ -80,6 +84,13 @@ public class User implements UserDetails {
         this.cpf = cpf;
     }
 
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
 
     public void setPassword(String password) {
         this.password = password;

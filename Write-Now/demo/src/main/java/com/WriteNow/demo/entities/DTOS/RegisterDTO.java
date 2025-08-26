@@ -1,3 +1,3 @@
 package com.WriteNow.demo.entities.DTOS;
 
-public record RegisterDTO(String name, String email, String cpf, String password) {}
+public record RegisterDTO(String name, String email, String cpf, String cep, String password) {}
