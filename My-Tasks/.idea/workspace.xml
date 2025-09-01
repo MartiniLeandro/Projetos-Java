@@ -5,11 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="132b19cc-a2e8-494a-822d-28b4cae5261f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/controllers/TaskController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/Task.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/enums/Status.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/repositories/TaskRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/services/TaskService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/configs/OpenAPIConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/exceptions/ErrorMsg.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/exceptions/ExceptionsHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/exceptions/NotFoundException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Money-Track/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Money-Track/.idea/dbnavigator.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Money-Track/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Money-Track/.idea/vcs.xml" afterDir="false" />
@@ -17,7 +16,9 @@
       <change beforePath="$PROJECT_DIR$/../Money-Track/demo/src/main/java/com/money_track/demo/controllers/AuthenticateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Money-Track/demo/src/main/java/com/money_track/demo/controllers/AuthenticateController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Money-Track/demo/src/main/java/com/money_track/demo/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Money-Track/demo/src/main/java/com/money_track/demo/security/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/demo/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/Task.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/Task.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/services/TaskService.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/services/TaskService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

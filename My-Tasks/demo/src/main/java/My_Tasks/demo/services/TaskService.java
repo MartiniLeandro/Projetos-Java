@@ -1,7 +1,7 @@
 package My_Tasks.demo.services;
 
 import My_Tasks.demo.entities.Task;
-import My_Tasks.demo.entities.enums.Status;
+import My_Tasks.demo.exceptions.NotFoundException;
 import My_Tasks.demo.repositories.TaskRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,7 @@ public class TaskService {
     }
 
     public Task findTaskById(Long id){
-        return taskRepository.findById(id).orElseThrow();
+        return taskRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe uma task com este ID"));
     }
 
     public Task createTask(Task task){
@@ -29,13 +29,14 @@ public class TaskService {
     }
 
     public Task updateTask(Task task, Long id){
-        Task updatedTask = taskRepository.findById(id).orElseThrow();
+        Task updatedTask = taskRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe uma task com este ID"));
         updatedTask.setStatus(task.getStatus());
         updatedTask.setTaskName(task.getTaskName());
         return taskRepository.save(updatedTask);
     }
 
     public void deleteTask(Long id){
+        if(!taskRepository.existsById(id)) throw new NotFoundException("Não existe uma task com este ID");
         taskRepository.deleteById(id);
     }
 }

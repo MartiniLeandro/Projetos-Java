@@ -2,6 +2,7 @@ package My_Tasks.demo.entities;
 
 import My_Tasks.demo.entities.enums.Status;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import org.antlr.v4.runtime.misc.NotNull;
 
 @Entity
@@ -9,7 +10,10 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank
     private String taskName;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 
