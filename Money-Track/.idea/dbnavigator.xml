@@ -40,6 +40,9 @@
     <filter-actions connection-id="3f86e2c6-1da7-4da3-92f2-354da8a3c53d" dataset="public.users" active-filter-id="30dcaf02-cd4e-4373-a44c-3e151a1c492f">
       <filter id="30dcaf02-cd4e-4373-a44c-3e151a1c492f" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
+    <filter-actions connection-id="3f86e2c6-1da7-4da3-92f2-354da8a3c53d" dataset="public.launches" active-filter-id="831bb500-6b75-4c37-91eb-ad3465c7ee5b">
+      <filter id="831bb500-6b75-4c37-91eb-ad3465c7ee5b" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
     <filter-actions connection-id="3f86e2c6-1da7-4da3-92f2-354da8a3c53d" dataset="public.categories" active-filter-id="0a3642c7-2c06-49af-8fc0-5582b948a648">
       <filter id="0a3642c7-2c06-49af-8fc0-5582b948a648" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>

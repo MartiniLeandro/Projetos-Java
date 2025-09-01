@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="132b19cc-a2e8-494a-822d-28b4cae5261f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/configs/OpenAPIConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/exceptions/ErrorMsg.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/exceptions/ExceptionsHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/exceptions/NotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/exceptions/AlreadyExistException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/test/java/My_Tasks/demo/ControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/test/java/My_Tasks/demo/ServiceTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Money-Track/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Money-Track/.idea/dbnavigator.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Money-Track/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Money-Track/.idea/vcs.xml" afterDir="false" />
@@ -16,8 +15,8 @@
       <change beforePath="$PROJECT_DIR$/../Money-Track/demo/src/main/java/com/money_track/demo/controllers/AuthenticateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Money-Track/demo/src/main/java/com/money_track/demo/controllers/AuthenticateController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Money-Track/demo/src/main/java/com/money_track/demo/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Money-Track/demo/src/main/java/com/money_track/demo/security/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/demo/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/Task.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/Task.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/exceptions/ExceptionsHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/exceptions/ExceptionsHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/repositories/TaskRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/repositories/TaskRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/services/TaskService.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/services/TaskService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -60,20 +59,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.DemoApplication.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.DemoApplication.executor": "Run",
+    "JUnit.ServiceTest.testCreateTask.executor": "Run",
+    "JUnit.ServiceTest.testCreateTaskFailed.executor": "Run",
+    "JUnit.ServiceTest.testDeleteTask.executor": "Run",
+    "JUnit.ServiceTest.testFindAllTasks.executor": "Run",
+    "JUnit.ServiceTest.testFindById.executor": "Run",
+    "JUnit.ServiceTest.testFindByIdFailed.executor": "Run",
+    "JUnit.ServiceTest.testUpdateTask.executor": "Run",
+    "JUnit.ServiceTest.testUpdateTaskFailed.executor": "Run",
+    "JUnit.ServiceTest.testUpdateTaskFailed2.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true"
   }
-}</component>
-  <component name="RunManager">
-    <configuration name="DemoApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="My_Tasks.demo.DemoApplication" />
+}]]></component>
+  <component name="RunManager" selected="JUnit.ServiceTest.testUpdateTaskFailed2">
+    <configuration name="ServiceTest.testCreateTaskFailed" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="demo" />
       <extension name="coverage">
         <pattern>
@@ -81,13 +88,85 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <option name="PACKAGE_NAME" value="My_Tasks.demo" />
+      <option name="MAIN_CLASS_NAME" value="My_Tasks.demo.ServiceTest" />
+      <option name="METHOD_NAME" value="testCreateTaskFailed" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServiceTest.testFindByIdFailed" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="demo" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="My_Tasks.demo.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="My_Tasks.demo" />
+      <option name="MAIN_CLASS_NAME" value="My_Tasks.demo.ServiceTest" />
+      <option name="METHOD_NAME" value="testFindByIdFailed" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServiceTest.testUpdateTask" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="demo" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="My_Tasks.demo.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="My_Tasks.demo" />
+      <option name="MAIN_CLASS_NAME" value="My_Tasks.demo.ServiceTest" />
+      <option name="METHOD_NAME" value="testUpdateTask" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServiceTest.testUpdateTaskFailed" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="demo" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="My_Tasks.demo.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="My_Tasks.demo" />
+      <option name="MAIN_CLASS_NAME" value="My_Tasks.demo.ServiceTest" />
+      <option name="METHOD_NAME" value="testUpdateTaskFailed" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServiceTest.testUpdateTaskFailed2" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="demo" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="My_Tasks.demo.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="My_Tasks.demo" />
+      <option name="MAIN_CLASS_NAME" value="My_Tasks.demo.ServiceTest" />
+      <option name="METHOD_NAME" value="testUpdateTaskFailed2" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.DemoApplication" />
+        <item itemvalue="JUnit.ServiceTest.testUpdateTaskFailed2" />
+        <item itemvalue="JUnit.ServiceTest.testUpdateTaskFailed" />
+        <item itemvalue="JUnit.ServiceTest.testUpdateTask" />
+        <item itemvalue="JUnit.ServiceTest.testCreateTaskFailed" />
+        <item itemvalue="JUnit.ServiceTest.testFindByIdFailed" />
       </list>
     </recent_temporary>
   </component>

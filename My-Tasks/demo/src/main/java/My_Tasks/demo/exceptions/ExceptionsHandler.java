@@ -13,4 +13,11 @@ public class ExceptionsHandler{
         ErrorMsg erro = new ErrorMsg(HttpStatus.NOT_FOUND.value(),exception.getMessage());
         return new ResponseEntity<>(erro,HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(AlreadyExistException.class)
+    public ResponseEntity<ErrorMsg> alreadyExistException(AlreadyExistException exception){
+        ErrorMsg erro = new ErrorMsg(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
+        return new ResponseEntity<>(erro,HttpStatus.BAD_REQUEST);
+
+    }
 }

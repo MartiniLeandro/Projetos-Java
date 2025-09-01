@@ -15,11 +15,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/authentication")
 public class AuthenticateController {
@@ -45,6 +45,11 @@ public class AuthenticateController {
         String token = tokenService.generateToken((User) auth.getPrincipal());
 
         return ResponseEntity.ok().body(token);
+    }
+
+    @GetMapping("/teste")
+    public Map<String, String> testConnectionFront(){
+        return Map.of("teste","Conexão bem-sucedida!!");
     }
 
     @PostMapping("/register")
