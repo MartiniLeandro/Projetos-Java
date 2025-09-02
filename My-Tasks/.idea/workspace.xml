@@ -5,10 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="132b19cc-a2e8-494a-822d-28b4cae5261f" name="Changes" comment="teste unitários do service">
-      <change afterPath="$PROJECT_DIR$/demo/src/test/java/My_Tasks/demo/ControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/controllers/AuthenticateController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/DTOS/LoginDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/DTOS/RegisterDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/DTOS/UserDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/enums/Roles.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/repositories/UserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/security/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/security/SecurityFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/security/TokenService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/services/AuthenticateService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/controllers/TaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/controllers/TaskController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/services/TaskService.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/services/TaskService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/demo/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,7 +30,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
+        <option value="Interface" />
         <option value="Class" />
+        <option value="Record" />
       </list>
     </option>
   </component>
@@ -75,6 +88,10 @@
     <configuration name="RunApplication" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="23" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <envs>
+        <env name="DB_PASS" value="@Jatucopo150724" />
+        <env name="JWT_SECRET" value="@SecretPass" />
+      </envs>
       <option name="MAIN_CLASS_NAME" value="My_Tasks.demo.DemoApplication" />
       <module name="demo" />
       <method v="2">
