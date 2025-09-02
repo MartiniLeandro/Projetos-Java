@@ -7,6 +7,7 @@ import My_Tasks.demo.repositories.TaskRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class TaskService {
@@ -32,11 +33,12 @@ public class TaskService {
 
     public Task updateTask(Task task, Long id){
         Task updatedTask = taskRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe uma task com este ID"));
-        if(taskRepository.existsByTaskName(task.getTaskName())) throw new AlreadyExistException("Já existe uma task com este nome");
+        if(!Objects.equals(updatedTask.getTaskName(), task.getTaskName()) && taskRepository.existsByTaskName(task.getTaskName())) throw new AlreadyExistException("Já existe uma task com este nome");
         updatedTask.setStatus(task.getStatus());
         updatedTask.setTaskName(task.getTaskName());
         return taskRepository.save(updatedTask);
     }
+
 
     public void deleteTask(Long id){
         if(!taskRepository.existsById(id)) throw new NotFoundException("Não existe uma task com este ID");

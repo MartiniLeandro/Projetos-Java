@@ -4,19 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="132b19cc-a2e8-494a-822d-28b4cae5261f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/exceptions/AlreadyExistException.java" afterDir="false" />
+    <list default="true" id="132b19cc-a2e8-494a-822d-28b4cae5261f" name="Changes" comment="teste unitários do service">
       <change afterPath="$PROJECT_DIR$/demo/src/test/java/My_Tasks/demo/ControllerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/test/java/My_Tasks/demo/ServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Money-Track/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Money-Track/.idea/dbnavigator.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Money-Track/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Money-Track/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Money-Track/demo/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Money-Track/demo/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Money-Track/demo/src/main/java/com/money_track/demo/controllers/AuthenticateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Money-Track/demo/src/main/java/com/money_track/demo/controllers/AuthenticateController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Money-Track/demo/src/main/java/com/money_track/demo/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Money-Track/demo/src/main/java/com/money_track/demo/security/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/exceptions/ExceptionsHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/exceptions/ExceptionsHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/repositories/TaskRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/repositories/TaskRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/controllers/TaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/controllers/TaskController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/services/TaskService.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/services/TaskService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -59,27 +50,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.DemoApplication.executor": "Run",
-    "JUnit.ServiceTest.testCreateTask.executor": "Run",
-    "JUnit.ServiceTest.testCreateTaskFailed.executor": "Run",
-    "JUnit.ServiceTest.testDeleteTask.executor": "Run",
-    "JUnit.ServiceTest.testFindAllTasks.executor": "Run",
-    "JUnit.ServiceTest.testFindById.executor": "Run",
-    "JUnit.ServiceTest.testFindByIdFailed.executor": "Run",
-    "JUnit.ServiceTest.testUpdateTask.executor": "Run",
-    "JUnit.ServiceTest.testUpdateTaskFailed.executor": "Run",
-    "JUnit.ServiceTest.testUpdateTaskFailed2.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.DemoApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.RunApplication.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServiceTest.testCreateTask.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServiceTest.testCreateTaskFailed.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServiceTest.testDeleteTask.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServiceTest.testFindAllTasks.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServiceTest.testFindById.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServiceTest.testFindByIdFailed.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServiceTest.testUpdateTask.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServiceTest.testUpdateTaskFailed.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServiceTest.testUpdateTaskFailed2.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager" selected="JUnit.ServiceTest.testUpdateTaskFailed2">
+}</component>
+  <component name="RunManager" selected="Application.RunApplication">
+    <configuration name="RunApplication" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="23" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="My_Tasks.demo.DemoApplication" />
+      <module name="demo" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="ServiceTest.testCreateTaskFailed" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="demo" />
       <extension name="coverage">
@@ -160,6 +161,14 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.RunApplication" />
+      <item itemvalue="JUnit.ServiceTest.testCreateTaskFailed" />
+      <item itemvalue="JUnit.ServiceTest.testFindByIdFailed" />
+      <item itemvalue="JUnit.ServiceTest.testUpdateTask" />
+      <item itemvalue="JUnit.ServiceTest.testUpdateTaskFailed2" />
+      <item itemvalue="JUnit.ServiceTest.testUpdateTaskFailed" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="JUnit.ServiceTest.testUpdateTaskFailed2" />
@@ -178,6 +187,19 @@
       <option name="presentableId" value="Default" />
       <updated>1756600362978</updated>
     </task>
+    <task id="LOCAL-00001" summary="teste unitários do service">
+      <option name="closed" value="true" />
+      <created>1756723748274</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1756723748274</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="teste unitários do service" />
+    <option name="LAST_COMMIT_MESSAGE" value="teste unitários do service" />
   </component>
 </project>
