@@ -13,13 +13,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AuthenticateController {
 
     private final UserRepository userRepository;
@@ -44,13 +44,13 @@ public class AuthenticateController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login( @RequestBody LoginDTO data){
+    public ResponseEntity<Map<String,String>> login( @RequestBody LoginDTO data){
         if(!userRepository.existsByEmail(data.email())) throw new NotFoundException("Não existe um user cadastrado com este email");
         UsernamePasswordAuthenticationToken userPassword = new UsernamePasswordAuthenticationToken(data.email(),data.password());
         Authentication authentication = authenticationManager.authenticate(userPassword);
 
         String token = tokenService.generateToken((User) authentication.getPrincipal());
 
-        return ResponseEntity.ok().body(token);
+        return ResponseEntity.ok().body(Map.of("token", token));
     }
 }

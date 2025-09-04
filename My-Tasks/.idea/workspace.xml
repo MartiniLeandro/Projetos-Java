@@ -5,21 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="132b19cc-a2e8-494a-822d-28b4cae5261f" name="Changes" comment="teste unitários do service">
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/controllers/AuthenticateController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/DTOS/LoginDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/DTOS/RegisterDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/DTOS/UserDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/User.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/enums/Roles.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/repositories/UserRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/security/SecurityConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/security/SecurityFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/security/TokenService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/services/AuthenticateService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/demo/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/controllers/AuthenticateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/controllers/AuthenticateController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/security/SecurityConfig.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,9 +171,9 @@
       <item itemvalue="Application.RunApplication" />
       <item itemvalue="JUnit.ServiceTest.testCreateTaskFailed" />
       <item itemvalue="JUnit.ServiceTest.testFindByIdFailed" />
-      <item itemvalue="JUnit.ServiceTest.testUpdateTask" />
       <item itemvalue="JUnit.ServiceTest.testUpdateTaskFailed2" />
       <item itemvalue="JUnit.ServiceTest.testUpdateTaskFailed" />
+      <item itemvalue="JUnit.ServiceTest.testUpdateTask" />
     </list>
     <recent_temporary>
       <list>

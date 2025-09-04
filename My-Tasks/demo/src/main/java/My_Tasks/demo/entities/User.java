@@ -35,7 +35,7 @@ public class User implements UserDetails {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.roles = Roles.ADMIN;
+        this.roles = Roles.USER;
     }
 
     public Long getId() {
