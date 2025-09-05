@@ -22,6 +22,7 @@ public class TaskController {
         this.taskRepository = taskRepository;
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
     public ResponseEntity<List<Task>> findAll(){
         return ResponseEntity.ok().body(taskService.findAllTasks());

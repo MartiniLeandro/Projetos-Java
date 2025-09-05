@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="132b19cc-a2e8-494a-822d-28b4cae5261f" name="Changes" comment="teste unitários do service">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/controllers/AuthenticateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/controllers/AuthenticateController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/entities/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/controllers/TaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/controllers/TaskController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/My_Tasks/demo/security/SecurityConfig.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -20,8 +19,8 @@
       <list>
         <option value="Enum" />
         <option value="Interface" />
-        <option value="Class" />
         <option value="Record" />
+        <option value="Class" />
       </list>
     </option>
   </component>
