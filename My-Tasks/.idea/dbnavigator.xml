@@ -42,6 +42,9 @@
     <filter-actions connection-id="8610401c-7873-4a22-a809-a631658a57fc" dataset="public.users" active-filter-id="155e29eb-2ba0-4a6a-b0e9-96c659fd42af">
       <filter id="155e29eb-2ba0-4a6a-b0e9-96c659fd42af" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
+    <filter-actions connection-id="8610401c-7873-4a22-a809-a631658a57fc" dataset="public.task" active-filter-id="672c4c6b-3543-457d-9ba9-10bfe036e639">
+      <filter id="672c4c6b-3543-457d-9ba9-10bfe036e639" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
   </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />

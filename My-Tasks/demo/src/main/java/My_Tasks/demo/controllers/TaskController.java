@@ -24,36 +24,28 @@ public class TaskController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
-    public ResponseEntity<List<Task>> findAll(){
-        return ResponseEntity.ok().body(taskService.findAllTasks());
+    public ResponseEntity<List<Task>> findAll(@RequestHeader("Authorization") String authHeader){
+        return ResponseEntity.ok().body(taskService.findAllTasks(authHeader));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> findById(@PathVariable Long id){
-        return ResponseEntity.ok().body(taskService.findTaskById(id));
+    public ResponseEntity<Task> findById(@PathVariable Long id, @RequestHeader("Authorization") String authHeader){
+        return ResponseEntity.ok().body(taskService.findTaskById(id,authHeader));
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task){
-        return ResponseEntity.ok().body(taskService.createTask(task));
+    public ResponseEntity<Task> createTask(@RequestBody Task task, @RequestHeader("Authorization") String authHeader){
+        return ResponseEntity.ok().body(taskService.createTask(task,authHeader));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task){
-        return ResponseEntity.ok().body(taskService.updateTask(task,id));
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<Task> patchTask(@PathVariable Long id, @RequestBody Status status){
-        Task task = taskService.findTaskById(id);
-        task.setStatus(status);
-        taskRepository.save(task);
-        return ResponseEntity.ok().body(task);
+    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task, @RequestHeader("Authorization") String authHeader){
+        return ResponseEntity.ok().body(taskService.updateTask(task,id,authHeader));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id){
-        taskService.deleteTask(id);
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id, @RequestHeader("Authorization") String authHeader){
+        taskService.deleteTask(id, authHeader);
         return ResponseEntity.noContent().build();
     }
 }

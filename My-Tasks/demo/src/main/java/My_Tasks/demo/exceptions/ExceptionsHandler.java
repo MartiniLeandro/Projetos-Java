@@ -18,6 +18,13 @@ public class ExceptionsHandler{
     public ResponseEntity<ErrorMsg> alreadyExistException(AlreadyExistException exception){
         ErrorMsg erro = new ErrorMsg(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
         return new ResponseEntity<>(erro,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IsNotYoursException.class)
+    public ResponseEntity<ErrorMsg> isNotYoursException(IsNotYoursException exception){
+        ErrorMsg erro = new ErrorMsg(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
+        return new ResponseEntity<>(erro,HttpStatus.BAD_REQUEST);
 
     }
+
 }

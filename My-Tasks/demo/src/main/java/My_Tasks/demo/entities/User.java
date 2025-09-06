@@ -1,12 +1,14 @@
 package My_Tasks.demo.entities;
 
 import My_Tasks.demo.entities.enums.Roles;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -30,12 +32,17 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Roles roles;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Task> tasks;
+
     public User(){}
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.roles = Roles.USER;
+        this.tasks = new ArrayList<>();
     }
 
     public Long getId() {
@@ -69,6 +76,14 @@ public class User implements UserDetails {
 
     public void setRoles(Roles roles) {
         this.roles = roles;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 
     @Override
