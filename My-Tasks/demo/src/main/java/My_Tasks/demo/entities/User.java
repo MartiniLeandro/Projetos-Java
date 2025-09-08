@@ -3,6 +3,7 @@ package My_Tasks.demo.entities;
 import My_Tasks.demo.entities.enums.Roles;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,6 +25,7 @@ public class User implements UserDetails {
     private String name;
 
     @NotBlank
+    @Email
     private String email;
 
     @NotBlank

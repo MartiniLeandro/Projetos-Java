@@ -24,7 +24,12 @@ public class ExceptionsHandler{
     public ResponseEntity<ErrorMsg> isNotYoursException(IsNotYoursException exception){
         ErrorMsg erro = new ErrorMsg(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
         return new ResponseEntity<>(erro,HttpStatus.BAD_REQUEST);
+    }
 
+    @ExceptionHandler(NotNullException.class)
+    public ResponseEntity<ErrorMsg> notNullException(NotNullException exception){
+        ErrorMsg erro = new ErrorMsg(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
+        return new ResponseEntity<>(erro,HttpStatus.BAD_REQUEST);
     }
 
 }
