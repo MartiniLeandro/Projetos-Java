@@ -63,6 +63,7 @@ public class TaskService {
         User user = getUserByToken(authHeader);
         Task task = taskRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe uma task com este ID"));
         if(!user.getTasks().contains(task)) throw new IsNotYoursException("Esta task não pertence a você");
+        user.getTasks().remove(task);
         taskRepository.deleteById(id);
     }
 

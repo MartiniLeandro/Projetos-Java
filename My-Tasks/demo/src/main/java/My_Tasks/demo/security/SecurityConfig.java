@@ -33,7 +33,8 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/**").permitAll();
-                    auth.requestMatchers("/tasks/**").authenticated() ;
+                    auth.requestMatchers("/swagger-ui/**").permitAll();
+                    auth.anyRequest().authenticated();
                 }).addFilterAfter(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
