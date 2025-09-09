@@ -6,6 +6,7 @@ import My_Tasks.demo.repositories.TaskRepository;
 import My_Tasks.demo.services.TaskService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,7 @@ public class TaskController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
-    public ResponseEntity<Page<Task>> findAll(@RequestHeader("Authorization") String authHeader, Pageable pageable){
+    public ResponseEntity<Page<Task>> findAll(@RequestHeader("Authorization") String authHeader, @PageableDefault(size = 6) Pageable pageable){
         return ResponseEntity.ok().body(taskService.findAllTasks(authHeader,pageable));
     }
 
