@@ -9,9 +9,10 @@ import My_Tasks.demo.exceptions.NotNullException;
 import My_Tasks.demo.repositories.TaskRepository;
 import My_Tasks.demo.repositories.UserRepository;
 import My_Tasks.demo.security.TokenService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -27,9 +28,9 @@ public class TaskService {
         this.userRepository = userRepository;
     }
 
-    public List<Task> findAllTasks(String authHeader){
+    public Page<Task> findAllTasks(String authHeader, Pageable pageable){
         User user = getUserByToken(authHeader);
-        return user.getTasks();
+        return taskRepository.findByUser(user, pageable);
     }
 
     public Task findTaskById(Long id, String authHeader){
