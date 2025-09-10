@@ -37,19 +37,15 @@ public class AuthenticateController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody @Valid LoginDTO loginDTO){
-        if(!userRepository.existsByEmail(loginDTO.email())) throw new NotFoundException("Este email não está cadastrado");
-        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(loginDTO.email(),loginDTO.password());
+    public ResponseEntity<Map<String,String>> loginUser(@RequestBody @Valid LoginDTO loginDTO) {
+        if (!userRepository.existsByEmail(loginDTO.email()))
+            throw new NotFoundException("Este email não está cadastrado");
+        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password());
         Authentication auth = authenticationManager.authenticate(usernamePassword);
 
         String token = tokenService.generateToken((User) auth.getPrincipal());
 
-        return ResponseEntity.ok().body(token);
-    }
-
-    @GetMapping("/teste")
-    public Map<String, String> testConnectionFront(){
-        return Map.of("teste","Conexão bem-sucedida!!");
+        return ResponseEntity.ok().body(Map.of("token", token));
     }
 
     @PostMapping("/register")
