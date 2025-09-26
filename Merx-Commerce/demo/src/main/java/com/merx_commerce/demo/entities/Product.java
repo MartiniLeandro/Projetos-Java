@@ -1,10 +1,6 @@
 package com.merx_commerce.demo.entities;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -41,4 +37,12 @@ public class Product {
     @ElementCollection
     @NotNull(message = "Images list cannot be null.")
     private List<String> images;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    @NotNull(message = "Category cannot be null")
+    private Category category;
+
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
+    private List<ItensOrder> orders;
 }
