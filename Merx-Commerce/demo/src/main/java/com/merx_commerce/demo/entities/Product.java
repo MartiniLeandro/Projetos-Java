@@ -43,6 +43,6 @@ public class Product {
     @NotNull(message = "Category cannot be null")
     private Category category;
 
-    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
     private List<ItensOrder> orders;
 }
