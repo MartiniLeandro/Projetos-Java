@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Entity
+@Table(name = "ordersItems")
 public class OrderItems {
 
     @Id
