@@ -31,5 +31,5 @@ public class Order {
 
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     @NotNull(message = "itens cannot be null")
-    private List<ItensOrder> itens;
+    private List<OrderItems> itens;
 }

@@ -45,7 +45,11 @@ public class User implements UserDetails {
     private List<Address> addresses = new ArrayList<>();
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    private List<Order> orders;
+    private List<Order> orders = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
