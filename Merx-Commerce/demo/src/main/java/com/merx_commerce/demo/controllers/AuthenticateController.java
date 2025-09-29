@@ -4,6 +4,7 @@ import com.merx_commerce.demo.entities.DTOS.LoginDTO;
 import com.merx_commerce.demo.entities.DTOS.UserRequestDTO;
 import com.merx_commerce.demo.entities.DTOS.UserResponseDTO;
 import com.merx_commerce.demo.entities.User;
+import com.merx_commerce.demo.exceptions.NotFoundException;
 import com.merx_commerce.demo.repositories.UserRepository;
 import com.merx_commerce.demo.security.TokenService;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +48,7 @@ public class AuthenticateController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String,String>> loginUser(@RequestBody LoginDTO data){
-        if(!userRepository.existsByEmail(data.email())) throw new RuntimeException("Não existe usuário cadastrado com este email");
+        if(!userRepository.existsByEmail(data.email())) throw new NotFoundException("Não existe usuário cadastrado com este email");
         UsernamePasswordAuthenticationToken userPassword = new UsernamePasswordAuthenticationToken(data.email(),data.password());
         Authentication auth = authenticationManager.authenticate(userPassword);
 
