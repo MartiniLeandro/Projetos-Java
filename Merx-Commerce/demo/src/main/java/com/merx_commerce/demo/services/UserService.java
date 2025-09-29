@@ -16,18 +16,18 @@ public class UserService {
     private final UserRepository userRepository;
 
     public List<UserResponseDTO> findAllUsers(){
-        return userRepository.findAll().stream().map(user -> new UserResponseDTO(user.getId(), user.getName(), user.getEmail())).toList();
+        return userRepository.findAll().stream().map(UserResponseDTO::new).toList();
     }
 
     public UserResponseDTO findById(Long id){
         User user = userRepository.findById(id).orElseThrow();
-        return new UserResponseDTO(user.getId(),user.getName(),user.getEmail());
+        return new UserResponseDTO(user);
     }
 
     public UserResponseDTO createUser(UserRequestDTO user){
         User newUser = User.builder().name(user.name()).cpf(user.cpf()).email(user.email()).password(user.password()).build();
         User savedUser = userRepository.save(newUser);
-        return new UserResponseDTO(savedUser.getId(), savedUser.getName(), savedUser.getEmail());
+        return new UserResponseDTO(savedUser);
     }
 
     public UserResponseDTO updateUser(UserRequestDTO user, Long id){
@@ -37,7 +37,7 @@ public class UserService {
         updatedUser.setCpf(user.cpf());
         updatedUser.setPassword(user.password());
         User savedUser = userRepository.save(updatedUser);
-        return new UserResponseDTO(savedUser.getId(), savedUser.getName(), savedUser.getEmail());
+        return new UserResponseDTO(savedUser);
     }
 
     public void deleteUser(Long id){
