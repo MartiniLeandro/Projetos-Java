@@ -6,6 +6,7 @@ import com.merx_commerce.demo.entities.User;
 import com.merx_commerce.demo.exceptions.AlreadyExistsException;
 import com.merx_commerce.demo.exceptions.NotFoundException;
 import com.merx_commerce.demo.repositories.UserRepository;
+import com.merx_commerce.demo.security.TokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
     public List<UserResponseDTO> findAllUsers(){
         return userRepository.findAll().stream().map(UserResponseDTO::new).toList();
@@ -58,8 +60,10 @@ public class UserService {
         }
     }
 
-    
-
-
-
+    public UserResponseDTO findUserByToken(String authHeader){
+        String token = authHeader.replace("Bearer ", "");
+        String email = tokenService.validateToken(token);
+        User user = userRepository.findUserByEmail(email);
+        return new UserResponseDTO(user);
+    }
 }
