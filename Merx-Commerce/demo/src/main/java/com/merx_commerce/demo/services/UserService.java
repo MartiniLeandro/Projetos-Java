@@ -42,7 +42,7 @@ public class UserService {
     public UserResponseDTO updateUser(UserRequestDTO user, Long id){
         User updatedUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist User with this ID"));
         if (userRepository.existsByEmail(user.email()) && !Objects.equals(updatedUser.getEmail(), user.email())) throw new AlreadyExistsException("already exists a user with this Email");
-        if (userRepository.existsByEmail(user.cpf()) && !Objects.equals(updatedUser.getCpf(), user.cpf())) throw new AlreadyExistsException("already exists a user with this CPF");
+        if (userRepository.existsByCpf(user.cpf()) && !Objects.equals(updatedUser.getCpf(), user.cpf())) throw new AlreadyExistsException("already exists a user with this CPF");
         updatedUser.setName(user.name());
         updatedUser.setEmail(user.email());
         updatedUser.setCpf(user.cpf());
