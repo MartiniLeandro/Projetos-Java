@@ -5,8 +5,11 @@ import com.merx_commerce.demo.entities.DTOS.UserRequestDTO;
 import com.merx_commerce.demo.entities.DTOS.UserResponseDTO;
 import com.merx_commerce.demo.entities.Enums.Roles;
 import com.merx_commerce.demo.entities.User;
+import com.merx_commerce.demo.exceptions.AlreadyExistsException;
+import com.merx_commerce.demo.exceptions.NotFoundException;
 import com.merx_commerce.demo.repositories.UserRepository;
 import com.merx_commerce.demo.security.TokenService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +20,7 @@ import org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +53,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testFindAllUsers(){
+    void testFindAllUsersSuccess(){
         when(userRepository.findAll()).thenReturn(List.of(user,admin));
         List<UserResponseDTO> allUsers = userService.findAllUsers();
 
@@ -58,7 +62,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testFindUserById(){
+    void testFindUserByIdSuccess(){
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(user));
         UserResponseDTO user = userService.findById(1L);
 
@@ -67,7 +71,15 @@ public class UserServiceTest {
     }
 
     @Test
-    void testCreateUser(){
+    void testFindUserByIdFailed(){
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> userService.findById(1L));
+
+        assertEquals("Not exist User with this ID", exception.getMessage());
+    }
+
+    @Test
+    void testCreateUserSuccess(){
         User user2 = new User(3L,"user2","317.589.880-70","user2@email.com","user2", Roles.USER, List.of(),List.of(),new Cart());
         when(userRepository.existsByCpf(user2.getCpf())).thenReturn(false);
         when(userRepository.existsByEmail(user2.getEmail())).thenReturn(false);
@@ -77,11 +89,25 @@ public class UserServiceTest {
 
         assertNotNull(newUser);
         assertEquals("user2", newUser.name());
-
     }
 
     @Test
-    void testUpdateUser(){
+    void testCreateUserFailed(){
+        when(userRepository.existsByCpf(anyString())).thenReturn(true);
+        AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> userService.createUser(new UserRequestDTO(user)));
+        assertEquals("already exists a user with this CPF", exception.getMessage());
+    }
+
+    @Test
+    void testCreateUserFailed2(){
+        when(userRepository.existsByCpf(anyString())).thenReturn(false);
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+        AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> userService.createUser(new UserRequestDTO(user)));
+        assertEquals("already exists a user with this Email", exception.getMessage());
+    }
+
+    @Test
+    void testUpdateUserSuccess(){
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
         when(userRepository.existsByEmail(admin.getEmail())).thenReturn(false);
         when(userRepository.existsByCpf(admin.getCpf())).thenReturn(false);
@@ -95,12 +121,46 @@ public class UserServiceTest {
     }
 
     @Test
-    void testDeleteUser(){
+    void testUpdateUserFailed(){
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> userService.updateUser(new UserRequestDTO(user),anyLong()));
+
+        assertEquals("Not exist User with this ID", exception.getMessage());
+    }
+
+    @Test
+    void testUpdateUserFailed2(){
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(admin));
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+        AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> userService.updateUser(new UserRequestDTO(user),2L));
+        assertEquals("already exists a user with this Email", exception.getMessage());
+    }
+
+    @Test
+    void testUpdateUserFailed3(){
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(admin));
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        when(userRepository.existsByCpf(anyString())).thenReturn(true);
+        AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> userService.updateUser(new UserRequestDTO(user),2L));
+        assertEquals("already exists a user with this CPF", exception.getMessage());
+    }
+
+    @Test
+    void testDeleteUserSuccess(){
         when(userRepository.existsById(1L)).thenReturn(true);
         userService.deleteUser(1L);
 
         verify(userRepository, times(1)).deleteById(1L);
     }
+
+    @Test
+    void testDeleteUserFailed(){
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> userService.deleteUser(1L));
+
+        assertEquals("Not exist User with this ID", exception.getMessage());
+    }
+
 
     @Test
     void testFindUserByToken(){
