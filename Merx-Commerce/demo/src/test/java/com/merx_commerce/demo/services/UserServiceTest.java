@@ -12,6 +12,7 @@ import com.merx_commerce.demo.security.TokenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -53,6 +54,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test find all Users SUCCESS")
     void testFindAllUsersSuccess(){
         when(userRepository.findAll()).thenReturn(List.of(user,admin));
         List<UserResponseDTO> allUsers = userService.findAllUsers();
@@ -62,6 +64,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test user by id SUCCESS")
     void testFindUserByIdSuccess(){
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(user));
         UserResponseDTO user = userService.findById(1L);
@@ -71,6 +74,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test user by id FAILED")
     void testFindUserByIdFailed(){
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
         NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> userService.findById(1L));
@@ -79,6 +83,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test create User SUCCESS")
     void testCreateUserSuccess(){
         User user2 = new User(3L,"user2","317.589.880-70","user2@email.com","user2", Roles.USER, List.of(),List.of(),new Cart());
         when(userRepository.existsByCpf(user2.getCpf())).thenReturn(false);
@@ -92,6 +97,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test create User FAILED")
     void testCreateUserFailed(){
         when(userRepository.existsByCpf(anyString())).thenReturn(true);
         AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> userService.createUser(new UserRequestDTO(user)));
@@ -99,6 +105,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test create User FAILED2")
     void testCreateUserFailed2(){
         when(userRepository.existsByCpf(anyString())).thenReturn(false);
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
@@ -107,6 +114,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test update User SUCCESS")
     void testUpdateUserSuccess(){
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
         when(userRepository.existsByEmail(admin.getEmail())).thenReturn(false);
@@ -121,6 +129,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test update User FAILED")
     void testUpdateUserFailed(){
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
         NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> userService.updateUser(new UserRequestDTO(user),anyLong()));
@@ -129,6 +138,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test update User FAILED2")
     void testUpdateUserFailed2(){
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(admin));
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
@@ -137,6 +147,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test update User FAILED3")
     void testUpdateUserFailed3(){
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(admin));
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
@@ -146,6 +157,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test delete User SUCCESS")
     void testDeleteUserSuccess(){
         when(userRepository.existsById(1L)).thenReturn(true);
         userService.deleteUser(1L);
@@ -154,6 +166,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test delete User FAILED")
     void testDeleteUserFailed(){
         when(userRepository.existsById(anyLong())).thenReturn(false);
         NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> userService.deleteUser(1L));
@@ -163,6 +176,7 @@ public class UserServiceTest {
 
 
     @Test
+    @DisplayName("Test find User by token SUCCESS")
     void testFindUserByToken(){
         when(tokenService.validateToken(anyString())).thenReturn(user.getEmail());
         when(userRepository.findUserByEmail(user.getEmail())).thenReturn(user);
