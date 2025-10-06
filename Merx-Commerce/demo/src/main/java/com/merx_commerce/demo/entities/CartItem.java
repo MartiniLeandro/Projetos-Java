@@ -1,5 +1,6 @@
 package com.merx_commerce.demo.entities;
 
+import com.merx_commerce.demo.entities.DTOS.CartItemRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 @Table(name = "cartsItems")
-public class CartItems {
+public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +30,12 @@ public class CartItems {
     private Integer quantity;
 
     private BigDecimal price;
+
+    public CartItem(CartItemRequestDTO data){
+        this.id = data.id();
+        this.product = data.product();
+        this.cart = data.cart();
+        this.quantity = data.quantity();
+        this.price = data.price();
+    }
 }

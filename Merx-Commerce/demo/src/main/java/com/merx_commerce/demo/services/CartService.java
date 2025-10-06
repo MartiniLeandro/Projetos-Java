@@ -5,6 +5,7 @@ import com.merx_commerce.demo.entities.DTOS.CartRequestDTO;
 import com.merx_commerce.demo.entities.DTOS.CartResponseDTO;
 import com.merx_commerce.demo.entities.DTOS.UserResponseDTO;
 import com.merx_commerce.demo.entities.User;
+import com.merx_commerce.demo.exceptions.AlreadyExistsException;
 import com.merx_commerce.demo.exceptions.NotFoundException;
 import com.merx_commerce.demo.repositories.CartRepository;
 import com.merx_commerce.demo.repositories.UserRepository;
@@ -29,7 +30,7 @@ public class CartService {
         return cartRepository.findAll().stream().map(CartResponseDTO::new).toList();
     }
 
-    public CartResponseDTO findById(Long id){
+    public CartResponseDTO findCartById(Long id){
         Cart cart = cartRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist Cart with this ID"));
         return new CartResponseDTO(cart);
     }
@@ -43,25 +44,35 @@ public class CartService {
     public CartResponseDTO createCart(CartRequestDTO cart, String authHeader){
         UserResponseDTO userDTO = userService.findUserByToken(authHeader);
         User user = userRepository.findUserByEmail(userDTO.email());
+        if(user.getCart() != null){
+            throw new AlreadyExistsException("You already have an cart");
+        }
         Cart newCart = new Cart(cart);
         user.setCart(newCart);
         cartRepository.save(newCart);
         return new CartResponseDTO(newCart);
     }
 
-    public CartResponseDTO updateCart(Long id, CartRequestDTO cart){
-        Cart updatedCart = cartRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist Cart with this ID"));
-        updatedCart.setUser(cart.user());
+    public CartResponseDTO updateCart(CartRequestDTO cart, String authHeader){
+        UserResponseDTO userDTO = userService.findUserByToken(authHeader);
+        User user = userRepository.findUserByEmail(userDTO.email());
+        Cart updatedCart = user.getCart();
         updatedCart.setItems(cart.items());
         cartRepository.save(updatedCart);
         return new CartResponseDTO(updatedCart);
     }
 
-    public void deleteCart(Long id){
+    public void deleteCartById(Long id){
         if(cartRepository.existsById(id)){
             cartRepository.deleteById(id);
         }else {
             throw new NotFoundException("Not exist Cart with this ID");
         }
+    }
+
+    public void deleteCartByToken(String authHeader){
+        UserResponseDTO userDTO = userService.findUserByToken(authHeader);
+        User user = userRepository.findUserByEmail(userDTO.email());
+        cartRepository.delete(user.getCart());
     }
 }

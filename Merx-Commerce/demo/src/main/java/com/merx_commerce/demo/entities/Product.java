@@ -46,5 +46,5 @@ public class Product {
     private List<OrderItems> orders;
 
     @OneToMany(mappedBy = "product")
-    private List<CartItems> carts;
+    private List<CartItem> carts;
 }
