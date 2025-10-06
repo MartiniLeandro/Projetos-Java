@@ -1,5 +1,6 @@
 package com.merx_commerce.demo.entities;
 
+import com.merx_commerce.demo.entities.DTOS.CartRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,4 +25,10 @@ public class Cart {
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     private List<CartItems> items;
+
+    public Cart(CartRequestDTO cart){
+        this.id = cart.id();
+        this.user = cart.user();
+        this.items = cart.items();
+    }
 }
