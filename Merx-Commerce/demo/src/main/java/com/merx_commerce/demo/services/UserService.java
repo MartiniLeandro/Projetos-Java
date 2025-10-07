@@ -31,6 +31,13 @@ public class UserService {
         return new UserResponseDTO(user);
     }
 
+    public UserResponseDTO findUserByToken(String authHeader){
+        String token = authHeader.replace("Bearer ", "");
+        String email = tokenService.validateToken(token);
+        User user = userRepository.findUserByEmail(email);
+        return new UserResponseDTO(user);
+    }
+
     public UserResponseDTO createUser(UserRequestDTO user){
         if(userRepository.existsByCpf(user.cpf())) throw new AlreadyExistsException("already exists a user with this CPF");
         if(userRepository.existsByEmail(user.email())) throw new AlreadyExistsException("already exists a user with this Email");
@@ -60,10 +67,5 @@ public class UserService {
         }
     }
 
-    public UserResponseDTO findUserByToken(String authHeader){
-        String token = authHeader.replace("Bearer ", "");
-        String email = tokenService.validateToken(token);
-        User user = userRepository.findUserByEmail(email);
-        return new UserResponseDTO(user);
-    }
+
 }

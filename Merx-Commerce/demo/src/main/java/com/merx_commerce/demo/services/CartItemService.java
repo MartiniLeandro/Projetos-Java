@@ -5,6 +5,7 @@ import com.merx_commerce.demo.entities.DTOS.CartItemRequestDTO;
 import com.merx_commerce.demo.entities.DTOS.CartItemResponseDTO;
 import com.merx_commerce.demo.entities.DTOS.UserResponseDTO;
 import com.merx_commerce.demo.entities.User;
+import com.merx_commerce.demo.exceptions.IsNotYoursException;
 import com.merx_commerce.demo.exceptions.NotFoundException;
 import com.merx_commerce.demo.repositories.CartItemRepository;
 import com.merx_commerce.demo.repositories.CartRepository;
@@ -47,7 +48,16 @@ public class CartItemService {
         return new CartItemResponseDTO(newCartItem);
     }
 
-    public CartItemResponseDTO updateCartItem(CartItemRequestDTO cartItem){
-
+    public CartItemResponseDTO updateCartItem(CartItemRequestDTO cartItem, Long id, String authHeader){
+        UserResponseDTO userDTO = userService.findUserByToken(authHeader);
+        User user = userRepository.findUserByEmail(userDTO.email());
+        CartItem updatedCartItem = cartItemRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist CartItem with this ID"));
+        if(!user.getCart().getItems().contains(updatedCartItem)) throw new IsNotYoursException("This CartItem is not your");
+        updatedCartItem.setProduct(cartItem.product());
+        updatedCartItem.setPrice(cartItem.price());
+        updatedCartItem.setQuantity(cartItem.quantity());
+        updatedCartItem.setCart(cartItem.cart());
+        cartItemRepository.save(updatedCartItem);
+        return new CartItemResponseDTO(updatedCartItem);
     }
 }

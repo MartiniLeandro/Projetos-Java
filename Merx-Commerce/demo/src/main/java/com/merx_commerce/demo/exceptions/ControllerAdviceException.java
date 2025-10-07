@@ -22,4 +22,10 @@ public class ControllerAdviceException {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    @ExceptionHandler(IsNotYoursException.class)
+    public ResponseEntity<ErrorResponse> isNotYoursException(IsNotYoursException exception, HttpServletRequest request){
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),"Is not yours", exception.getMessage(),request.getRequestURI(), Instant.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
 }
