@@ -7,6 +7,7 @@ import com.merx_commerce.demo.entities.DTOS.UserResponseDTO;
 import com.merx_commerce.demo.entities.User;
 import com.merx_commerce.demo.exceptions.IsNotYoursException;
 import com.merx_commerce.demo.exceptions.NotFoundException;
+import com.merx_commerce.demo.exceptions.OutOfStockException;
 import com.merx_commerce.demo.repositories.CartItemRepository;
 import com.merx_commerce.demo.repositories.CartRepository;
 import com.merx_commerce.demo.repositories.UserRepository;
@@ -33,6 +34,12 @@ public class CartItemService {
         return cartItemRepository.findAll().stream().map(CartItemResponseDTO::new).toList();
     }
 
+    public List<CartItemResponseDTO> findAllCartsItemsByToken(String authHeader){
+        UserResponseDTO userDTO = userService.findUserByToken(authHeader);
+        User user = userRepository.findUserByEmail(userDTO.email());
+        return user.getCart().getItems().stream().map(CartItemResponseDTO::new).toList();
+    }
+
     public CartItemResponseDTO findById(Long id){
         CartItem cartItem = cartItemRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist CartItem with this ID"));
         return new CartItemResponseDTO(cartItem);
@@ -41,6 +48,7 @@ public class CartItemService {
     public CartItemResponseDTO createCartItem(CartItemRequestDTO cartItem, String authHeader){
         UserResponseDTO userDTO = userService.findUserByToken(authHeader);
         User user = userRepository.findUserByEmail(userDTO.email());
+        if (cartItem.product().getQuantityInStock() <= 0) throw new OutOfStockException("This product is out of stock");
         CartItem newCartItem = new CartItem(cartItem);
         newCartItem.setCart(user.getCart());
         user.getCart().getItems().add(newCartItem);
@@ -53,11 +61,20 @@ public class CartItemService {
         User user = userRepository.findUserByEmail(userDTO.email());
         CartItem updatedCartItem = cartItemRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist CartItem with this ID"));
         if(!user.getCart().getItems().contains(updatedCartItem)) throw new IsNotYoursException("This CartItem is not your");
+        if(cartItem.product().getQuantityInStock() <= 0) throw new OutOfStockException("This product is out of stock");
         updatedCartItem.setProduct(cartItem.product());
         updatedCartItem.setPrice(cartItem.price());
         updatedCartItem.setQuantity(cartItem.quantity());
         updatedCartItem.setCart(cartItem.cart());
         cartItemRepository.save(updatedCartItem);
         return new CartItemResponseDTO(updatedCartItem);
+    }
+
+    public void deleteCartItem(String authHeader,Long id){
+        UserResponseDTO userDTO = userService.findUserByToken(authHeader);
+        User user = userRepository.findUserByEmail(userDTO.email());
+        CartItem cartItem = cartItemRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist CartItem with this ID"));
+        if(!user.getCart().getItems().contains(cartItem)) throw new IsNotYoursException("This CartItem is not your");
+        cartItemRepository.delete(cartItem);
     }
 }
