@@ -30,21 +30,25 @@ public class CartItemService {
         this.userRepository = userRepository;
     }
 
+    //admin
     public List<CartItemResponseDTO> findAllCartsItems(){
         return cartItemRepository.findAll().stream().map(CartItemResponseDTO::new).toList();
     }
 
+    //user
     public List<CartItemResponseDTO> findAllCartsItemsByToken(String authHeader){
         UserResponseDTO userDTO = userService.findUserByToken(authHeader);
         User user = userRepository.findUserByEmail(userDTO.email());
         return user.getCart().getItems().stream().map(CartItemResponseDTO::new).toList();
     }
 
+    //prioridade admin
     public CartItemResponseDTO findById(Long id){
         CartItem cartItem = cartItemRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist CartItem with this ID"));
         return new CartItemResponseDTO(cartItem);
     }
 
+    //user
     public CartItemResponseDTO createCartItem(CartItemRequestDTO cartItem, String authHeader){
         UserResponseDTO userDTO = userService.findUserByToken(authHeader);
         User user = userRepository.findUserByEmail(userDTO.email());
@@ -56,6 +60,7 @@ public class CartItemService {
         return new CartItemResponseDTO(newCartItem);
     }
 
+    //user
     public CartItemResponseDTO updateCartItem(CartItemRequestDTO cartItem, Long id, String authHeader){
         UserResponseDTO userDTO = userService.findUserByToken(authHeader);
         User user = userRepository.findUserByEmail(userDTO.email());
@@ -70,6 +75,7 @@ public class CartItemService {
         return new CartItemResponseDTO(updatedCartItem);
     }
 
+    //user
     public void deleteCartItem(String authHeader,Long id){
         UserResponseDTO userDTO = userService.findUserByToken(authHeader);
         User user = userRepository.findUserByEmail(userDTO.email());

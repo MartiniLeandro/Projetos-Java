@@ -22,15 +22,18 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
+    //admin
     public List<UserResponseDTO> findAllUsers(){
         return userRepository.findAll().stream().map(UserResponseDTO::new).toList();
     }
 
+    //admin
     public UserResponseDTO findById(Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist User with this ID"));
         return new UserResponseDTO(user);
     }
 
+    //admin e user
     public UserResponseDTO findUserByToken(String authHeader){
         String token = authHeader.replace("Bearer ", "");
         String email = tokenService.validateToken(token);
@@ -38,6 +41,7 @@ public class UserService {
         return new UserResponseDTO(user);
     }
 
+    //admin
     public UserResponseDTO createUser(UserRequestDTO user){
         if(userRepository.existsByCpf(user.cpf())) throw new AlreadyExistsException("already exists a user with this CPF");
         if(userRepository.existsByEmail(user.email())) throw new AlreadyExistsException("already exists a user with this Email");
@@ -46,6 +50,7 @@ public class UserService {
         return new UserResponseDTO(savedUser);
     }
 
+    //admin
     public UserResponseDTO updateUser(UserRequestDTO user, Long id){
         User updatedUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist User with this ID"));
         if (userRepository.existsByEmail(user.email()) && !Objects.equals(updatedUser.getEmail(), user.email())) throw new AlreadyExistsException("already exists a user with this Email");
@@ -59,6 +64,7 @@ public class UserService {
         return new UserResponseDTO(savedUser);
     }
 
+    //admin
     public void deleteUser(Long id){
         if(userRepository.existsById(id)){
             userRepository.deleteById(id);

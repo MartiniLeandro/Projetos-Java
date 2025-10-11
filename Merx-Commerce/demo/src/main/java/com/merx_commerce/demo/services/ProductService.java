@@ -18,15 +18,18 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    //user e admin
     public List<ProductResponseDTO> findAllProducts() {
         return productRepository.findAll().stream().map(ProductResponseDTO::new).toList();
     }
 
+    //user e admin
     public ProductResponseDTO findById(Long id){
         Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist Product with this ID"));
         return new ProductResponseDTO(product);
     }
 
+    //admin
     public ProductResponseDTO createProduct(ProductRequestDTO product){
         if(productRepository.existsByName(product.name())) throw new AlreadyExistsException("already exists a product with this Name");
         Product newProduct = Product.builder().name(product.name()).description(product.description()).price(product.price()).quantityInStock(product.quantityInStock()).images(product.images()).category(product.category()).build();
@@ -34,6 +37,7 @@ public class ProductService {
         return new ProductResponseDTO(savedProduct);
     }
 
+    //admin e user(quando comprar item, irá mudar a quantidade no estoque)
     public ProductResponseDTO updateProduct(ProductRequestDTO product, Long id){
         Product updatedProduct = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist Product with this ID"));
         if(productRepository.existsByName(product.name()) && !Objects.equals(updatedProduct.getName(), product.name())) throw new AlreadyExistsException("already exists a product with this name");
@@ -47,6 +51,7 @@ public class ProductService {
         return new ProductResponseDTO(savedProduct);
     }
 
+    //admin
     public void deleteProduct(Long id){
         if(productRepository.existsById(id)){
             productRepository.deleteById(id);
