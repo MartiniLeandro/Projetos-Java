@@ -2,9 +2,11 @@ package com.merx_commerce.demo.services;
 
 import com.merx_commerce.demo.entities.Cart;
 import com.merx_commerce.demo.entities.CartItem;
+import com.merx_commerce.demo.entities.DTOS.CartRequestDTO;
 import com.merx_commerce.demo.entities.DTOS.CartResponseDTO;
 import com.merx_commerce.demo.entities.DTOS.UserResponseDTO;
 import com.merx_commerce.demo.entities.User;
+import com.merx_commerce.demo.exceptions.AlreadyExistsException;
 import com.merx_commerce.demo.exceptions.NotFoundException;
 import com.merx_commerce.demo.repositories.CartRepository;
 import com.merx_commerce.demo.repositories.UserRepository;
@@ -97,5 +99,31 @@ public class CartServiceTest {
         NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> cartService.findCartByToken("fake-token"));
 
         Assertions.assertEquals("This User don't have an Cart",exception.getMessage());
+    }
+
+    @Test
+    void testCreateCart(){
+        UserResponseDTO user = new UserResponseDTO(u1);
+        when(userService.findUserByToken(anyString())).thenReturn(user);
+        when(userRepository.findUserByEmail(user.email())).thenReturn(u1);
+        CartRequestDTO cartRequest = new CartRequestDTO(c2.getId(),c2.getUser(),c2.getItems());
+        when(cartRepository.save(any(Cart.class))).thenReturn(u1.getCart());
+
+        CartResponseDTO newCart = cartService.createCart(cartRequest, "fake-token");
+
+        Assertions.assertNotNull(newCart);
+        Assertions.assertEquals("leandro2", newCart.user().getName());
+    }
+
+    @Test
+    void testCreateCartFailed(){
+        UserResponseDTO user = new UserResponseDTO(u1);
+        CartRequestDTO cartRequest = new CartRequestDTO(c2.getId(),c2.getUser(),c2.getItems());
+        when(userService.findUserByToken(anyString())).thenReturn(user);
+        when(userRepository.findUserByEmail(user.email())).thenReturn(u1);
+        u1.setCart(c1);
+        AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> cartService.createCart(cartRequest,"fake-token"));
+
+        Assertions.assertEquals("You already have an cart", exception.getMessage());
     }
 }
