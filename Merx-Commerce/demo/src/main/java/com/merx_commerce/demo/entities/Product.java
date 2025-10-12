@@ -33,6 +33,7 @@ public class Product {
     @NotNull(message = "Stock quantity is required.")
     private Integer quantityInStock;
 
+    @ElementCollection
     @NotNull(message = "Images list cannot be null.")
     private List<String> images;
 
