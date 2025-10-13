@@ -3,11 +3,19 @@ package com.merx_commerce.demo.entities;
 import com.merx_commerce.demo.entities.Enums.StatusOrder;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -32,5 +40,5 @@ public class Order {
 
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     @NotNull(message = "itens cannot be null")
-    private List<OrderItems> itens;
+    private List<OrderItems> items;
 }
