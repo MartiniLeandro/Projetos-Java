@@ -112,4 +112,17 @@ public class CartItemServiceTest {
         Assertions.assertEquals(2, cartItemResponseDTO.quantity());
         Assertions.assertEquals(u1.getCart(),cartItemResponseDTO.cart());
     }
+
+    @Test
+    void testDeleteCartItem(){
+        UserResponseDTO userDTO = new UserResponseDTO(u1);
+        CartItem cartItem = new CartItem(1L,p1,u1.getCart(),1,new BigDecimal(250));
+        u1.getCart().setItems(List.of(cartItem));
+        when(userService.findUserByToken(anyString())).thenReturn(userDTO);
+        when(userRepository.findUserByEmail(userDTO.email())).thenReturn(u1);
+        when(cartItemRepository.findById(anyLong())).thenReturn(Optional.of(cartItem));
+        cartItemService.deleteCartItem("fake-token",1L);
+
+        verify(cartItemRepository, times(1)).deleteById(1L);
+    }
 }
