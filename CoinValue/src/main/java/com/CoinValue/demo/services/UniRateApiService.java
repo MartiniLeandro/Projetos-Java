@@ -4,6 +4,7 @@ import com.CoinValue.demo.entities.DTO.AllCoinsDTO;
 import com.CoinValue.demo.entities.DTO.ConvertAllCoinsDTO;
 import com.CoinValue.demo.entities.DTO.ConvertAllCoinsRequestDTO;
 import com.CoinValue.demo.entities.DTO.ConvertCoinDTO;
+import com.CoinValue.demo.exceptions.NullInfosException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -31,6 +32,7 @@ public class UniRateApiService {
     }
 
     public ConvertCoinDTO convertCoinToCoin(ConvertCoinDTO data){
+        if(data.amount() == null && data.from() == null && data.to() == null) throw new NullInfosException("Please, send all this infos");
         return webClient.get().uri("/api/convert?api_key={apiKey}&amount={amount}&from={from}&to={to}", apiKey, data.amount(), data.to(), data.from())
                 .retrieve()
                 .bodyToMono(ConvertCoinDTO.class)
@@ -38,6 +40,7 @@ public class UniRateApiService {
     }
 
     public ConvertAllCoinsDTO convertAllCoins(ConvertAllCoinsRequestDTO data){
+        if(data == null || data.amount() == null || data.base() == null) throw new NullInfosException("Please, send all this infos");
         return webClient.get().uri("/api/rates?api_key={apiKey}&amount={amount}&from={base}",apiKey,data.amount(),data.base())
                 .retrieve()
                 .bodyToMono(ConvertAllCoinsDTO.class)
