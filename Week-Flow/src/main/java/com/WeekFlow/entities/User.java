@@ -1,5 +1,6 @@
 package com.WeekFlow.entities;
 
+import com.WeekFlow.entities.DTOS.UserRegisterDTO;
 import com.WeekFlow.entities.ENUMS.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -8,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,6 +39,15 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     private List<Task> tasks;
+
+    public User(UserRegisterDTO data){
+        this.id = data.id();
+        this.name = data.name();
+        this.email = data.email();
+        this.password = data.password();
+        this.role = Roles.USER;
+        this.tasks = new ArrayList<>();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
