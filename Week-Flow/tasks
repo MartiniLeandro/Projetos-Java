@@ -1,0 +1,5 @@
+*Terminar configuração token JWT
+*Adicionar tratamento de exceções
+*Fazer testes unitários e de integração, junto com security
+*swagger para documentar aplicação
+*sistema para implementar notificações
