@@ -17,4 +17,10 @@ public class ControllerAdviceException {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> alreadyExistsException(AlreadyExistsException e, HttpServletRequest request){
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),"Already Exist", e.getMessage(), request.getRequestURI(), Instant.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
 }
