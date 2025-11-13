@@ -7,7 +7,12 @@ import com.WeekFlow.entities.User;
 import com.WeekFlow.exceptions.AlreadyExistsException;
 import com.WeekFlow.exceptions.NotFoundException;
 import com.WeekFlow.repositories.UserRepository;
+import com.WeekFlow.security.TokenService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -17,9 +22,13 @@ import java.util.Map;
 public class AuthenticationController {
 
     private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
 
-    public AuthenticationController(UserRepository userRepository) {
+    public AuthenticationController(UserRepository userRepository, AuthenticationManager authenticationManager, TokenService tokenService) {
         this.userRepository = userRepository;
+        this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
     }
 
     @PostMapping("register")
@@ -30,10 +39,16 @@ public class AuthenticationController {
         return ResponseEntity.ok().body(new UserResponseDTO(newUser));
     }
 
-    @PostMapping("login")
-    public ResponseEntity<Map<String,String>> loginUser(@RequestBody UserLoginDTO data){
-        if(!userRepository.existsByEmail(data.email())) throw new NotFoundException("Not exist user with this email");
-        return ResponseEntity.ok().body(Map.of("token","token"));
+    @PostMapping("/login")
+    public ResponseEntity<Map<String,String>> loginUser(@RequestBody @Valid UserLoginDTO loginDTO) {
+        if (!userRepository.existsByEmail(loginDTO.email()))
+            throw new NotFoundException("Este email não está cadastrado");
+        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password());
+        Authentication auth = authenticationManager.authenticate(usernamePassword);
+
+        String token = tokenService.generateToken((User) auth.getPrincipal());
+
+        return ResponseEntity.ok().body(Map.of("token", token));
     }
 
 }
