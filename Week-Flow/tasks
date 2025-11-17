@@ -3,3 +3,8 @@
 *Fazer testes unitários e de integração, junto com security
 *swagger para documentar aplicação
 *sistema para implementar notificações
+
+*usuário pode criar tarefa, e colocar quais dias de semana ele deseja realizar esta tarefa, podendo ser recorrente ou não
+*com o passar das semanas e dos dias, o usuário vai marcando se fez a atividade ou nn
+*usuário pode verificar quantas vezes ele realizou certa tarefa, entre determinadas datas
+*sistema pode notificar o usuário via email ou outra maneira, falando das suas tasks que devem ser feitas
