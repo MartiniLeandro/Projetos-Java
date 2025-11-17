@@ -35,11 +35,11 @@ public class User implements UserDetails {
     @NotBlank(message = "Password cannot be null")
     private String password;
 
-    //@Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private Roles role;
 
     @OneToMany(mappedBy = "user")
-    private List<Task> tasks;
+    private List<Habit> habits;
 
     public User(UserRegisterDTO data){
         this.id = data.id();
@@ -47,7 +47,7 @@ public class User implements UserDetails {
         this.email = data.email();
         this.password = data.password();
         this.role = Roles.USER;
-        this.tasks = new ArrayList<>();
+        this.habits = new ArrayList<>();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.WeekFlow.entities;
 
+import com.WeekFlow.entities.DTOS.HabitRequestDTO;
 import com.WeekFlow.entities.ENUMS.Status;
 import com.WeekFlow.entities.ENUMS.Week;
 import jakarta.persistence.*;
@@ -15,8 +16,8 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Entity
 @Builder
-@Table(name= "tasks")
-public class Task {
+@Table(name= "habits")
+public class Habit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,13 +29,15 @@ public class Task {
     private String description;
 
     @NotNull
-    private Status Status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     private LocalTime initialTime;
 
     private LocalTime finalTime;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private Week daysWeek;
 
     @NotNull
@@ -43,5 +46,15 @@ public class Task {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Habit(HabitRequestDTO data){
+        this.name = data.name();
+        this.description = data.description();
+        this.status = data.status();
+        this.initialTime = data.initialTime();
+        this.finalTime = data.finalTime();
+        this.daysWeek = data.daysWeek();
+        this.recurrent = data.recurrent();
+    }
 
 }
