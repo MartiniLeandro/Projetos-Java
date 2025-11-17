@@ -35,6 +35,7 @@ public class User implements UserDetails {
     @NotBlank(message = "Password cannot be null")
     private String password;
 
+    //@Enumerated(EnumType.STRING)
     private Roles role;
 
     @OneToMany(mappedBy = "user")
