@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
@@ -28,10 +29,6 @@ public class Habit {
 
     private String description;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private Status status;
-
     private LocalTime initialTime;
 
     private LocalTime finalTime;
@@ -47,10 +44,11 @@ public class Habit {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private LocalDate createdAt = LocalDate.now();
+
     public Habit(HabitRequestDTO data){
         this.name = data.name();
         this.description = data.description();
-        this.status = data.status();
         this.initialTime = data.initialTime();
         this.finalTime = data.finalTime();
         this.daysWeek = data.daysWeek();
