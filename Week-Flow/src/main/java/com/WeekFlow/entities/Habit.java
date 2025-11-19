@@ -10,6 +10,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -35,7 +36,7 @@ public class Habit {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private Week daysWeek;
+    private List<Week> daysWeek;
 
     @NotNull
     private Boolean recurrent;
