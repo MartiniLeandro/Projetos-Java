@@ -1,15 +1,12 @@
 package com.WeekFlow.services;
 
 import com.WeekFlow.entities.DTOS.HabitRequestDTO;
-import com.WeekFlow.entities.DTOS.HabitResposeDTO;
+import com.WeekFlow.entities.DTOS.HabitResponseDTO;
 import com.WeekFlow.entities.Habit;
 import com.WeekFlow.entities.User;
 import com.WeekFlow.exceptions.IsNotYoursException;
 import com.WeekFlow.exceptions.NotFoundException;
 import com.WeekFlow.repositories.HabitRepository;
-import com.WeekFlow.repositories.UserRepository;
-import com.WeekFlow.security.TokenService;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -19,43 +16,41 @@ import java.util.List;
 public class HabitService {
 
     private final HabitRepository habitRepository;
-    private final TokenService tokenService;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public HabitService(HabitRepository habitRepository, TokenService tokenService, UserRepository userRepository) {
+    public HabitService(HabitRepository habitRepository, UserService userService) {
         this.habitRepository = habitRepository;
-        this.tokenService = tokenService;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
-    public List<HabitResposeDTO> getAllHabits(String authHeader){
-        User user = findUserByToken(authHeader);
+    public List<HabitResponseDTO> getAllHabits(String authHeader){
+        User user = userService.findUserByToken(authHeader);
         List<Habit> allHabits = user.getHabits();
-        return allHabits.stream().map(HabitResposeDTO::new).toList();
+        return allHabits.stream().map(HabitResponseDTO::new).toList();
     }
 
-    public HabitResposeDTO getHabitById(String authHeader, Long id){
-        User user = findUserByToken(authHeader);
+    public HabitResponseDTO getHabitById(String authHeader, Long id){
+        User user = userService.findUserByToken(authHeader);
         Habit habit = habitRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist habit with this ID"));
         if(!user.getHabits().contains(habit)) throw new IsNotYoursException("This habit is not your's");
-        return new HabitResposeDTO(habit);
+        return new HabitResponseDTO(habit);
     }
 
-    public HabitResposeDTO createHabit(String authHeader, HabitRequestDTO habit){
-        User user = findUserByToken(authHeader);
+    public HabitResponseDTO createHabit(String authHeader, HabitRequestDTO habit){
+        User user = userService.findUserByToken(authHeader);
         Habit newHabit = new Habit(habit);
         newHabit.setUser(user);
         habitRepository.save(newHabit);
-        return new HabitResposeDTO(newHabit);
+        return new HabitResponseDTO(newHabit);
     }
 
-    public HabitResposeDTO updateHabit(String authHeader, HabitRequestDTO habit, Long id){
-        User user = findUserByToken(authHeader);
+    public HabitResponseDTO updateHabit(String authHeader, HabitRequestDTO habit, Long id){
+        User user = userService.findUserByToken(authHeader);
         Habit updatedHabit = habitRepository.findById(id).orElseThrow(() -> new NotFoundException("Not exist habit with this ID"));
         if(!user.getHabits().contains(updatedHabit)) throw new IsNotYoursException("This habit is not your's");
         BeanUtils.copyProperties(updatedHabit, habit, "id");
         habitRepository.save(updatedHabit);
-        return new HabitResposeDTO(updatedHabit);
+        return new HabitResponseDTO(updatedHabit);
     }
 
     public void deleteHabit(Long id){
@@ -64,13 +59,5 @@ public class HabitService {
         }else{
             throw new NotFoundException("Not exist habit with this ID");
         }
-    }
-
-
-    public User findUserByToken(String authHeader){
-        String token = authHeader.replace("Bearer ", "");
-        if(token.isEmpty()) throw new JWTVerificationException("null token");
-        String email = tokenService.validateToken(token);
-        return userRepository.findUserByEmail(email);
     }
 }

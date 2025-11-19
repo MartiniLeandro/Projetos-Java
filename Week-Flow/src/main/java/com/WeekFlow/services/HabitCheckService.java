@@ -12,24 +12,23 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class HabitCheckService {
 
     private final HabitCheckRepository habitCheckRepository;
-    private final HabitService habitService;
+    private final UserService userService;
     private final HabitRepository habitRepository;
 
-    public HabitCheckService(HabitCheckRepository habitCheckRepository, HabitService habitService, HabitRepository habitRepository) {
+    public HabitCheckService(HabitCheckRepository habitCheckRepository, UserService userService, HabitRepository habitRepository) {
         this.habitCheckRepository = habitCheckRepository;
-        this.habitService = habitService;
+        this.userService = userService;
         this.habitRepository = habitRepository;
     }
 
     public HabitCheckResponseDTO markHabitForToday(Long habitId, String authHeader){
         Habit habit = habitRepository.findById(habitId).orElseThrow(() -> new NotFoundException("Not exist habit with this ID"));
-        User user = habitService.findUserByToken(authHeader);
+        User user = userService.findUserByToken(authHeader);
         if(!habit.getUser().getId().equals(user.getId())) throw new IsNotYoursException("This Habit is not your's");
         HabitCheck habitCheck = habitCheckRepository.findByHabitAndDate(habit, LocalDate.now()).orElse(null);
         if(habitCheck == null){
@@ -44,7 +43,7 @@ public class HabitCheckService {
 
     public HabitCheckResponseDTO unmarkHabitForToday(Long habitId, String authHeader){
         Habit habit = habitRepository.findById(habitId).orElseThrow(() -> new NotFoundException("Not exist habit with this ID"));
-        User user = habitService.findUserByToken(authHeader);
+        User user = userService.findUserByToken(authHeader);
         if(!habit.getUser().getId().equals(user.getId())) throw new IsNotYoursException("This Habit is not your's");
         HabitCheck habitCheck = habitCheckRepository.findByHabitAndDate(habit, LocalDate.now()).orElse(null);
         if(habitCheck == null){
@@ -58,13 +57,13 @@ public class HabitCheckService {
     }
 
     public List<HabitCheckResponseDTO> getHabitsCheckByDate(LocalDate date, String authHeader){
-        User user = habitService.findUserByToken(authHeader);
+        User user = userService.findUserByToken(authHeader);
         List<HabitCheck> habitsCheck = habitCheckRepository.findByHabitUserAndDate(user,date);
         return habitsCheck.stream().map(HabitCheckResponseDTO::new).toList();
     }
 
     public List<HabitCheckResponseDTO> getHabitsCheckBetweenDates(LocalDate start, LocalDate end, String authHeader){
-        User user = habitService.findUserByToken(authHeader);
+        User user = userService.findUserByToken(authHeader);
         List<HabitCheck> habitsCheck = habitCheckRepository.findByHabitUserAndDateBetween(user,start,end);
         return habitsCheck.stream().map(HabitCheckResponseDTO::new).toList();
     }
