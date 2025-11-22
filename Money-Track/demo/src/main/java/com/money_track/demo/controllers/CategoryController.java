@@ -4,6 +4,7 @@ import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.CategoryDTO;
 import com.money_track.demo.services.CategoryService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,8 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> findAllCategories(){
-        return ResponseEntity.ok().body(categoryService.findAllCategories());
+    public ResponseEntity<Page<CategoryDTO>> findAllCategories(@RequestParam Integer page, @RequestParam Integer size){
+        return ResponseEntity.ok().body(categoryService.findAllCategories(page,size));
     }
 
     @GetMapping("/{id}")

@@ -6,6 +6,9 @@ import com.money_track.demo.exceptions.AlreadyExistsException;
 import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.repositories.CategoryRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +22,10 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<CategoryDTO> findAllCategories(){
-        List<Category> allCategories = categoryRepository.findAll();
-        return allCategories.stream().map(CategoryDTO::new).toList();
+    public Page<CategoryDTO> findAllCategories(Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Category> allCategories = categoryRepository.findAll(pageable);
+        return allCategories.map(CategoryDTO::new);
     }
 
     public CategoryDTO findCategoryById(Long id){
