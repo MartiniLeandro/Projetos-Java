@@ -14,6 +14,9 @@ import com.money_track.demo.repositories.LaunchRepository;
 import com.money_track.demo.repositories.UserRepository;
 import com.money_track.demo.security.TokenService;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -35,10 +38,11 @@ public class LaunchService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<LaunchDTO> findAllLaunches(String authHeader){
+    public Page<LaunchDTO> findAllLaunches(String authHeader,Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page,size);
         User user = findUserByToken(authHeader);
-        List<Launch> allLaunches = user.getLaunches();
-        return allLaunches.stream().map(LaunchDTO::new).toList();
+        Page<Launch> allLaunches = launchRepository.findAllLaunchesByUser(pageable,user);
+        return allLaunches.map(LaunchDTO::new);
     }
 
     public LaunchDTO findLaunchById(String authHeader,Long id){

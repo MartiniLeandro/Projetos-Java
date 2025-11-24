@@ -3,6 +3,8 @@ package com.money_track.demo.repositories;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.TypeValue;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
@@ -11,4 +13,5 @@ import java.util.List;
 public interface LaunchRepository extends JpaRepository<Launch,Long> {
     List<Launch> findByUserAndDateBetween(User user, LocalDate initialDate, LocalDate finalDate);
     List<Launch> findByUserAndCategory_TypeValue(User user, TypeValue typeValue);
+    Page<Launch> findAllLaunchesByUser(Pageable pageable,User user);
 }

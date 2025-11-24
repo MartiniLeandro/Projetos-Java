@@ -1,11 +1,11 @@
 package com.money_track.demo.controllers;
 
-import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.LaunchDTO;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.enums.TypeValue;
 import com.money_track.demo.services.LaunchService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +23,8 @@ public class LaunchController {
     }
 
     @GetMapping
-    public ResponseEntity<List<LaunchDTO>> findAllLaunches(@RequestHeader("Authorization") String authHeader){
-        return ResponseEntity.ok().body(launchService.findAllLaunches(authHeader));
+    public ResponseEntity<Page<LaunchDTO>> findAllLaunches(@RequestHeader("Authorization") String authHeader, @RequestParam Integer page, @RequestParam Integer size){
+        return ResponseEntity.ok().body(launchService.findAllLaunches(authHeader,page,size));
     }
 
     @GetMapping("/{id}")
