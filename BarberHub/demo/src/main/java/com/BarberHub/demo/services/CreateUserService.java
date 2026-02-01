@@ -31,7 +31,8 @@ public class CreateUserService {
         Cliente cliente = new Cliente();
         cliente.setNome(data.nome());
         cliente.setTelefone(data.telefone());
+        cliente.setUser(user);
         clienteRepository.save(cliente);
-        return new ClienteRegisterResponseDTO(cliente.getNome(),user.getEmail(),cliente.getTelefone());
+        return new ClienteRegisterResponseDTO(cliente.getId(),cliente.getNome(),user.getEmail(),cliente.getTelefone());
     }
 }
