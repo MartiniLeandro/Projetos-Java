@@ -1,4 +1,4 @@
-package com.BarberHub.demo.entities.DTOS;
+package com.BarberHub.demo.entities.ENUMS;
 
 public enum RoleUser {
     CLIENTE,

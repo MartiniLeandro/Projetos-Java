@@ -1,6 +1,6 @@
 package com.BarberHub.demo.entities;
 
-import com.BarberHub.demo.entities.DTOS.RoleUser;
+import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -40,11 +40,11 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Cliente cliente;
 
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    /*@OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Barbearia barbearia;
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
-    private Barbeiro barbeiro;
+    private Barbeiro barbeiro;*/
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
