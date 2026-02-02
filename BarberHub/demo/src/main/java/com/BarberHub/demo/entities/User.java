@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")
+@Table(name = "Users")
 public class User implements UserDetails {
 
     @Id
@@ -40,11 +40,11 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Cliente cliente;
 
-    /*@OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Barbearia barbearia;
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
-    private Barbeiro barbeiro;*/
+    private Barbeiro barbeiro;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
