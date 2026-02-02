@@ -1,8 +1,7 @@
 package com.BarberHub.demo.controllers;
 
-import com.BarberHub.demo.entities.DTOS.ClienteRegisterResponseDTO;
 import com.BarberHub.demo.entities.DTOS.LoginUserDTO;
-import com.BarberHub.demo.entities.DTOS.RegisterClienteDTO;
+import com.BarberHub.demo.entities.DTOS.RegisterUserDTO;
 import com.BarberHub.demo.entities.User;
 import com.BarberHub.demo.security.TokenService;
 import com.BarberHub.demo.services.CreateUserService;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,9 +37,10 @@ public class AuthenticationController {
         return ResponseEntity.ok().body(token);
     }
 
-    @PostMapping("/register-cliente")
-    public ResponseEntity<ClienteRegisterResponseDTO> createCliente(@RequestBody RegisterClienteDTO data){
-        return ResponseEntity.ok().body(createUserService.createUser(data));
+    @PostMapping("/register")
+    public ResponseEntity<String> createCliente(@RequestBody RegisterUserDTO data){
+        createUserService.createUser(data);
+        return ResponseEntity.ok().body("User criado");
     }
 
 }

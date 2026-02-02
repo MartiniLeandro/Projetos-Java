@@ -35,4 +35,14 @@ public class Endereco {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "barbearia_id")
     private Barbearia barbearia;
+
+    public Endereco(String cep, String logradouro, String numero, String complemento, String bairro, String cidade, String uf) {
+        this.cep = cep;
+        this.logradouro = logradouro;
+        this.numero = numero;
+        this.complemento = complemento;
+        this.bairro = bairro;
+        this.cidade = cidade;
+        this.uf = uf;
+    }
 }
