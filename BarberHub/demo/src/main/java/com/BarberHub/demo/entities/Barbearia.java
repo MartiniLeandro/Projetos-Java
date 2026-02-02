@@ -39,7 +39,7 @@ public class Barbearia {
     private List<Barbeiro> barbeiros;
 
     @OneToMany(mappedBy = "barbearia", cascade = CascadeType.ALL)
-    private List<Servicos> servicos;
+    private List<Servico> servicos;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
