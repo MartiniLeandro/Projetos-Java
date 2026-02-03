@@ -3,6 +3,7 @@ package com.BarberHub.demo.services;
 import com.BarberHub.demo.entities.*;
 import com.BarberHub.demo.entities.DTOS.RegisterUserDTO;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
+import com.BarberHub.demo.exceptions.AlreadyExistsException;
 import com.BarberHub.demo.repositories.BarbeariaRepository;
 import com.BarberHub.demo.repositories.BarbeiroRepository;
 import com.BarberHub.demo.repositories.ClienteRepository;
@@ -28,6 +29,7 @@ public class CreateUserService {
     }
 
     public void createUser(RegisterUserDTO data){
+        if(userRepository.existsByEmail(data.email())) throw new AlreadyExistsException("Este email já está cadastrado");
         User user = new User();
         user.setEmail(data.email());
         user.setPassword(passwordEncoder.encode(data.password()));
@@ -50,6 +52,7 @@ public class CreateUserService {
     }
 
     public void createBarbearia(RegisterUserDTO data, User user){
+        if(barbeariaRepository.existsByCnpj(data.cnpj())) throw new AlreadyExistsException("Este CNPJ já está cadastrado");
         Endereco endereco = new Endereco(data.cep(),data.logradouro(),data.numero(),data.complemento(),data.bairro(),data.cidade(),data.uf());
         Barbearia barbearia = new Barbearia();
         barbearia.setNome(data.nome());
