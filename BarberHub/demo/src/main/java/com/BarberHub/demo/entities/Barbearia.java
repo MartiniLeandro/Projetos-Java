@@ -35,6 +35,14 @@ public class Barbearia {
     @NotBlank(message = "telefone cannot be null")
     private String telefone;
 
+    @ElementCollection
+    @CollectionTable(name = "barbearia_horarios", joinColumns = @JoinColumn(name = "barbearia_id"))
+    private List<DataHoraBarbearia> horarios;
+
+    @ElementCollection
+    @CollectionTable(name = "barbearia_imagens", joinColumns = @JoinColumn(name = "barbearia_id"))
+    private List<String> urlImagens;
+
     @OneToMany(mappedBy = "barbearia", cascade = CascadeType.ALL)
     private List<Barbeiro> barbeiros;
 

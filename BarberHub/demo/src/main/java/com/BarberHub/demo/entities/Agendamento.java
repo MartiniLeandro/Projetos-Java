@@ -21,16 +21,19 @@ public class Agendamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade =  CascadeType.ALL)
+    @ManyToOne(cascade =  CascadeType.ALL)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
+    @ManyToOne(cascade =  CascadeType.ALL)
     @JoinColumn(name = "barbeiro_id")
     private Barbeiro barbeiro;
 
+    @ManyToOne(cascade =  CascadeType.ALL)
     @JoinColumn(name = "barbearia_id")
     private Barbearia barbearia;
 
+    @ManyToOne(cascade =  CascadeType.ALL)
     @JoinColumn(name = "servico_id")
     private Servico servico;
 
@@ -38,5 +41,6 @@ public class Agendamento {
 
     private LocalDateTime hora_final;
 
+    @Enumerated(EnumType.STRING)
     private StatusCorte status;
 }

@@ -52,4 +52,6 @@ public class BarbeariaService {
         }
     }
 
+    // MAIS PARA FRENTE: filtro por endereço e adicionar imagens
+
 }
