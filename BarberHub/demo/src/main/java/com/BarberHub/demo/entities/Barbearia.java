@@ -1,5 +1,6 @@
 package com.BarberHub.demo.entities;
 
+import com.BarberHub.demo.entities.ENUMS.StatusUsers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -52,4 +53,7 @@ public class Barbearia {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    private StatusUsers status;
 }

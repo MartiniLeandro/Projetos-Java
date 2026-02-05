@@ -1,5 +1,6 @@
 package com.BarberHub.demo.entities;
 
+import com.BarberHub.demo.entities.ENUMS.StatusUsers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -28,4 +29,7 @@ public class Cliente {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    private StatusUsers status;
 }

@@ -1,5 +1,6 @@
 package com.BarberHub.demo.entities;
 
+import com.BarberHub.demo.entities.ENUMS.StatusUsers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,6 +36,9 @@ public class Barbeiro {
     @ManyToOne
     @JoinColumn(name = "barbearia_id")
     private Barbearia barbearia;
+
+    @Enumerated(EnumType.STRING)
+    private StatusUsers status;
 
 
 }
