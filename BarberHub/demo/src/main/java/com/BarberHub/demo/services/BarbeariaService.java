@@ -3,6 +3,7 @@ package com.BarberHub.demo.services;
 import com.BarberHub.demo.entities.Barbearia;
 import com.BarberHub.demo.entities.DTOS.BarbeariaDTO;
 import com.BarberHub.demo.entities.DTOS.BarbeariaRequestDTO;
+import com.BarberHub.demo.exceptions.AlreadyExistsException;
 import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.BarbeariaRepository;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class BarbeariaService {
     public BarbeariaDTO updateBarbearia(Long id, BarbeariaRequestDTO data){
         Barbearia barbearia = barbeariaRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe Barbearia com este ID"));
         barbearia.setNome(data.nome());
+        if(barbeariaRepository.existsByCnpj(data.cnpj()) && !barbearia.getCnpj().equals(data.cnpj())) throw new AlreadyExistsException("Este CNPJ já está cadastrado");
         barbearia.setCnpj(data.cnpj());
         barbearia.setTelefone(data.telefone());
         barbearia.setEndereco(data.endereco());
