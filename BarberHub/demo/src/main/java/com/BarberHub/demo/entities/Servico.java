@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Duration;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,6 +30,9 @@ public class Servico {
 
     @NotBlank(message = "preco cannot be null")
     private Double preco;
+
+    @NotNull
+    private Duration tempoMedio;
 
     @NotNull
     @ManyToOne

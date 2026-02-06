@@ -33,6 +33,7 @@ public class Barbeiro {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "barbearia_id")
     private Barbearia barbearia;
