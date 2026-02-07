@@ -11,13 +11,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "Enderecos")
+@Embeddable
 public class Endereco {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @NotBlank(message = "cep cannot be null")
     private String cep;
@@ -39,18 +34,4 @@ public class Endereco {
 
     @NotBlank(message = "uf cannot be null")
     private String uf;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "barbearia_id")
-    private Barbearia barbearia;
-
-    public Endereco(String cep, String logradouro, String numero, String complemento, String bairro, String cidade, String uf) {
-        this.cep = cep;
-        this.logradouro = logradouro;
-        this.numero = numero;
-        this.complemento = complemento;
-        this.bairro = bairro;
-        this.cidade = cidade;
-        this.uf = uf;
-    }
 }

@@ -30,7 +30,7 @@ public class Barbearia {
     private String cnpj;
 
     @NotNull
-    @OneToOne(mappedBy = "barbearia",cascade = CascadeType.ALL)
+    @Embedded
     private Endereco endereco;
 
     @NotBlank(message = "telefone cannot be null")
