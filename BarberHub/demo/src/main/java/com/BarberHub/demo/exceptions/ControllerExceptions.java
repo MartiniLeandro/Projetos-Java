@@ -19,7 +19,13 @@ public class ControllerExceptions {
 
     @ExceptionHandler(AlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> alreadyExistsException(AlreadyExistsException exception, HttpServletRequest request) {
-        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Not Found",exception.getMessage(),request.getRequestURI(), Instant.now());
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Already exists",exception.getMessage(),request.getRequestURI(), Instant.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(IsNotYoursException.class)
+    public ResponseEntity<ErrorResponse> isNotYoursException(IsNotYoursException exception, HttpServletRequest request) {
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Is not yours",exception.getMessage(),request.getRequestURI(), Instant.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 }

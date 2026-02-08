@@ -4,10 +4,12 @@ import com.BarberHub.demo.entities.*;
 import com.BarberHub.demo.entities.DTOS.RegisterUserDTO;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import com.BarberHub.demo.exceptions.AlreadyExistsException;
+import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.BarbeariaRepository;
 import com.BarberHub.demo.repositories.BarbeiroRepository;
 import com.BarberHub.demo.repositories.ClienteRepository;
 import com.BarberHub.demo.repositories.UserRepository;
+import com.BarberHub.demo.security.TokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +21,15 @@ public class CreateUserService {
     private final PasswordEncoder passwordEncoder;
     private final BarbeariaRepository barbeariaRepository;
     private final BarbeiroRepository barbeiroRepository;
+    private final TokenService tokenService;
 
-    public CreateUserService(UserRepository userRepository, ClienteRepository clienteRepository, PasswordEncoder passwordEncoder, BarbeariaRepository barbeariaRepository, BarbeiroRepository barbeiroRepository) {
+    public CreateUserService(UserRepository userRepository, ClienteRepository clienteRepository, PasswordEncoder passwordEncoder, BarbeariaRepository barbeariaRepository, BarbeiroRepository barbeiroRepository, TokenService tokenService) {
         this.userRepository = userRepository;
         this.clienteRepository = clienteRepository;
         this.passwordEncoder = passwordEncoder;
         this.barbeariaRepository = barbeariaRepository;
         this.barbeiroRepository = barbeiroRepository;
+        this.tokenService = tokenService;
     }
 
     public void createUser(RegisterUserDTO data){
@@ -69,5 +73,10 @@ public class CreateUserService {
         barbeiro.setTelefone(data.telefone());
         barbeiro.setUser(user);
         barbeiroRepository.save(barbeiro);
+    }
+
+    public User findUserByToken(String token) {
+        String email = tokenService.validateToken(token);
+        return userRepository.findUserByEmail(email).orElseThrow(() -> new NotFoundException("Usuário não encontrado com este email"));
     }
 }

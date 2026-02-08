@@ -3,5 +3,9 @@ package com.BarberHub.demo.repositories;
 import com.BarberHub.demo.entities.Servico;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface ServicoRepository extends JpaRepository<Servico,Long> {
+
+    List<Servico> findByBarbeariaId(Long id);
 }
