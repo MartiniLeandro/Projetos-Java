@@ -1,4 +1,3 @@
-service dos serviços
 service dos agendamentos
 
 todos os controllers

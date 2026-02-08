@@ -28,4 +28,10 @@ public class ControllerExceptions {
         ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Is not yours",exception.getMessage(),request.getRequestURI(), Instant.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+
+    @ExceptionHandler(InvalidRoleException.class)
+    public ResponseEntity<ErrorResponse> invalidRole(InvalidRoleException exception, HttpServletRequest request) {
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid role",exception.getMessage(),request.getRequestURI(), Instant.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
 }

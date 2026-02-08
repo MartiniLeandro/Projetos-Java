@@ -10,6 +10,7 @@ import com.BarberHub.demo.repositories.BarbeiroRepository;
 import com.BarberHub.demo.repositories.ClienteRepository;
 import com.BarberHub.demo.repositories.UserRepository;
 import com.BarberHub.demo.security.TokenService;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ public class CreateUserService {
         this.tokenService = tokenService;
     }
 
+    @Transactional
     public void createUser(RegisterUserDTO data){
         if(userRepository.existsByEmail(data.email())) throw new AlreadyExistsException("Este email já está cadastrado");
         User user = new User();
@@ -47,6 +49,7 @@ public class CreateUserService {
         }
     }
 
+    @Transactional
     public void createCliente(RegisterUserDTO data, User user){
         Cliente cliente = new Cliente();
         cliente.setNome(data.nome());
@@ -55,6 +58,7 @@ public class CreateUserService {
         clienteRepository.save(cliente);
     }
 
+    @Transactional
     public void createBarbearia(RegisterUserDTO data, User user){
         if(barbeariaRepository.existsByCnpj(data.cnpj())) throw new AlreadyExistsException("Este CNPJ já está cadastrado");
         Endereco endereco = new Endereco(data.cep(),data.logradouro(),data.numero(),data.complemento(),data.bairro(),data.cidade(),data.uf());
@@ -67,6 +71,7 @@ public class CreateUserService {
         barbeariaRepository.save(barbearia);
     }
 
+    @Transactional
     public void createBarbeiro(RegisterUserDTO data, User user){
         Barbeiro barbeiro = new Barbeiro();
         barbeiro.setNome(data.nome());
