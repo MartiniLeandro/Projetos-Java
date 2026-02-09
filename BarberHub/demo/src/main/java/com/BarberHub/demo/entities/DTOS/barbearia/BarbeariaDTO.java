@@ -1,7 +1,10 @@
-package com.BarberHub.demo.entities.DTOS;
+package com.BarberHub.demo.entities.DTOS.barbearia;
 
 
 import com.BarberHub.demo.entities.Barbearia;
+import com.BarberHub.demo.entities.DTOS.barbeiro.BarbeiroDTO;
+import com.BarberHub.demo.entities.DTOS.endereco.EnderecoDTO;
+import com.BarberHub.demo.entities.DTOS.servico.ServicoDTO;
 
 import java.util.List;
 

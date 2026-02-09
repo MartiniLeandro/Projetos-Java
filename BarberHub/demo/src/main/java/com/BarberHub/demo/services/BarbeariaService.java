@@ -1,8 +1,8 @@
 package com.BarberHub.demo.services;
 
 import com.BarberHub.demo.entities.Barbearia;
-import com.BarberHub.demo.entities.DTOS.BarbeariaDTO;
-import com.BarberHub.demo.entities.DTOS.BarbeariaRequestDTO;
+import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaDTO;
+import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaRequestDTO;
 import com.BarberHub.demo.entities.User;
 import com.BarberHub.demo.exceptions.AlreadyExistsException;
 import com.BarberHub.demo.exceptions.InvalidRoleException;

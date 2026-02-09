@@ -1,7 +1,7 @@
 package com.BarberHub.demo.services;
 
-import com.BarberHub.demo.entities.DTOS.ServicoRequestDTO;
-import com.BarberHub.demo.entities.DTOS.ServicoResponseDTO;
+import com.BarberHub.demo.entities.DTOS.servico.ServicoRequestDTO;
+import com.BarberHub.demo.entities.DTOS.servico.ServicoResponseDTO;
 import com.BarberHub.demo.entities.Servico;
 import com.BarberHub.demo.entities.User;
 import com.BarberHub.demo.exceptions.IsNotYoursException;

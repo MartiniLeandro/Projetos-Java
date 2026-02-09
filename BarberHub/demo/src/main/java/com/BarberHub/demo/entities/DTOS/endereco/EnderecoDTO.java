@@ -1,4 +1,4 @@
-package com.BarberHub.demo.entities.DTOS;
+package com.BarberHub.demo.entities.DTOS.endereco;
 
 import com.BarberHub.demo.entities.Endereco;
 

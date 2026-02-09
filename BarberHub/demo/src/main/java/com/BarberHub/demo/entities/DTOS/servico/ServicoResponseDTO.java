@@ -1,5 +1,6 @@
-package com.BarberHub.demo.entities.DTOS;
+package com.BarberHub.demo.entities.DTOS.servico;
 
+import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaNomeDTO;
 import com.BarberHub.demo.entities.Servico;
 
 import java.time.Duration;

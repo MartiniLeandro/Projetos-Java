@@ -1,7 +1,7 @@
 package com.BarberHub.demo.services;
 
 import com.BarberHub.demo.entities.*;
-import com.BarberHub.demo.entities.DTOS.RegisterUserDTO;
+import com.BarberHub.demo.entities.DTOS.user.RegisterUserDTO;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import com.BarberHub.demo.exceptions.AlreadyExistsException;
 import com.BarberHub.demo.exceptions.NotFoundException;

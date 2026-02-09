@@ -28,17 +28,17 @@ public class Agendamento {
     private Cliente cliente;
 
     @NotNull
-    @ManyToOne(cascade =  CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "barbeiro_id")
     private Barbeiro barbeiro;
 
     @NotNull
-    @ManyToOne(cascade =  CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "barbearia_id")
     private Barbearia barbearia;
 
     @NotNull
-    @ManyToOne(cascade =  CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "servico_id")
     private Servico servico;
 

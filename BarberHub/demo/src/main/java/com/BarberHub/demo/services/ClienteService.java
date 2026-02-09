@@ -1,8 +1,8 @@
 package com.BarberHub.demo.services;
 
 import com.BarberHub.demo.entities.Cliente;
-import com.BarberHub.demo.entities.DTOS.ClienteRequestDTO;
-import com.BarberHub.demo.entities.DTOS.ClienteResponseDTO;
+import com.BarberHub.demo.entities.DTOS.cliente.ClienteRequestDTO;
+import com.BarberHub.demo.entities.DTOS.cliente.ClienteResponseDTO;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import com.BarberHub.demo.entities.User;
 import com.BarberHub.demo.exceptions.InvalidRoleException;

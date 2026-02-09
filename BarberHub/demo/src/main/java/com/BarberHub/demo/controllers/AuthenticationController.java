@@ -1,7 +1,7 @@
 package com.BarberHub.demo.controllers;
 
-import com.BarberHub.demo.entities.DTOS.LoginUserDTO;
-import com.BarberHub.demo.entities.DTOS.RegisterUserDTO;
+import com.BarberHub.demo.entities.DTOS.user.LoginUserDTO;
+import com.BarberHub.demo.entities.DTOS.user.RegisterUserDTO;
 import com.BarberHub.demo.entities.User;
 import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.UserRepository;
