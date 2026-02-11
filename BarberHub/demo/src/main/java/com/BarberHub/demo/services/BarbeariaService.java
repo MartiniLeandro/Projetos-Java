@@ -56,6 +56,7 @@ public class BarbeariaService {
         barbearia.setEndereco(data.endereco());
         barbearia.setBarbeiros(data.barbeiros());
         barbearia.setServicos(data.servicos());
+        barbearia.setHorarios(data.horarios());
         barbeariaRepository.save(barbearia);
         return new BarbeariaDTO(barbearia);
     }
