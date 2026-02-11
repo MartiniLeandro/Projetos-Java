@@ -42,18 +42,28 @@ public class AgendamentoService {
         return agendamentos.stream().map(AgendamentoResponseDTO::new).toList();
     }
 
-    //QUALQUER ROLE
-    public List<AgendamentoResponseDTO> findAllAgendamentosByBarbearia(Long idBarbearia){
-        Barbearia barbearia = barbeariaRepository.findById(idBarbearia).orElseThrow(() -> new NotFoundException("Não existe Barbearia com este ID"));
-        List<Agendamento> agendamentos = agendamentoRepository.findAllByBarbearia(barbearia);
+    //BARBEARIA
+    public List<AgendamentoResponseDTO> findAllAgendamentosByBarbearia(String token){
+        User user = userService.findUserByToken(token);
+        if(user.getBarbearia() == null) throw new IsNotYoursException("Você não possui permissão para esta ação");
+        List<Agendamento> agendamentos = agendamentoRepository.findAllByBarbearia(user.getBarbearia());
         return  agendamentos.stream().map(AgendamentoResponseDTO::new).toList();
     }
 
-    //QUALQUER ROLE
-    public List<AgendamentoResponseDTO> findAllAgendamentosByBarbeiro(Long idBarbeiro){
-        Barbeiro barbeiro = barbeiroRepository.findById(idBarbeiro).orElseThrow(() -> new NotFoundException("Não existe Barbearia com este ID"));
-        List<Agendamento> agendamentos = agendamentoRepository.findAllByBarbeiro(barbeiro);
-        return  agendamentos.stream().map(AgendamentoResponseDTO::new).toList();
+    //BARBEIRO e BARBEARIA
+    public List<AgendamentoResponseDTO> findAllAgendamentosByBarbeiro(String token, Long idBarbeiro){
+        User user = userService.findUserByToken(token);
+        if(user.getBarbeiro() != null){
+            return agendamentoRepository.findAllByBarbeiro(user.getBarbeiro()).stream().map(AgendamentoResponseDTO::new).toList();
+        }
+        if(user.getBarbearia() != null){
+            Barbeiro barbeiro = barbeiroRepository.findById(idBarbeiro).orElseThrow(() -> new NotFoundException("Não existe barbeiro com este ID"));
+            if(!barbeiro.getBarbearia().getId().equals(user.getBarbearia().getId())){
+                throw new IsNotYoursException("Você não possui permissão para esta ação");
+            }
+            return agendamentoRepository.findAllByBarbeiro(barbeiro).stream().map(AgendamentoResponseDTO::new).toList();
+        }
+        throw new IsNotYoursException("Acesso negado");
     }
 
     //CLIENTE
@@ -80,13 +90,18 @@ public class AgendamentoService {
         return new AgendamentoResponseDTO(agendamento);
     }
 
-    //QUALQUER ROLE
+    //BARBEARIA e BARBEIRO
     public List<AgendamentoResponseDTO> findAllAgendamentosByDate(Long idBarbearia, LocalDate data){
         LocalDateTime inicioDia = data.atStartOfDay();
         LocalDateTime finalDia = data.atTime(LocalTime.MAX);
         List<Agendamento> agendamentos = agendamentoRepository.findByBarbeariaIdAndHoraInicialBetween(idBarbearia, inicioDia, finalDia);
         return agendamentos.stream().map(AgendamentoResponseDTO::new).toList();
     }
+
+    //QUALQUER ROLE
+    /*public List<AgendamentoResponseDTO> findHorariosLivres(){
+
+    }*/
 
 
 
