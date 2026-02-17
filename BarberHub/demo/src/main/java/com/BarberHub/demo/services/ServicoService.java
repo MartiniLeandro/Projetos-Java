@@ -2,8 +2,10 @@ package com.BarberHub.demo.services;
 
 import com.BarberHub.demo.entities.DTOS.servico.ServicoRequestDTO;
 import com.BarberHub.demo.entities.DTOS.servico.ServicoResponseDTO;
+import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import com.BarberHub.demo.entities.Servico;
 import com.BarberHub.demo.entities.User;
+import com.BarberHub.demo.exceptions.InvalidRoleException;
 import com.BarberHub.demo.exceptions.IsNotYoursException;
 import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.ServicoRepository;
@@ -24,19 +26,23 @@ public class ServicoService {
     }
 
     //ADMIN
-    public List<ServicoResponseDTO> findAllServicos(){
+    public List<ServicoResponseDTO> findAllServicos(String token){
+        User user = userService.findUserByToken(token);
+        if(user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não possui permissão para esta ação");
         List<Servico> servicos = servicoRepository.findAll();
         return servicos.stream().map(ServicoResponseDTO::new).toList();
     }
 
     //QUALQUER ROLE
-    public ServicoResponseDTO findServicoById(Long id){
+    public ServicoResponseDTO findServicoById(Long id, String token){
+        userService.findUserByToken(token);
         Servico servico = servicoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe serviço com este ID"));
         return new ServicoResponseDTO(servico);
     }
 
     //QUALQUER ROLE
-    public List<ServicoResponseDTO> findAllServicosByBarbeariaId(Long id){
+    public List<ServicoResponseDTO> findAllServicosByBarbeariaId(Long id,  String token){
+        userService.findUserByToken(token);
         List<Servico> servicos = servicoRepository.findByBarbeariaId(id);
         return servicos.stream().map(ServicoResponseDTO::new).toList();
     }

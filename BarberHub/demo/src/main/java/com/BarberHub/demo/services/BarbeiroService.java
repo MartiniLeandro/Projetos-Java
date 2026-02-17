@@ -30,20 +30,25 @@ public class BarbeiroService {
     }
 
     //ADMIN
-    public List<BarbeiroResponseDTO> findAllBarbeiros(){
+    public List<BarbeiroResponseDTO> findAllBarbeiros(String token){
+        User user = userService.findUserByToken(token);
+        if(user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não tem permissão para fazer esta ação");
+
         List<Barbeiro> barbeiros = barbeiroRepository.findAll();
         return barbeiros.stream().map(BarbeiroResponseDTO::new).toList();
     }
 
     //CLIENTE, BARBEIRO, BARBEARIA
-    public List<BarbeiroResponseDTO> findAllBarbeirosByBarbeariaId(Long id){
+    public List<BarbeiroResponseDTO> findAllBarbeirosByBarbeariaId(Long id, String token){
+        userService.findUserByToken(token);
         Barbearia barbearia = barbeariaRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe barbearia com este ID"));
         List<Barbeiro> barbeiros = barbearia.getBarbeiros();
         return  barbeiros.stream().map(BarbeiroResponseDTO::new).toList();
     }
 
     //CLIENTE, BARBEIRO, BARBEARIA
-    public BarbeiroResponseDTO findBarbeiroById(Long id){
+    public BarbeiroResponseDTO findBarbeiroById(Long id, String token){
+        userService.findUserByToken(token);
         Barbeiro barbeiro = barbeiroRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe barbeiro com este ID"));
         return  new BarbeiroResponseDTO(barbeiro);
     }
@@ -52,7 +57,7 @@ public class BarbeiroService {
     @Transactional
     public BarbeiroResponseDTO updateBarbeiro(Long id, BarbeiroRequestDTO data, String token){
         User user = userService.findUserByToken(token);
-        if(user.getBarbeiro() == null) throw new NotFoundException("Você não é um barbeiro");
+        if(user.getBarbeiro() == null) throw new InvalidRoleException("Você não é um barbeiro");
         Barbeiro barbeiro = barbeiroRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe barbeiro com este ID"));
         if(!Objects.equals(user.getBarbeiro().getId(), barbeiro.getId())) throw new InvalidRoleException("Você não tem permissão para esta ação");
         barbeiro.setNome(data.nome());

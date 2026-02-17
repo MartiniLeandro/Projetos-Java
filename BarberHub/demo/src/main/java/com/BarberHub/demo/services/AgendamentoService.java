@@ -6,6 +6,7 @@ import com.BarberHub.demo.entities.DTOS.agendamento.AgendamentoResponseDTO;
 import com.BarberHub.demo.entities.ENUMS.DiasSemana;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import com.BarberHub.demo.entities.ENUMS.StatusCorte;
+import com.BarberHub.demo.exceptions.InvalidRoleException;
 import com.BarberHub.demo.exceptions.IsNotYoursException;
 import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.*;
@@ -39,7 +40,9 @@ public class AgendamentoService {
     }
 
     //ADMIN
-    public List<AgendamentoResponseDTO> findAllAgendamentos(){
+    public List<AgendamentoResponseDTO> findAllAgendamentos(String token){
+        User user = userService.findUserByToken(token);
+        if(user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não tem permissão para esta ação");
         List<Agendamento> agendamentos = agendamentoRepository.findAll();
         return agendamentos.stream().map(AgendamentoResponseDTO::new).toList();
     }
@@ -93,7 +96,9 @@ public class AgendamentoService {
     }
 
     //BARBEARIA e BARBEIRO
-    public List<AgendamentoResponseDTO> findAllAgendamentosByDate(Long idBarbearia, LocalDate data){
+    public List<AgendamentoResponseDTO> findAllAgendamentosByDate(Long idBarbearia, LocalDate data, String token){
+        User user = userService.findUserByToken(token);
+        if(user.getRole() != RoleUser.BARBEARIA && user.getRole() != RoleUser.BARBEIRO) throw new InvalidRoleException("Você não tem permissão para esta ação");
         LocalDateTime inicioDia = data.atStartOfDay();
         LocalDateTime finalDia = data.atTime(LocalTime.MAX);
         List<Agendamento> agendamentos = agendamentoRepository.findByBarbeariaIdAndHoraInicialBetween(idBarbearia, inicioDia, finalDia);
@@ -101,7 +106,8 @@ public class AgendamentoService {
     }
 
     //QUALQUER ROLE
-    public List<LocalTime> findHorariosLivres(Long idBarbearia, Long idBarbeiro, LocalDate data){
+    public List<LocalTime> findHorariosLivres(Long idBarbearia, Long idBarbeiro, LocalDate data, String token){
+        userService.findUserByToken(token);
         Barbearia barbearia = barbeariaRepository.findById(idBarbearia).orElseThrow(() -> new NotFoundException("Não existe barbearia com este ID"));
         DiasSemana diaDaSemana = converterDataEnum(data.getDayOfWeek());
         DataHoraBarbearia horariosDiaBarbearia = barbearia.getHorarios().stream()

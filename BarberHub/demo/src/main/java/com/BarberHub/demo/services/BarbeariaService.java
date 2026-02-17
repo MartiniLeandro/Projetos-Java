@@ -3,6 +3,7 @@ package com.BarberHub.demo.services;
 import com.BarberHub.demo.entities.Barbearia;
 import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaDTO;
 import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaRequestDTO;
+import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import com.BarberHub.demo.entities.User;
 import com.BarberHub.demo.exceptions.AlreadyExistsException;
 import com.BarberHub.demo.exceptions.InvalidRoleException;
@@ -26,18 +27,24 @@ public class BarbeariaService {
     }
 
     //CLIENTE, BARBEIRO
-    public List<BarbeariaDTO> findAllBarbearias(){
+    public List<BarbeariaDTO> findAllBarbearias(String token){
+        User user = userService.findUserByToken(token);
+        if (user.getRole() != RoleUser.BARBEIRO && user.getRole() != RoleUser.CLIENTE) throw new InvalidRoleException("Você não tem permissão para esta ação");
         List<Barbearia> barbearias = barbeariaRepository.findAll();
         return barbearias.stream().map(BarbeariaDTO::new).toList();
     }
 
     //CLIENTE, BARBEIRO
-    public BarbeariaDTO findBarbeariaById(Long id){
+    public BarbeariaDTO findBarbeariaById(Long id, String token){
+        User user = userService.findUserByToken(token);
+        if (user.getRole() != RoleUser.BARBEIRO && user.getRole() != RoleUser.CLIENTE) throw new InvalidRoleException("Você não tem permissão para esta ação");
         return new BarbeariaDTO(barbeariaRepository.findById(id).orElseThrow(() -> new NotFoundException("Barbearia com este ID não existe")));
     }
 
     //CLIENTE, BARBEIRO
-    public List<BarbeariaDTO> findBarbeariasByNome(String nome){
+    public List<BarbeariaDTO> findBarbeariasByNome(String nome, String token){
+        User user = userService.findUserByToken(token);
+        if (user.getRole() != RoleUser.BARBEIRO && user.getRole() != RoleUser.CLIENTE) throw new InvalidRoleException("Você não tem permissão para esta ação");
         List<Barbearia> barbearias = barbeariaRepository.findByNomeContainingIgnoreCase(nome);
         return barbearias.stream().map(BarbeariaDTO::new).toList();
     }
