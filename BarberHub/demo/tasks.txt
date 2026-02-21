@@ -1,6 +1,5 @@
-service dos agendamentos
-
-todos os controllers
-testes unitários
-swagger
-front-end com react
+Controllers
+Testes unitários
+Testes de integração
+Swagger
+Front-end com react
