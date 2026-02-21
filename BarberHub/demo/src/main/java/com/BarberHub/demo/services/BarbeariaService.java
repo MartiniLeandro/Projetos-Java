@@ -1,7 +1,7 @@
 package com.BarberHub.demo.services;
 
 import com.BarberHub.demo.entities.Barbearia;
-import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaDTO;
+import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaResponseDTO;
 import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaRequestDTO;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import com.BarberHub.demo.entities.User;
@@ -27,31 +27,31 @@ public class BarbeariaService {
     }
 
     //CLIENTE, BARBEIRO
-    public List<BarbeariaDTO> findAllBarbearias(String token){
+    public List<BarbeariaResponseDTO> findAllBarbearias(String token){
         User user = userService.findUserByToken(token);
         if (user.getRole() != RoleUser.BARBEIRO && user.getRole() != RoleUser.CLIENTE) throw new InvalidRoleException("Você não tem permissão para esta ação");
         List<Barbearia> barbearias = barbeariaRepository.findAll();
-        return barbearias.stream().map(BarbeariaDTO::new).toList();
+        return barbearias.stream().map(BarbeariaResponseDTO::new).toList();
     }
 
     //CLIENTE, BARBEIRO
-    public BarbeariaDTO findBarbeariaById(Long id, String token){
+    public BarbeariaResponseDTO findBarbeariaById(Long id, String token){
         User user = userService.findUserByToken(token);
         if (user.getRole() != RoleUser.BARBEIRO && user.getRole() != RoleUser.CLIENTE) throw new InvalidRoleException("Você não tem permissão para esta ação");
-        return new BarbeariaDTO(barbeariaRepository.findById(id).orElseThrow(() -> new NotFoundException("Barbearia com este ID não existe")));
+        return new BarbeariaResponseDTO(barbeariaRepository.findById(id).orElseThrow(() -> new NotFoundException("Barbearia com este ID não existe")));
     }
 
     //CLIENTE, BARBEIRO
-    public List<BarbeariaDTO> findBarbeariasByNome(String nome, String token){
+    public List<BarbeariaResponseDTO> findBarbeariasByNome(String nome, String token){
         User user = userService.findUserByToken(token);
         if (user.getRole() != RoleUser.BARBEIRO && user.getRole() != RoleUser.CLIENTE) throw new InvalidRoleException("Você não tem permissão para esta ação");
         List<Barbearia> barbearias = barbeariaRepository.findByNomeContainingIgnoreCase(nome);
-        return barbearias.stream().map(BarbeariaDTO::new).toList();
+        return barbearias.stream().map(BarbeariaResponseDTO::new).toList();
     }
 
     //BARBEARIA
     @Transactional
-    public BarbeariaDTO updateBarbearia(Long id, BarbeariaRequestDTO data, String token){
+    public BarbeariaResponseDTO updateBarbearia(Long id, BarbeariaRequestDTO data, String token){
         User user = userService.findUserByToken(token);
         if(user.getBarbearia() == null) throw new NotFoundException("Você não possui uma barbearia");
         Barbearia barbearia = barbeariaRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe Barbearia com este ID"));
@@ -65,7 +65,7 @@ public class BarbeariaService {
         barbearia.setServicos(data.servicos());
         barbearia.setHorarios(data.horarios());
         barbeariaRepository.save(barbearia);
-        return new BarbeariaDTO(barbearia);
+        return new BarbeariaResponseDTO(barbearia);
     }
 
     //BARBEARIA, ADMIN

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/barbeiro")
+@RequestMapping("/barbeiros")
 public class BarbeiroController {
 
     private final BarbeiroService barbeiroService;
@@ -44,7 +44,7 @@ public class BarbeiroController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthoriry('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteBarbeiro(@PathVariable Long id, @RequestHeader("Authorization") String token){
         barbeiroService.deleteBarbeiro(id, token);
         return ResponseEntity.noContent().build();
