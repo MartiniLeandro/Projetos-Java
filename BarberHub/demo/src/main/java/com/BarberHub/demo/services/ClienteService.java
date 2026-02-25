@@ -45,8 +45,8 @@ public class ClienteService {
     @Transactional
     public ClienteResponseDTO updateCliente(Long id, ClienteRequestDTO data, String token){
         User user = userService.findUserByToken(token);
-        if(user.getCliente() == null) throw new InvalidRoleException("Você não é um cliente");
-        Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe cliente com este user"));
+        if(user.getCliente() == null && user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não possui permissão para esta ação");
+        Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe cliente com este id"));
         if(!Objects.equals(user.getCliente().getId(), cliente.getId())) throw new InvalidRoleException("Você não tem permissão para esta ação");
         cliente.setNome(data.nome());
         cliente.setTelefone(data.telefone());
