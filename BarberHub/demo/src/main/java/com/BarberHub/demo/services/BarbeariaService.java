@@ -72,7 +72,7 @@ public class BarbeariaService {
     @Transactional
     public void deleteBarbeariaById(Long id, String token){
         User user = userService.findUserByToken(token);
-        if(user.getBarbearia() == null) throw new NotFoundException("Você não possui uma barbearia");
+        if(user.getBarbearia() == null && user.getRole() != RoleUser.ADMIN) throw new NotFoundException("Você não possui uma barbearia");
         try{
             barbeariaRepository.deleteById(id);
         }catch (NotFoundException e){
