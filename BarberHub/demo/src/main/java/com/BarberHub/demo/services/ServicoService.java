@@ -80,8 +80,8 @@ public class ServicoService {
     //BARBEARIA
     @Transactional
     public ServicoResponseDTO updateServico(Long id, ServicoRequestDTO data, String token){
-        Servico servico = servicoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe servico com este ID"));
         User user = userService.findUserByToken(token);
+        Servico servico = servicoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe servico com este ID"));
         if(user.getBarbearia() == null) throw new NotFoundException("Você não possui uma barbearia");
         if(!user.getBarbearia().getServicos().contains(servico)) throw new IsNotYoursException("Este servico não pertence a você");
         servico.setNome(data.nome());
@@ -96,8 +96,8 @@ public class ServicoService {
     //BARBEARIA
     @Transactional
     public void deleteServico(Long id, String token){
-        Servico servico = servicoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe servico com este ID"));
         User user = userService.findUserByToken(token);
+        Servico servico = servicoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe servico com este ID"));
         if(user.getBarbearia() == null) throw new NotFoundException("Você não possui uma barbearia");
         if(!user.getBarbearia().getServicos().contains(servico)) throw new IsNotYoursException("Este servico não pertence a você");
         servicoRepository.delete(servico);
