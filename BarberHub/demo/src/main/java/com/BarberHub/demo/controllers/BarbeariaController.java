@@ -31,7 +31,7 @@ public class BarbeariaController {
         return ResponseEntity.ok().body(barbeariaService.findBarbeariaById(id,token));
     }
 
-    @GetMapping
+    @GetMapping("/nome")
     @PreAuthorize("hasAnyAuthority('CLIENTE','BARBEIRO','ADMIN')")
     public ResponseEntity<List<BarbeariaResponseDTO>> findBarbeariaByNome(@RequestParam String nome, @RequestHeader("Authorization") String token){
         return ResponseEntity.ok().body(barbeariaService.findBarbeariasByNome(nome,token));

@@ -118,7 +118,7 @@ public class AgendamentoService {
         LocalDateTime inicioDia = data.atStartOfDay();
         LocalDateTime finalDia = data.atTime(LocalTime.MAX);
         List<Agendamento> agendamentosOcupados = agendamentoRepository.findByBarbeiroIdAndHoraInicialBetween(idBarbeiro, inicioDia, finalDia);
-        List<LocalTime> horasOcupadas = agendamentosOcupados.stream().map(agendamento -> agendamento.getHora_inicial().toLocalTime()).toList();
+        List<LocalTime> horasOcupadas = agendamentosOcupados.stream().map(agendamento -> agendamento.getHoraInicial().toLocalTime()).toList();
 
         List<LocalTime> horariosLivres = new ArrayList<>();
         LocalTime horarioAtual = horariosDiaBarbearia.getHorarioAbertura();
@@ -181,8 +181,8 @@ public class AgendamentoService {
         agendamento.setBarbeiro(barbeiro);
         agendamento.setCliente(cliente);
         agendamento.setServico(servico);
-        agendamento.setHora_inicial(horarioInicio);
-        agendamento.setHora_final(horarioFinal);
+        agendamento.setHoraInicial(horarioInicio);
+        agendamento.setHoraFinal(horarioFinal);
         agendamento.setStatus(StatusCorte.AGENDADO);
         agendamentoRepository.save(agendamento);
         return  new AgendamentoResponseDTO(agendamento);
@@ -218,7 +218,7 @@ public class AgendamentoService {
             agendamentoOriginal.setBarbeiro(novoBarbeiro);
         }
 
-        if (data.hora_inicial() != null && !data.hora_inicial().equals(agendamentoOriginal.getHora_inicial())) {
+        if (data.hora_inicial() != null && !data.hora_inicial().equals(agendamentoOriginal.getHoraInicial())) {
 
             LocalDateTime novoInicio = data.hora_inicial();
             LocalDateTime novoFinal = novoInicio.plusMinutes(30);
@@ -233,8 +233,8 @@ public class AgendamentoService {
                 throw new RuntimeException("O novo horário escolhido já está ocupado");
             }
 
-            agendamentoOriginal.setHora_inicial(novoInicio);
-            agendamentoOriginal.setHora_final(novoFinal);
+            agendamentoOriginal.setHoraInicial(novoInicio);
+            agendamentoOriginal.setHoraFinal(novoFinal);
         }
 
         if (data.idServico() != null) {

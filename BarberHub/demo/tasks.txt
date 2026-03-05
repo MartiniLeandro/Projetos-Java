@@ -1,4 +1,3 @@
-Controllers
 Testes unitários
 Testes de integração
 Swagger

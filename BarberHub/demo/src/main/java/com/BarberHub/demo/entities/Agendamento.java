@@ -43,10 +43,12 @@ public class Agendamento {
     private Servico servico;
 
     @NotNull
-    private LocalDateTime hora_inicial;
+    @Column(name = "hora_inicial")
+    private LocalDateTime horaInicial;
 
     @NotNull
-    private LocalDateTime hora_final;
+    @Column(name = "hora_Final")
+    private LocalDateTime horaFinal;
 
     @NotNull
     @Enumerated(EnumType.STRING)

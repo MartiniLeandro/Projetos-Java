@@ -25,8 +25,8 @@ public record AgendamentoResponseDTO(
                 new BarbeiroNomeDTO(agendamento.getBarbeiro()),
                 new BarbeariaNomeDTO(agendamento.getBarbearia()),
                 new ServicoNomeDTO(agendamento.getServico()),
-                agendamento.getHora_inicial(),
-                agendamento.getHora_final(),
+                agendamento.getHoraInicial(),
+                agendamento.getHoraInicial(),
                 agendamento.getStatus()
         );
     }

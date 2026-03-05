@@ -26,10 +26,10 @@ public class ServicoController {
         return ResponseEntity.ok().body(servicoService.findAllServicos(token));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping({"/{idBarbearia}/{id}", "/{id}"})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ServicoResponseDTO> findServicoById(@PathVariable Long id, @RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok().body(servicoService.findServicoById(id,token));
+    public ResponseEntity<ServicoResponseDTO> findServicoById(@PathVariable Long id, @RequestHeader("Authorization") String token, @PathVariable(required = false) Long idBarbearia) {
+        return ResponseEntity.ok().body(servicoService.findServicoById(id,token,idBarbearia));
     }
 
     @GetMapping("/{idBarbearia}")
