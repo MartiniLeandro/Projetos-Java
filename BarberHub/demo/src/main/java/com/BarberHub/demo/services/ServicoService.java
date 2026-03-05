@@ -41,8 +41,8 @@ public class ServicoService {
 
     //QUALQUER ROLE
     public ServicoResponseDTO findServicoById(Long id, String token, Long barbeariaId){
-        Servico servico = servicoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe serviço com este ID"));
         User user = userService.findUserByToken(token);
+        Servico servico = servicoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe serviço com este ID"));
         if(user.getRole() == RoleUser.CLIENTE || user.getRole() == RoleUser.BARBEIRO){ //verificar outra maneira de fazer essa validação sem dois IFs
             Barbearia barbearia = barbeariaRepository.findById(barbeariaId).orElseThrow(() -> new NotFoundException("Não existe barbearia com este ID"));
             if(!barbearia.getServicos().contains(servico)){

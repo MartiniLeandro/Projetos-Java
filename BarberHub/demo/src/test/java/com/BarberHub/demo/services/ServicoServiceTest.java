@@ -20,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -66,7 +67,11 @@ public class ServicoServiceTest {
 
     @Test
     void testFindServicoById(){
-        when(userService.findUserByToken(anyString())).thenReturn(admin);
-        when(servicoRepository.findById(1L)).thenReturn(Optional.of(s1));
+        when(userService.findUserByToken(anyString())).thenReturn(u1);
+        when(servicoRepository.findById(anyLong())).thenReturn(Optional.of(s1));
+        ServicoResponseDTO servico = servicoService.findServicoById(1L,"fake-token",1L);
+
+        Assertions.assertNotNull(servico);
+        Assertions.assertEquals("servico1",s1.getNome());
     }
 }
