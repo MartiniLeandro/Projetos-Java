@@ -1,11 +1,14 @@
 package com.BarberHub.demo.services;
 
 import com.BarberHub.demo.entities.*;
+import com.BarberHub.demo.entities.DTOS.agendamento.AgendamentoResponseDTO;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import com.BarberHub.demo.entities.ENUMS.StatusCorte;
 import com.BarberHub.demo.entities.ENUMS.StatusUsers;
 import com.BarberHub.demo.repositories.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,6 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AgendamentoServiceTest{
@@ -100,6 +108,62 @@ public class AgendamentoServiceTest{
         LocalDateTime horarioInicial2 = LocalDateTime.of(2026,3,10,15,30);
         agendamento1 = Agendamento.builder().id(1L).cliente(cliente1).barbeiro(barbeiro1).barbearia(barbearia1).servico(servico1).horaInicial(horarioInicial1).horaFinal(horarioInicial1.plusMinutes(30)).status(StatusCorte.AGENDADO).build();
         agendamento2 = Agendamento.builder().id(2L).cliente(cliente2).barbeiro(barbeiro2).barbearia(barbearia2).servico(servico2).horaInicial(horarioInicial2).horaFinal(horarioInicial1.plusMinutes(30)).status(StatusCorte.AGENDADO).build();
+    }
+
+    @Test
+    void testFindAllAgendamentos(){
+        when(userService.findUserByToken(anyString())).thenReturn(admin);
+        when(agendamentoRepository.findAll()).thenReturn(List.of(agendamento1, agendamento2));
+        List<AgendamentoResponseDTO> agendamentos = agendamentoService.findAllAgendamentos("fake-token");
+
+        Assertions.assertNotNull(agendamentos);
+        Assertions.assertEquals(2, agendamentos.size());
+    }
+
+    @Test
+    void testFindAllAgendamentosByBarbearia() {
+        userBarbearia1.setBarbearia(barbearia1);
+        when(userService.findUserByToken(anyString())).thenReturn(userBarbearia1);
+        when(agendamentoRepository.findAllByBarbearia(any(Barbearia.class))).thenReturn(List.of(agendamento1, agendamento2));
+        List<AgendamentoResponseDTO> agendamentos =  agendamentoService.findAllAgendamentosByBarbearia("fake-token");
+
+        Assertions.assertNotNull(agendamentos);
+        Assertions.assertEquals(2, agendamentos.size());
+    }
+
+    @Test
+    void testFindAllAgendamentosByBarbeiro1(){
+        userBarbeiro1.setBarbeiro(barbeiro1);
+        when(userService.findUserByToken(anyString())).thenReturn(userBarbeiro1);
+        when(agendamentoRepository.findAllByBarbeiro(any(Barbeiro.class))).thenReturn(List.of(agendamento1));
+        List<AgendamentoResponseDTO> agendamentos = agendamentoService.findAllAgendamentosByBarbeiro("fake-Token",1L);
+
+        Assertions.assertNotNull(agendamentos);
+        Assertions.assertEquals(1, agendamentos.size());
+    }
+
+    @Test
+    void testFindAllAgendamentosByBarbeiro2(){
+        userBarbearia1.setBarbearia(barbearia1);
+        barbearia1.setBarbeiros(List.of(barbeiro1));
+        when(userService.findUserByToken(anyString())).thenReturn(userBarbearia1);
+        when(barbeiroRepository.findById(anyLong())).thenReturn(Optional.of(barbeiro1));
+        when(agendamentoRepository.findAllByBarbeiro(any(Barbeiro.class))).thenReturn(List.of(agendamento1));
+        List<AgendamentoResponseDTO> agendamentos = agendamentoService.findAllAgendamentosByBarbeiro("fake-Token",1L);
+
+        Assertions.assertNotNull(agendamentos);
+        Assertions.assertEquals(1, agendamentos.size());
+    }
+
+    @Test
+    void testFindAllAgendamentosByCliente(){
+        userCliente1.setCliente(cliente1);
+        when(userService.findUserByToken(anyString())).thenReturn(userCliente1);
+        when(agendamentoRepository.findAllByCliente(any(Cliente.class))).thenReturn(List.of(agendamento1,agendamento2));
+        List<AgendamentoResponseDTO> agendamentos = agendamentoService.findAllAgendamentosByCliente("fake-token");
+
+        Assertions.assertNotNull(agendamentos);
+        Assertions.assertEquals(2, agendamentos.size());
     }
 
 }
