@@ -20,25 +20,25 @@ public class ClienteController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ClienteResponseDTO>> getAllClientes(@RequestHeader("Authorization") String token){
         return ResponseEntity.ok().body(clienteService.findAllClientes(token));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ClienteResponseDTO> getClienteById(@PathVariable Long id, @RequestHeader("Authorization") String token){
         return ResponseEntity.ok().body(clienteService.findClientesById(id, token));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','CLIENTE')")
+    @PreAuthorize("hasAnyRole('ADMIN','CLIENTE')")
     public ResponseEntity<ClienteResponseDTO> updateCliente(@RequestBody ClienteRequestDTO clienteRequestDTO, @PathVariable Long id, @RequestHeader("Authorization") String token){
         return ResponseEntity.ok().body(clienteService.updateCliente(id,clienteRequestDTO, token));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteCliente(@PathVariable Long id, @RequestHeader("Authorization") String token){
         clienteService.deleteCliente(id, token);
         return ResponseEntity.noContent().build();

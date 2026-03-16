@@ -22,25 +22,25 @@ public class AgendamentoController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<AgendamentoResponseDTO>> findAllAgendamentos(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok().body(agendamentoService.findAllAgendamentos(token));
     }
 
     @GetMapping("/barbearia")
-    @PreAuthorize("hasAnyAuthority('BARBEARIA','ADMIN')")
+    @PreAuthorize("hasAnyRole('BARBEARIA','ADMIN')")
     public ResponseEntity<List<AgendamentoResponseDTO>> findAllAgendamentosByBarbearia(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok().body(agendamentoService.findAllAgendamentosByBarbearia(token));
     }
 
     @GetMapping("/barbeiro/{idBarbeiro}")
-    @PreAuthorize("hasAnyAuthority('BARBEIRO',''BARBEARIA','ADMIN')")
+    @PreAuthorize("hasAnyRole('BARBEIRO',''BARBEARIA','ADMIN')")
     public ResponseEntity<List<AgendamentoResponseDTO>> findAllAgendamentosByBarbeiro(@PathVariable Long idBarbeiro, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok().body(agendamentoService.findAllAgendamentosByBarbeiro(token,idBarbeiro));
     }
 
     @GetMapping("/cliente")
-    @PreAuthorize("hasAnyAuthority('CLIENTE','ADMIN')")
+    @PreAuthorize("hasAnyRole('CLIENTE','ADMIN')")
     public ResponseEntity<List<AgendamentoResponseDTO>> findAllAgendamentosByCliente(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok().body(agendamentoService.findAllAgendamentosByCliente(token));
     }
@@ -52,7 +52,7 @@ public class AgendamentoController {
     }
 
     @GetMapping("/date/{idBarbearia}")
-    @PreAuthorize("hasAnyAuthority('BARBEIRO','BARBEARIA','ADMIN')")
+    @PreAuthorize("hasAnyRole('BARBEIRO','BARBEARIA','ADMIN')")
     public ResponseEntity<List<AgendamentoResponseDTO>>  findAllAgendamentosByDate(@PathVariable Long idBarbearia, LocalDate date, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok().body(agendamentoService.findAllAgendamentosByDate(idBarbearia,date,token));
     }
@@ -70,7 +70,7 @@ public class AgendamentoController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('BARBEARIA','BARBEIRO','ADMIN')")
+    @PreAuthorize("hasAnyRole('BARBEARIA','BARBEIRO','ADMIN')")
     public ResponseEntity<AgendamentoResponseDTO> updateAgendamento(@PathVariable Long id, @RequestBody AgendamentoRequestDTO agendamentoRequestDTO, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok().body(agendamentoService.updateAgendamento(id,agendamentoRequestDTO,token));
     }

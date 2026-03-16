@@ -20,7 +20,7 @@ public class BarbeiroController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<BarbeiroResponseDTO>> getAllBarbeiros(@RequestHeader("Authorization") String token){
         return ResponseEntity.ok().body(barbeiroService.findAllBarbeiros(token));
     }
@@ -38,13 +38,13 @@ public class BarbeiroController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','BARBEIRO')")
+    @PreAuthorize("hasAnyRole('ADMIN','BARBEIRO')")
     public ResponseEntity<BarbeiroResponseDTO> updateBarbeiro(@PathVariable Long id, @RequestHeader("Authorization") String token, BarbeiroRequestDTO barbeiroRequestDTO){
         return ResponseEntity.ok().body(barbeiroService.updateBarbeiro(id,barbeiroRequestDTO,token));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteBarbeiro(@PathVariable Long id, @RequestHeader("Authorization") String token){
         barbeiroService.deleteBarbeiro(id, token);
         return ResponseEntity.noContent().build();

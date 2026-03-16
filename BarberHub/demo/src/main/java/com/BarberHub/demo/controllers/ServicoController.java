@@ -21,7 +21,7 @@ public class ServicoController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ServicoResponseDTO>> findAllServicos(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok().body(servicoService.findAllServicos(token));
     }
@@ -39,19 +39,20 @@ public class ServicoController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('BARBEARIA')")
+    @PreAuthorize("hasRole('BARBEARIA')")
     public ResponseEntity<ServicoResponseDTO> createServico(@RequestBody ServicoRequestDTO servico, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok().body(servicoService.createServico(servico,token));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('BARBEARIA')")
+    @PreAuthorize("hasRole('BARBEARIA')")
     public ResponseEntity<ServicoResponseDTO> updateService(@PathVariable Long id, @RequestBody ServicoRequestDTO servico, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok().body(servicoService.updateServico(id, servico,token));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void>  deleteService(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+    @PreAuthorize("hasRole('BARBEARIA')")
+    public ResponseEntity<Void> deleteService(@PathVariable Long id, @RequestHeader("Authorization") String token) {
         servicoService.deleteServico(id, token);
         return ResponseEntity.noContent().build();
     }

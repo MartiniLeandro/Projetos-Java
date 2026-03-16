@@ -20,31 +20,31 @@ public class BarbeariaController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('CLIENTE','BARBEIRO','ADMIN')")
+    @PreAuthorize("hasAnyRole('CLIENTE','BARBEIRO','ADMIN')")
     public ResponseEntity<List<BarbeariaResponseDTO>> findAllBarbearias(@RequestHeader("Authorization") String token){
         return ResponseEntity.ok().body(barbeariaService.findAllBarbearias(token));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('CLIENTE','BARBEIRO','ADMIN')")
+    @PreAuthorize("hasAnyRole('CLIENTE','BARBEIRO','ADMIN')")
     public ResponseEntity<BarbeariaResponseDTO> findBarbeariaById(@PathVariable Long id, @RequestHeader("Authorization") String token){
         return ResponseEntity.ok().body(barbeariaService.findBarbeariaById(id,token));
     }
 
     @GetMapping("/nome")
-    @PreAuthorize("hasAnyAuthority('CLIENTE','BARBEIRO','ADMIN')")
+    @PreAuthorize("hasAnyRole('CLIENTE','BARBEIRO','ADMIN')")
     public ResponseEntity<List<BarbeariaResponseDTO>> findBarbeariaByNome(@RequestParam String nome, @RequestHeader("Authorization") String token){
         return ResponseEntity.ok().body(barbeariaService.findBarbeariasByNome(nome,token));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('BARBEARIA')")
+    @PreAuthorize("hasRole('BARBEARIA')")
     public ResponseEntity<BarbeariaResponseDTO> updateBarbearia(@PathVariable Long id, @RequestBody BarbeariaRequestDTO barbeariaRequestDTO, @RequestHeader("Authorization") String token){
         return ResponseEntity.ok().body(barbeariaService.updateBarbearia(id,barbeariaRequestDTO,token));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('BARBEARIA','ADMIN')")
+    @PreAuthorize("hasAnyRole('BARBEARIA','ADMIN')")
     public ResponseEntity<Void> deleteBarbearia(@PathVariable Long id, @RequestHeader("Authorization") String token){
         barbeariaService.deleteBarbeariaById(id,token);
         return ResponseEntity.noContent().build();

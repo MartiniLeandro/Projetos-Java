@@ -1,5 +1,6 @@
 package com.BarberHub.demo.entities.DTOS.user;
 
+import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaNomeDTO;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import lombok.Builder;
 
@@ -17,5 +18,6 @@ public record RegisterUserDTO(
         String complemento,
         String bairro,
         String cidade,
-        String uf) {
+        String uf,
+        BarbeariaNomeDTO barbeariaInfo) {
 }

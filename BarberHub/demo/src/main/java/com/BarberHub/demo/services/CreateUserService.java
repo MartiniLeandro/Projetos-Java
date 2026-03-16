@@ -3,6 +3,7 @@ package com.BarberHub.demo.services;
 import com.BarberHub.demo.entities.*;
 import com.BarberHub.demo.entities.DTOS.user.RegisterUserDTO;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
+import com.BarberHub.demo.entities.ENUMS.StatusUsers;
 import com.BarberHub.demo.exceptions.AlreadyExistsException;
 import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.BarbeariaRepository;
@@ -10,6 +11,7 @@ import com.BarberHub.demo.repositories.BarbeiroRepository;
 import com.BarberHub.demo.repositories.ClienteRepository;
 import com.BarberHub.demo.repositories.UserRepository;
 import com.BarberHub.demo.security.TokenService;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -55,6 +57,7 @@ public class CreateUserService {
         cliente.setNome(data.nome());
         cliente.setTelefone(data.telefone());
         cliente.setUser(user);
+        cliente.setStatus(StatusUsers.ATIVO);
         clienteRepository.save(cliente);
     }
 
@@ -68,19 +71,25 @@ public class CreateUserService {
         barbearia.setCnpj(data.cnpj());
         barbearia.setUser(user);
         barbearia.setEndereco(endereco);
+        barbearia.setStatus(StatusUsers.ATIVO);
         barbeariaRepository.save(barbearia);
     }
 
     @Transactional
-    public void createBarbeiro(RegisterUserDTO data, User user){
+    public void createBarbeiro(RegisterUserDTO data, User user){//configurar o register de barbeiro, em que a barbearia que deve criar
+        Barbearia barbearia = barbeariaRepository.findById(data.barbeariaInfo().id()).orElseThrow(() -> new NotFoundException("Não existe a barbearia com este ID"));
         Barbeiro barbeiro = new Barbeiro();
         barbeiro.setNome(data.nome());
         barbeiro.setTelefone(data.telefone());
         barbeiro.setUser(user);
+        barbeiro.setStatus(StatusUsers.ATIVO);
+        barbeiro.setBarbearia(barbearia);
         barbeiroRepository.save(barbeiro);
     }
 
-    public User findUserByToken(String token) {
+    public User findUserByToken(String authHeader) {
+        String token = authHeader.replace("Bearer ","");
+        if(token.isEmpty()) throw new JWTVerificationException("Token nulo");
         String email = tokenService.validateToken(token);
         return userRepository.findUserByEmail(email).orElseThrow(() -> new NotFoundException("Usuário não encontrado com este email"));
     }
