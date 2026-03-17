@@ -47,7 +47,7 @@ public class ClienteService {
         User user = userService.findUserByToken(token);
         if(user.getCliente() == null && user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não possui permissão para esta ação");
         Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe cliente com este id"));
-        if(!Objects.equals(user.getCliente().getId(), cliente.getId()) && user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não tem permissão para esta ação");
+        if(user.getCliente() != null && !Objects.equals(user.getCliente().getId(), cliente.getId()) && user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não tem permissão para esta ação");
         cliente.setNome(data.nome());
         cliente.setTelefone(data.telefone());
         cliente.setStatus(data.status());
@@ -60,10 +60,7 @@ public class ClienteService {
     public void deleteCliente(Long id, String token){
         User user = userService.findUserByToken(token);
         if(user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não possui permissão para esta ação");
-        try{
-            clienteRepository.deleteById(id);
-        }catch (NotFoundException e){
-            throw new NotFoundException("Não existe cliente com este ID");
-        }
+        if(!clienteRepository.existsById(id)) throw new NotFoundException("Não existe cliente com este ID");
+        clienteRepository.deleteById(id);
     }
 }

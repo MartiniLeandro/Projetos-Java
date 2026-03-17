@@ -26,7 +26,7 @@ public class Cliente {
     private String telefone;
 
     @NotNull
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 
