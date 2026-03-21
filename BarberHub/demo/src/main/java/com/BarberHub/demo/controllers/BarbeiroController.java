@@ -38,8 +38,8 @@ public class BarbeiroController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','BARBEIRO')")
-    public ResponseEntity<BarbeiroResponseDTO> updateBarbeiro(@PathVariable Long id, @RequestHeader("Authorization") String token, BarbeiroRequestDTO barbeiroRequestDTO){
+    @PreAuthorize("hasRole('BARBEIRO')")
+    public ResponseEntity<BarbeiroResponseDTO> updateBarbeiro(@PathVariable Long id, @RequestHeader("Authorization") String token, @RequestBody BarbeiroRequestDTO barbeiroRequestDTO){
         return ResponseEntity.ok().body(barbeiroService.updateBarbeiro(id,barbeiroRequestDTO,token));
     }
 

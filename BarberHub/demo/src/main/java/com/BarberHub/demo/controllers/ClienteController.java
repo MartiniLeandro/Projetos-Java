@@ -32,7 +32,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','CLIENTE')")
+    @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<ClienteResponseDTO> updateCliente(@RequestBody ClienteRequestDTO clienteRequestDTO, @PathVariable Long id, @RequestHeader("Authorization") String token){
         return ResponseEntity.ok().body(clienteService.updateCliente(id,clienteRequestDTO, token));
     }
