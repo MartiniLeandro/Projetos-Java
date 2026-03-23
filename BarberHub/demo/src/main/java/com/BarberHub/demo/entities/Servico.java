@@ -26,7 +26,7 @@ public class Servico {
     @NotBlank(message = "descricao cannot be null")
     private String descricao;
 
-    @NotBlank(message = "preco cannot be null")
+    @NotNull(message = "preco cannot be null")
     private Double preco;
 
     @NotNull

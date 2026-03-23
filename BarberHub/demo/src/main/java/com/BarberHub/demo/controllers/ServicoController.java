@@ -26,7 +26,7 @@ public class ServicoController {
         return ResponseEntity.ok().body(servicoService.findAllServicos(token));
     }
 
-    @GetMapping({"/{idBarbearia}/{id}", "/{id}"})
+    @GetMapping({"/servico/{idBarbearia}/{id}", "/servico/{id}"})
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ServicoResponseDTO> findServicoById(@PathVariable Long id, @RequestHeader("Authorization") String token, @PathVariable(required = false) Long idBarbearia) {
         return ResponseEntity.ok().body(servicoService.findServicoById(id,token,idBarbearia));
@@ -34,8 +34,8 @@ public class ServicoController {
 
     @GetMapping("/{idBarbearia}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<ServicoResponseDTO>> findAllServicosByBarbearia(@PathVariable Long id, @RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok().body(servicoService.findAllServicosByBarbeariaId(id,token));
+    public ResponseEntity<List<ServicoResponseDTO>> findAllServicosByBarbearia(@PathVariable Long idBarbearia, @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok().body(servicoService.findAllServicosByBarbeariaId(idBarbearia,token));
     }
 
     @PostMapping
@@ -48,8 +48,8 @@ public class ServicoController {
     @PreAuthorize("hasRole('BARBEARIA')")
     public ResponseEntity<ServicoResponseDTO> updateService(@PathVariable Long id, @RequestBody ServicoRequestDTO servico, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok().body(servicoService.updateServico(id, servico,token));
-    }
 
+    }
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('BARBEARIA')")
     public ResponseEntity<Void> deleteService(@PathVariable Long id, @RequestHeader("Authorization") String token) {

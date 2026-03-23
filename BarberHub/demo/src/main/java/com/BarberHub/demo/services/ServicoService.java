@@ -43,7 +43,8 @@ public class ServicoService {
     public ServicoResponseDTO findServicoById(Long id, String token, Long barbeariaId){
         User user = userService.findUserByToken(token);
         Servico servico = servicoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe serviço com este ID"));
-        if(user.getRole() == RoleUser.CLIENTE || user.getRole() == RoleUser.BARBEIRO){ //verificar outra maneira de fazer essa validação sem dois IFs
+        if(barbeariaId == null && user.getRole() != RoleUser.BARBEARIA) throw new NotFoundException("É necessário o ID da Barbearia");
+        if(user.getRole() == RoleUser.CLIENTE || user.getRole() == RoleUser.BARBEIRO || user.getRole() == RoleUser.ADMIN){ //verificar outra maneira de fazer essa validação sem dois IFs
             Barbearia barbearia = barbeariaRepository.findById(barbeariaId).orElseThrow(() -> new NotFoundException("Não existe barbearia com este ID"));
             if(!barbearia.getServicos().contains(servico)){
                 throw new IsNotYoursException("Este serviço não é desta barbearia!!");
@@ -55,7 +56,7 @@ public class ServicoService {
     //QUALQUER ROLE
     public List<ServicoResponseDTO> findAllServicosByBarbeariaId(Long barbeariaId,  String token){
         User user = userService.findUserByToken(token);
-        if(user.getRole() == RoleUser.BARBEARIA && !Objects.equals(user.getId(), barbeariaId)){
+        if(user.getRole() == RoleUser.BARBEARIA && !Objects.equals(user.getBarbearia().getId(), barbeariaId)){
             throw new IsNotYoursException("Esta não é a sua barbearia");
         }
         Barbearia barbearia = barbeariaRepository.findById(barbeariaId).orElseThrow(() -> new NotFoundException("Não existe barbearia com este ID"));
@@ -100,6 +101,7 @@ public class ServicoService {
         Servico servico = servicoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe servico com este ID"));
         if(user.getBarbearia() == null) throw new NotFoundException("Você não possui uma barbearia");
         if(!user.getBarbearia().getServicos().contains(servico)) throw new IsNotYoursException("Este servico não pertence a você");
+        user.getBarbearia().getServicos().remove(servico);
         servicoRepository.delete(servico);
     }
 }
