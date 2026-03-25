@@ -50,7 +50,7 @@ public class AgendamentoService {
     //BARBEARIA
     public List<AgendamentoResponseDTO> findAllAgendamentosByBarbearia(String token){
         User user = userService.findUserByToken(token);
-        if(user.getBarbearia() == null) throw new IsNotYoursException("Você não possui permissão para esta ação");
+        if(user.getBarbearia() == null && user.getRole() != RoleUser.ADMIN) throw new IsNotYoursException("Você não possui permissão para esta ação");
         List<Agendamento> agendamentos = agendamentoRepository.findAllByBarbearia(user.getBarbearia());
         return  agendamentos.stream().map(AgendamentoResponseDTO::new).toList();
     }
@@ -71,7 +71,7 @@ public class AgendamentoService {
         throw new IsNotYoursException("Acesso negado");
     }
 
-    //CLIENTE
+    //CLIENTE (falta colocar permissão para ADMIN)
     public List<AgendamentoResponseDTO> findAllAgendamentosByCliente(String token){
         User user = userService.findUserByToken(token);
         if(user.getCliente() == null) throw new IsNotYoursException("Você não possui permissão para esta ação");

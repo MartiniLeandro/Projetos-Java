@@ -33,9 +33,9 @@ public class AgendamentoController {
         return ResponseEntity.ok().body(agendamentoService.findAllAgendamentosByBarbearia(token));
     }
 
-    @GetMapping("/barbeiro/{idBarbeiro}")
-    @PreAuthorize("hasAnyRole('BARBEIRO',''BARBEARIA','ADMIN')")
-    public ResponseEntity<List<AgendamentoResponseDTO>> findAllAgendamentosByBarbeiro(@PathVariable Long idBarbeiro, @RequestHeader("Authorization") String token) {
+    @GetMapping({"/barbeiro/{idBarbeiro}", "/barbeiro"})
+    @PreAuthorize("hasAnyRole('BARBEIRO','BARBEARIA')")
+    public ResponseEntity<List<AgendamentoResponseDTO>> findAllAgendamentosByBarbeiro(@PathVariable(required = false) Long idBarbeiro, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok().body(agendamentoService.findAllAgendamentosByBarbeiro(token,idBarbeiro));
     }
 
