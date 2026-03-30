@@ -53,13 +53,13 @@ public class AgendamentoController {
 
     @GetMapping("/date/{idBarbearia}")
     @PreAuthorize("hasAnyRole('BARBEIRO','BARBEARIA','ADMIN')")
-    public ResponseEntity<List<AgendamentoResponseDTO>>  findAllAgendamentosByDate(@PathVariable Long idBarbearia, LocalDate date, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<AgendamentoResponseDTO>>  findAllAgendamentosByDate(@PathVariable Long idBarbearia, @RequestParam LocalDate date, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok().body(agendamentoService.findAllAgendamentosByDate(idBarbearia,date,token));
     }
 
     @GetMapping("/horarios/{idBarbearia}/{idBarbeiro}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<LocalTime>> findAllHorariosLivres(@PathVariable Long idBarbearia, @PathVariable Long idBarbeiro, LocalDate date, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<LocalTime>> findAllHorariosLivres(@PathVariable Long idBarbearia, @PathVariable Long idBarbeiro, @RequestParam LocalDate date, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok().body(agendamentoService.findHorariosLivres(idBarbearia,idBarbeiro,date,token));
     }
 

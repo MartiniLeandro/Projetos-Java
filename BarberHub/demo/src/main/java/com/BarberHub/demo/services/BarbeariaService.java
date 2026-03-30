@@ -49,7 +49,7 @@ public class BarbeariaService {
         return barbearias.stream().map(BarbeariaResponseDTO::new).toList();
     }
 
-    //BARBEARIA
+    //BARBEARIA (arrumar questão do DTO, para não ter que passar as entidades por completo)
     @Transactional
     public BarbeariaResponseDTO updateBarbearia(Long id, BarbeariaRequestDTO data, String token){
         User user = userService.findUserByToken(token);

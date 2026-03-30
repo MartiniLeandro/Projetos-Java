@@ -95,7 +95,7 @@ public class AgendamentoService {
         return new AgendamentoResponseDTO(agendamento);
     }
 
-    //BARBEARIA e BARBEIRO
+    //BARBEARIA e BARBEIRO (não precisar obrigatoriamente passar o ID)
     public List<AgendamentoResponseDTO> findAllAgendamentosByDate(Long idBarbearia, LocalDate data, String token){
         User user = userService.findUserByToken(token);
         if(user.getRole() != RoleUser.BARBEARIA && user.getRole() != RoleUser.BARBEIRO) throw new InvalidRoleException("Você não tem permissão para esta ação");
