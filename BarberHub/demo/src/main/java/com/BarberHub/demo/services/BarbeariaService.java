@@ -3,27 +3,36 @@ package com.BarberHub.demo.services;
 import com.BarberHub.demo.entities.Barbearia;
 import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaResponseDTO;
 import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaRequestDTO;
+import com.BarberHub.demo.entities.DataHoraBarbearia;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
+import com.BarberHub.demo.entities.Endereco;
 import com.BarberHub.demo.entities.User;
 import com.BarberHub.demo.exceptions.AlreadyExistsException;
 import com.BarberHub.demo.exceptions.InvalidRoleException;
 import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.BarbeariaRepository;
+import com.BarberHub.demo.repositories.BarbeiroRepository;
+import com.BarberHub.demo.repositories.ServicoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class BarbeariaService {
 
     private final BarbeariaRepository barbeariaRepository;
     private final CreateUserService userService;
+    private final BarbeiroRepository barbeiroRepository;
+    private final ServicoRepository servicoRepository;
 
-    public BarbeariaService(BarbeariaRepository barbeariaRepository, CreateUserService userService) {
+    public BarbeariaService(BarbeariaRepository barbeariaRepository, CreateUserService userService, BarbeiroRepository barbeiroRepository, ServicoRepository servicoRepository) {
         this.barbeariaRepository = barbeariaRepository;
         this.userService = userService;
+        this.barbeiroRepository = barbeiroRepository;
+        this.servicoRepository = servicoRepository;
     }
 
     //CLIENTE, BARBEIRO
@@ -49,7 +58,7 @@ public class BarbeariaService {
         return barbearias.stream().map(BarbeariaResponseDTO::new).toList();
     }
 
-    //BARBEARIA (arrumar questão do DTO, para não ter que passar as entidades por completo)
+    //BARBEARIA
     @Transactional
     public BarbeariaResponseDTO updateBarbearia(Long id, BarbeariaRequestDTO data, String token){
         User user = userService.findUserByToken(token);
@@ -60,10 +69,18 @@ public class BarbeariaService {
         if(barbeariaRepository.existsByCnpj(data.cnpj()) && !barbearia.getCnpj().equals(data.cnpj())) throw new AlreadyExistsException("Este CNPJ já está cadastrado");
         barbearia.setCnpj(data.cnpj());
         barbearia.setTelefone(data.telefone());
-        barbearia.setEndereco(data.endereco());
-        barbearia.setBarbeiros(data.barbeiros());
-        barbearia.setServicos(data.servicos());
-        barbearia.setHorarios(data.horarios());
+        if(data.endereco() != null){
+            barbearia.setEndereco(new Endereco(data.endereco()));
+        }
+        if(data.barbeiros() != null){
+            barbearia.setBarbeiros(data.barbeiros().stream().map(barbeiro -> barbeiroRepository.getReferenceById(barbeiro.id())).collect(Collectors.toList()));
+        }
+        if(data.servicos() != null){
+            barbearia.setServicos(data.servicos().stream().map(servico -> servicoRepository.getReferenceById(servico.id())).collect(Collectors.toList()));
+        }
+        if(data.horarios() != null){
+            barbearia.setHorarios(data.horarios().stream().map(DataHoraBarbearia::new).collect(Collectors.toList()));
+        }
         barbeariaRepository.save(barbearia);
         return new BarbeariaResponseDTO(barbearia);
     }

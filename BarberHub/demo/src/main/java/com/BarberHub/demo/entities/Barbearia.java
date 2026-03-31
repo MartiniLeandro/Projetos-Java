@@ -42,7 +42,7 @@ public class Barbearia {
     @CollectionTable(name = "barbearia_imagens", joinColumns = @JoinColumn(name = "barbearia_id"))
     private List<String> urlImagens;
 
-    @OneToMany(mappedBy = "barbearia", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "barbearia")
     private List<Barbeiro> barbeiros;
 
     @OneToMany(mappedBy = "barbearia", cascade = CascadeType.ALL)
