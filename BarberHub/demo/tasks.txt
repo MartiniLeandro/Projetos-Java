@@ -1,4 +1,4 @@
 Testes unitários
 Testes de integração
-Swagger
 Front-end com react
+consertar os services
