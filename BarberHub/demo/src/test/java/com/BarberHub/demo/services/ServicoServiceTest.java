@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -136,6 +137,7 @@ public class ServicoServiceTest {
     @Test
     void testFindAllServicosByBarbeariaIdFailed1(){
         u1.setId(2L);
+        b1.setId(2L);
         when(userService.findUserByToken(anyString())).thenReturn(u1);
         IsNotYoursException exception = Assertions.assertThrows(IsNotYoursException.class, () -> servicoService.findAllServicosByBarbeariaId(1L, "fake-token"));
 
@@ -221,7 +223,10 @@ public class ServicoServiceTest {
 
     @Test
     void testDeleteServico(){
-        b1.setServicos(List.of(s1,s2));
+        List<Servico> servicos = new ArrayList<>();
+        servicos.add(s1);
+        servicos.add(s2);
+        b1.setServicos(servicos);
         when(userService.findUserByToken(anyString())).thenReturn(u1);
         when(servicoRepository.findById(anyLong())).thenReturn(Optional.of(s1));
         doNothing().when(servicoRepository).delete(any(Servico.class));

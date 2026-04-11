@@ -143,6 +143,7 @@ public class ClienteServiceTest {
     @Test
     void testDeleteCliente(){
         when(userService.findUserByToken(anyString())).thenReturn(admin);
+        when(clienteRepository.existsById(1L)).thenReturn(true);
         doNothing().when(clienteRepository).deleteById(anyLong());
         clienteService.deleteCliente(1L, "fake-token");
 
@@ -160,10 +161,11 @@ public class ClienteServiceTest {
     @Test
     void testDeleteClienteFailed2(){
         when(userService.findUserByToken(anyString())).thenReturn(admin);
-        doThrow(NotFoundException.class).when(clienteRepository).deleteById(anyLong());
-        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> clienteService.deleteCliente(1L, "fake-token"));
-
+        when(clienteRepository.existsById(1L)).thenReturn(false);
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
+            clienteService.deleteCliente(1L, "fake-token");
+        });
         Assertions.assertEquals("Não existe cliente com este ID", exception.getMessage());
-        verify(clienteRepository, times(1)).deleteById(1L);
+        verify(clienteRepository, never()).deleteById(anyLong());
     }
 }
