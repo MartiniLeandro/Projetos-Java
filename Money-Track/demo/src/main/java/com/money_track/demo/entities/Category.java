@@ -3,9 +3,15 @@ package com.money_track.demo.entities;
 import com.money_track.demo.entities.enums.TypeValue;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.*;
 
 import java.util.Objects;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "categories")
 public class Category {
@@ -20,45 +26,4 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private TypeValue typeValue;
 
-    public Category(){}
-    public Category(String name, TypeValue typeValue) {
-        this.name = name;
-        this.typeValue = typeValue;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id){
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public TypeValue getTypeValue() {
-        return typeValue;
-    }
-
-    public void setTypeValue(TypeValue typeValue) {
-        this.typeValue = typeValue;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Category category = (Category) o;
-        return Objects.equals(id, category.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
 }

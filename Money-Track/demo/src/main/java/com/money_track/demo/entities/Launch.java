@@ -3,10 +3,16 @@ package com.money_track.demo.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "launches")
 public class Launch {
@@ -32,14 +38,6 @@ public class Launch {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Launch(){}
-    public Launch(String description, Category category, Double value, LocalDate date, User user) {
-        this.description = description;
-        this.category = category;
-        this.value = value;
-        this.date = date;
-        this.user = user;
-    }
     public Launch(String description, Category category, Double value, LocalDate date) {
         this.description = description;
         this.category = category;
@@ -47,63 +45,4 @@ public class Launch {
         this.date = date;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id){
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public Double getValue() {
-        return value;
-    }
-
-    public void setValue(Double value) {
-        this.value = value;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Launch launch = (Launch) o;
-        return Objects.equals(id, launch.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
 }
