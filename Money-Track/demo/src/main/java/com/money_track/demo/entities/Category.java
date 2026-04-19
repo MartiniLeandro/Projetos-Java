@@ -1,5 +1,6 @@
 package com.money_track.demo.entities;
 
+import com.money_track.demo.entities.DTO.CategoryDTO;
 import com.money_track.demo.entities.enums.TypeValue;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -25,5 +26,10 @@ public class Category {
 
     @Enumerated(EnumType.STRING)
     private TypeValue typeValue;
+
+    public Category(CategoryDTO categoryDTO) {
+        this.name = categoryDTO.name();
+        this.typeValue = categoryDTO.typeValue();
+    }
 
 }

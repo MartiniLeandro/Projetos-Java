@@ -2,62 +2,57 @@ package com.money_track.demo.services;
 
 import com.money_track.demo.entities.DTO.UserDTO;
 import com.money_track.demo.entities.User;
+import com.money_track.demo.entities.enums.Roles;
 import com.money_track.demo.exceptions.AlreadyExistsException;
 import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.repositories.UserRepository;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import jakarta.transaction.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserDTO> findAllUsers(){
         List<User> allUsers = userRepository.findAll();
         return allUsers.stream().map(UserDTO::new).toList();
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     public UserDTO findUserById(Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("não existe User com este ID"));
         return new UserDTO(user);
     }
 
-    public UserDTO createUser(User user){
-        if(userRepository.existsByEmail(user.getEmail())) throw new AlreadyExistsException("Este email já está cadastrado");
-        if(userRepository.existsByCpf(user.getCpf())) throw new AlreadyExistsException("Este CPF já está cadastrado");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return new UserDTO(user);
-    }
-
-    public UserDTO updateUser(User user, Long id){
+    @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    public UserDTO updateUser(UserDTO user, Long id){
+        User userLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User updatedUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe user com este ID"));
-        updatedUser.setName(user.getName());
-        updatedUser.setCpf(user.getCpf());
-        if(userRepository.existsByEmail(user.getEmail()) && !updatedUser.getEmail().equals(user.getEmail())) throw new AlreadyExistsException("Este email já está cadastrado");
-        updatedUser.setEmail(user.getEmail());
-        updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        updatedUser.setLaunches(user.getLaunches());
+        if(!Objects.equals(userLogado.getEmail(), updatedUser.getEmail()) && userLogado.getRole() != Roles.ROLE_ADMIN) throw new RuntimeException("Você não tem permissão para realizar esta ação");
+        updatedUser.setName(user.name());
+        updatedUser.setCpf(user.cpf());
+        if(userRepository.existsByEmail(user.email()) && !updatedUser.getEmail().equals(user.email())) throw new AlreadyExistsException("Este email já está cadastrado");
+        updatedUser.setEmail(user.email());
 
-        userRepository.save(updatedUser);
-        return new UserDTO(updatedUser);
+        User savedUser = userRepository.save(updatedUser);
+        return new UserDTO(savedUser);
     }
 
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(Long id){
-        try{
-            userRepository.deleteById(id);
-        }catch (EmptyResultDataAccessException e){
-            throw new NotFoundException("Não existe user com este ID");
-        }
+        if(!userRepository.existsById(id)) throw new NotFoundException("Não existe user com este ID");
+        userRepository.deleteById(id);
     }
 }
