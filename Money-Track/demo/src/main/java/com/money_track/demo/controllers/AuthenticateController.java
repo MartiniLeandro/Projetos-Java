@@ -9,6 +9,7 @@ import com.money_track.demo.exceptions.AlreadyExistsException;
 import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.repositories.UserRepository;
 import com.money_track.demo.security.TokenService;
+import com.money_track.demo.services.CreateUserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,38 +25,21 @@ import java.util.Map;
 @RequestMapping("/authentication")
 public class AuthenticateController {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-    private final TokenService tokenService;
+    private final CreateUserService createUserService;
 
-    public AuthenticateController(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenService tokenService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.tokenService = tokenService;
+    public AuthenticateController(CreateUserService createUserService) {
+        this.createUserService = createUserService;
     }
 
-    @PostMapping("/login")
+
+    @PostMapping("/login") //jogar para o service
     public ResponseEntity<Map<String,String>> loginUser(@RequestBody @Valid LoginDTO loginDTO) {
-        if (!userRepository.existsByEmail(loginDTO.email()))
-            throw new NotFoundException("Este email não está cadastrado");
-        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password());
-        Authentication auth = authenticationManager.authenticate(usernamePassword);
-
-        String token = tokenService.generateToken((User) auth.getPrincipal());
-
-        return ResponseEntity.ok().body(Map.of("token", token));
+        return ResponseEntity.ok().body(createUserService.login(loginDTO));
     }
 
-    @PostMapping("/register")
+    @PostMapping("/register") //jogar para o service
     public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid RegisterDTO registerDTO){
-        if(userRepository.existsByEmail(registerDTO.email())) throw new AlreadyExistsException("Este email já está cadastrado");
-        if(userRepository.existsByCpf(registerDTO.cpf())) throw new AlreadyExistsException("Este CPF já está cadastrado");
-        String passwordEncoded = passwordEncoder.encode(registerDTO.password());
-        User newUser = new User(registerDTO.name(), registerDTO.cpf(),registerDTO.email(),passwordEncoded, Roles.ROLE_USER);
-        userRepository.save(newUser);
-        return ResponseEntity.ok().body(new UserDTO(newUser));
+        return ResponseEntity.ok().body(createUserService.register(registerDTO));
     }
 
 

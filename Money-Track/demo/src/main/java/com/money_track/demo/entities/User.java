@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -43,7 +44,7 @@ public class User implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Roles role;
+    private Roles role = Roles.ROLE_USER;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Launch> launches = new ArrayList<>();

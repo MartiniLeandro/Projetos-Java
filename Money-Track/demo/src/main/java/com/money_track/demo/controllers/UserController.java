@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/users")
+@RequestMapping("/admin/users") //melhor maneira de restringir, pois tem metodo que o User utiliza, nn só ADM
 public class UserController {
 
     private final UserService userService;
@@ -29,14 +29,9 @@ public class UserController {
         return ResponseEntity.ok().body(userService.findUserById(id));
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid User user){
-        return ResponseEntity.ok().body(userService.createUser(user));
-    }
-
     @PutMapping("/update/{id}")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid User user, @PathVariable @Valid Long id){
-        return ResponseEntity.ok().body(userService.updateUser(user,id));
+    public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid UserDTO data, @PathVariable @Valid Long id){
+        return ResponseEntity.ok().body(userService.updateUser(data,id));
     }
 
     @DeleteMapping("/delete/{id}")
