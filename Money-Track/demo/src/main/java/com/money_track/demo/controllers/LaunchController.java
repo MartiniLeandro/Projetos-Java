@@ -1,6 +1,7 @@
 package com.money_track.demo.controllers;
 
 import com.money_track.demo.entities.DTO.LaunchDTO;
+import com.money_track.demo.entities.DTO.LaunchRequestDTO;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.enums.TypeValue;
 import com.money_track.demo.services.LaunchService;
@@ -23,43 +24,43 @@ public class LaunchController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<LaunchDTO>> findAllLaunches(@RequestHeader("Authorization") String authHeader, @RequestParam Integer page, @RequestParam Integer size){
-        return ResponseEntity.ok().body(launchService.findAllLaunches(authHeader,page,size));
+    public ResponseEntity<Page<LaunchDTO>> findAllLaunches(@RequestParam Integer page, @RequestParam Integer size){
+        return ResponseEntity.ok().body(launchService.findAllLaunches(page,size));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LaunchDTO> findLaunchById(@PathVariable @Valid Long id,@RequestHeader("Authorization") String authHeader){
-        return ResponseEntity.ok().body(launchService.findLaunchById(authHeader,id));
+    public ResponseEntity<LaunchDTO> findLaunchById(@PathVariable @Valid Long id){
+        return ResponseEntity.ok().body(launchService.findLaunchById(id));
     }
 
     @GetMapping("/filterByCategory")
-    public ResponseEntity<List<LaunchDTO>> findByCategory(@RequestHeader("Authorization") String authHeader, @RequestParam String category){
-        return ResponseEntity.ok().body(launchService.filterLaunchByCategory(category,authHeader));
+    public ResponseEntity<List<LaunchDTO>> findByCategory(@RequestParam String category){
+        return ResponseEntity.ok().body(launchService.filterLaunchByCategory(category));
     }
 
     @GetMapping("/filterByDate")
-    public ResponseEntity<List<LaunchDTO>> findByDate(@RequestHeader("Authorization") String authHeader,@RequestParam LocalDate initialDate,@RequestParam LocalDate finalDate){
-        return ResponseEntity.ok().body(launchService.filterLaunchByDate(initialDate,finalDate, authHeader));
+    public ResponseEntity<List<LaunchDTO>> findByDate(@RequestParam LocalDate initialDate,@RequestParam LocalDate finalDate){
+        return ResponseEntity.ok().body(launchService.filterLaunchByDate(initialDate,finalDate));
     }
 
     @GetMapping("filterByTypeValue")
-    public ResponseEntity<List<LaunchDTO>> findByTypeValue(@RequestHeader("Authorization") String authHeader, @RequestParam TypeValue typeValue){
-        return ResponseEntity.ok().body(launchService.filterByTypeValue(authHeader,typeValue));
+    public ResponseEntity<List<LaunchDTO>> findByTypeValue(@RequestParam TypeValue typeValue){
+        return ResponseEntity.ok().body(launchService.filterByTypeValue(typeValue));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<LaunchDTO> createLaunch(@RequestBody @Valid Launch launch,@RequestHeader("Authorization") String authHeader){
-        return ResponseEntity.ok().body(launchService.createLaunch(launch,authHeader));
+    public ResponseEntity<LaunchDTO> createLaunch(@RequestBody @Valid LaunchRequestDTO launch){
+        return ResponseEntity.ok().body(launchService.createLaunch(launch));
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<LaunchDTO> updateLaunch(@RequestBody @Valid Launch launch, @PathVariable @Valid Long id,@RequestHeader("Authorization") String authHeader){
-        return ResponseEntity.ok().body(launchService.updateLaunch(id,launch,authHeader));
+    public ResponseEntity<LaunchDTO> updateLaunch(@RequestBody @Valid LaunchRequestDTO launch, @PathVariable @Valid Long id){
+        return ResponseEntity.ok().body(launchService.updateLaunch(id,launch));
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<Void> deleteLaunch(@PathVariable @Valid Long id,@RequestHeader("Authorization") String authHeader){
-        launchService.deleteLaunchById(id,authHeader);
+    public ResponseEntity<Void> deleteLaunch(@PathVariable @Valid Long id){
+        launchService.deleteLaunchById(id);
         return ResponseEntity.noContent().build();
     }
 

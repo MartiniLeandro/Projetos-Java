@@ -32,12 +32,12 @@ public class CategoryController {
     }
 
     @PostMapping("/admin/createCategory")
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody @Valid Category category){
+    public ResponseEntity<CategoryDTO> createCategory(@RequestBody @Valid CategoryDTO category){
         return ResponseEntity.ok().body(categoryService.createCategory(category));
     }
 
     @PutMapping("admin/updateCategory/{id}")
-    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody @Valid Category category, @PathVariable @Valid Long id){
+    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody @Valid CategoryDTO category, @PathVariable @Valid Long id){
         return ResponseEntity.ok().body(categoryService.updateCategory(category,id));
     }
 

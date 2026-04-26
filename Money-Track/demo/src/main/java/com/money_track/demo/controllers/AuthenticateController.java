@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/authentication")
 public class AuthenticateController {
@@ -32,12 +31,12 @@ public class AuthenticateController {
     }
 
 
-    @PostMapping("/login") //jogar para o service
+    @PostMapping("/login")
     public ResponseEntity<Map<String,String>> loginUser(@RequestBody @Valid LoginDTO loginDTO) {
         return ResponseEntity.ok().body(createUserService.login(loginDTO));
     }
 
-    @PostMapping("/register") //jogar para o service
+    @PostMapping("/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid RegisterDTO registerDTO){
         return ResponseEntity.ok().body(createUserService.register(registerDTO));
     }

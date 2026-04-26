@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/users") //melhor maneira de restringir, pois tem metodo que o User utiliza, nn só ADM
+@RequestMapping("/admin/users")
 public class UserController {
 
     private final UserService userService;

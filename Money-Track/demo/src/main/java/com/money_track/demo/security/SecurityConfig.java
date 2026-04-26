@@ -40,7 +40,6 @@ public class SecurityConfig {
                         auth.requestMatchers("/authentication/**").permitAll();
                         auth.requestMatchers("categories/**").authenticated();
                         auth.requestMatchers("user/launches").authenticated();
-                        auth.requestMatchers("/admin/**").hasRole("ADMIN");
                         auth.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityFilter,UsernamePasswordAuthenticationFilter.class)
