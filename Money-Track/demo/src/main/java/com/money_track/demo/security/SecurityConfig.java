@@ -3,6 +3,7 @@ package com.money_track.demo.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,12 +35,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(cors -> {})
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
                         auth.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll();
                         auth.requestMatchers("/authentication/**").permitAll();
-                        auth.requestMatchers("categories/**").authenticated();
-                        auth.requestMatchers("user/launches").authenticated();
                         auth.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityFilter,UsernamePasswordAuthenticationFilter.class)
@@ -51,20 +51,6 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource(){
-        CorsConfiguration cors = new CorsConfiguration();
-
-        cors.setAllowedOrigins(List.of("http://localhost:4200"));
-        cors.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH"));
-        cors.setAllowedHeaders(List.of("Authorization","Content-type"));
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", cors);
-
-        return source;
-
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
