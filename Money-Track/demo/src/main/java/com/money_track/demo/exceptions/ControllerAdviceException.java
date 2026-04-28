@@ -35,4 +35,10 @@ public class ControllerAdviceException {
         ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Negative Numbers",e.getMessage(),request.getRequestURI(), Instant.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> unauthorizedException(UnauthorizedException e,HttpServletRequest request){
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Login incorreto",e.getMessage(),request.getRequestURI(), Instant.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
 }

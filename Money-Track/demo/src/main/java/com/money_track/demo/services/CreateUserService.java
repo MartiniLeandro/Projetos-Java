@@ -6,10 +6,12 @@ import com.money_track.demo.entities.DTO.UserDTO;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.exceptions.AlreadyExistsException;
 import com.money_track.demo.exceptions.NotFoundException;
+import com.money_track.demo.exceptions.UnauthorizedException;
 import com.money_track.demo.repositories.UserRepository;
 import com.money_track.demo.security.TokenService;
 import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,12 +37,16 @@ public class CreateUserService {
     public Map<String, String> login(LoginDTO loginDTO ) {
         if (!userRepository.existsByEmail(loginDTO.email()))
             throw new NotFoundException("Este email não está cadastrado");
-        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password());
-        Authentication auth = authenticationManager.authenticate(usernamePassword);
+        try{
+            UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password());
+            Authentication auth = authenticationManager.authenticate(usernamePassword);
 
-        String token = tokenService.generateToken((User) auth.getPrincipal());
+            String token = tokenService.generateToken((User) auth.getPrincipal());
 
-        return Map.of("token", token);
+            return Map.of("token", token);
+        }catch (BadCredentialsException e){
+            throw new UnauthorizedException("Login incorreto");
+        }
     }
 
     @Transactional
