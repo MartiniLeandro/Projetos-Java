@@ -1,11 +1,13 @@
 package com.BarberHub.demo.services;
 
 import com.BarberHub.demo.entities.*;
+import com.BarberHub.demo.entities.DTOS.user.LoginUserDTO;
 import com.BarberHub.demo.entities.DTOS.user.RegisterUserDTO;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import com.BarberHub.demo.entities.ENUMS.StatusUsers;
 import com.BarberHub.demo.exceptions.AlreadyExistsException;
 import com.BarberHub.demo.exceptions.NotFoundException;
+import com.BarberHub.demo.exceptions.UnauthorizedException;
 import com.BarberHub.demo.repositories.BarbeariaRepository;
 import com.BarberHub.demo.repositories.BarbeiroRepository;
 import com.BarberHub.demo.repositories.ClienteRepository;
@@ -13,8 +15,14 @@ import com.BarberHub.demo.repositories.UserRepository;
 import com.BarberHub.demo.security.TokenService;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.transaction.Transactional;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 public class CreateUserService {
@@ -25,14 +33,16 @@ public class CreateUserService {
     private final BarbeariaRepository barbeariaRepository;
     private final BarbeiroRepository barbeiroRepository;
     private final TokenService tokenService;
+    private final AuthenticationManager authenticationManager;
 
-    public CreateUserService(UserRepository userRepository, ClienteRepository clienteRepository, PasswordEncoder passwordEncoder, BarbeariaRepository barbeariaRepository, BarbeiroRepository barbeiroRepository, TokenService tokenService) {
+    public CreateUserService(UserRepository userRepository, ClienteRepository clienteRepository, PasswordEncoder passwordEncoder, BarbeariaRepository barbeariaRepository, BarbeiroRepository barbeiroRepository, TokenService tokenService, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.clienteRepository = clienteRepository;
         this.passwordEncoder = passwordEncoder;
         this.barbeariaRepository = barbeariaRepository;
         this.barbeiroRepository = barbeiroRepository;
         this.tokenService = tokenService;
+        this.authenticationManager = authenticationManager;
     }
 
     @Transactional
@@ -92,5 +102,17 @@ public class CreateUserService {
         if(token.isEmpty()) throw new JWTVerificationException("Token nulo");
         String email = tokenService.validateToken(token);
         return userRepository.findUserByEmail(email).orElseThrow(() -> new NotFoundException("Usuário não encontrado com este email"));
+    }
+
+    public Map<String,String> loginUser(LoginUserDTO data){
+        if(!userRepository.existsByEmail(data.email())) throw new NotFoundException("Este email não está cadastrado");
+        try{
+            UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+            Authentication authentication = authenticationManager.authenticate(usernamePassword);
+            String token = tokenService.createToken((User) authentication.getPrincipal());
+            return Map.of("token",token);
+        }catch (BadCredentialsException exception){
+            throw new UnauthorizedException("Credenciais inválidas");
+        }
     }
 }

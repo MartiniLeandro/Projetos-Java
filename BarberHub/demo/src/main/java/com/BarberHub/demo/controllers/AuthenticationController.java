@@ -16,29 +16,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
 
     private final CreateUserService createUserService;
-    private final AuthenticationManager authenticationManager;
-    private final TokenService tokenService;
-    private final UserRepository userRepository;
 
-    public AuthenticationController(CreateUserService createUserService, AuthenticationManager authenticationManager, TokenService tokenService, UserRepository userRepository) {
+    public AuthenticationController(CreateUserService createUserService) {
         this.createUserService = createUserService;
-        this.authenticationManager = authenticationManager;
-        this.tokenService = tokenService;
-        this.userRepository = userRepository;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginUserDTO data){
-        if(!userRepository.existsByEmail(data.email())) throw new NotFoundException("Este email não está cadastrado");
-        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
-        Authentication authentication = authenticationManager.authenticate(usernamePassword);
-        String token = tokenService.createToken((User) authentication.getPrincipal());
-
+    public ResponseEntity<Map<String,String>> loginUser(@RequestBody LoginUserDTO data){
+        Map<String,String> token = createUserService.loginUser(data);
         return ResponseEntity.ok().body(token);
     }
 
