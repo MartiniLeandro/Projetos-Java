@@ -4,12 +4,14 @@ import com.money_track.demo.entities.DTO.LaunchDTO;
 import com.money_track.demo.entities.DTO.LaunchRequestDTO;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.enums.TypeValue;
+import com.money_track.demo.services.FinanceService;
 import com.money_track.demo.services.LaunchService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,9 +20,11 @@ import java.util.List;
 public class LaunchController {
 
     private final LaunchService launchService;
+    private final FinanceService financeService;
 
-    public LaunchController(LaunchService launchService) {
+    public LaunchController(LaunchService launchService, FinanceService financeService) {
         this.launchService = launchService;
+        this.financeService = financeService;
     }
 
     @GetMapping
@@ -63,5 +67,4 @@ public class LaunchController {
         launchService.deleteLaunchById(id);
         return ResponseEntity.noContent().build();
     }
-
 }

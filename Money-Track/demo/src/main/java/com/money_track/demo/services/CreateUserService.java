@@ -45,7 +45,7 @@ public class CreateUserService {
 
             return Map.of("token", token);
         }catch (BadCredentialsException e){
-            throw new UnauthorizedException("Login incorreto");
+            throw new UnauthorizedException("Email ou senha incorreta");
         }
     }
 
