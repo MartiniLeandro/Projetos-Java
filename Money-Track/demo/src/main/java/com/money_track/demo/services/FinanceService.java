@@ -17,7 +17,27 @@ public class FinanceService {
     }
 
     public BigDecimal getTotalRevenue(){
+        BigDecimal total =  launchRepository.getTotalRevenue(getCurrentUser());
+        return total != null ? total : BigDecimal.ZERO;
+    }
+
+    public BigDecimal getTotalExpense(){
+        BigDecimal total = launchRepository.getTotalExpense(getCurrentUser());
+        return total != null ? total : BigDecimal.ZERO;
+    }
+
+    public BigDecimal getTotalBalance(){
+        BigDecimal totalRevenue = getTotalRevenue();
+        BigDecimal totalExpense = getTotalExpense();
+
+        totalRevenue = totalRevenue != null ? totalRevenue : BigDecimal.ZERO;
+        totalExpense = totalExpense != null ? totalExpense : BigDecimal.ZERO;
+
+        return totalRevenue.subtract(totalExpense);
+    }
+
+    private Long getCurrentUser(){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return launchRepository.getTotalRevenue(user.getId());
+        return user.getId();
     }
 }
