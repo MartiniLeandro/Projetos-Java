@@ -1,11 +1,14 @@
 package com.money_track.demo.services;
 
+import com.money_track.demo.entities.DTO.CategoryTotalDTO;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.repositories.LaunchRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class FinanceService {
@@ -29,11 +32,51 @@ public class FinanceService {
     public BigDecimal getTotalBalance(){
         BigDecimal totalRevenue = getTotalRevenue();
         BigDecimal totalExpense = getTotalExpense();
-
-        totalRevenue = totalRevenue != null ? totalRevenue : BigDecimal.ZERO;
-        totalExpense = totalExpense != null ? totalExpense : BigDecimal.ZERO;
-
         return totalRevenue.subtract(totalExpense);
+    }
+
+    public BigDecimal getTotalRevenueByMonth(int year, int month){
+        Long userId = getCurrentUser();
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+        BigDecimal valorTotal = launchRepository.getTotalRevenueByMonth(userId, startDate, endDate);
+        return valorTotal != null ? valorTotal : BigDecimal.ZERO;
+    }
+
+    public BigDecimal getTotalExpenseByMonth(int year, int month){
+        Long userId = getCurrentUser();
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+        BigDecimal valorTotal = launchRepository.getTotalExpenseByMonth(userId, startDate, endDate);
+        return valorTotal != null ? valorTotal : BigDecimal.ZERO;
+    }
+
+    public BigDecimal getTotalBalanceByMonth(int year, int month){
+        BigDecimal totalRevenue = getTotalRevenueByMonth(year, month);
+        BigDecimal totalExpense = getTotalExpenseByMonth(year, month);
+        return totalRevenue.subtract(totalExpense);
+    }
+
+    public List<CategoryTotalDTO> getTotalRevenueByCategories(){
+        return launchRepository.getTotalRevenueByCategories(getCurrentUser());
+    }
+
+    public List<CategoryTotalDTO> getTotalExpenseBCategories(){
+        return launchRepository.getTotalExpenseByCategories(getCurrentUser());
+    }
+
+    public List<CategoryTotalDTO> getTotalRevenueByCategoriesByMonth(int year, int month){
+        Long userId = getCurrentUser();
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+        return launchRepository.getTotalRevenueByCategoriesByMonth(userId, startDate, endDate);
+    }
+
+    public List<CategoryTotalDTO> getTotalExpenseByCategoriesByMonth(int year, int month){
+        Long userId = getCurrentUser();
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+        return launchRepository.getTotalExpenseByCategoriesByMonth(userId, startDate, endDate);
     }
 
     private Long getCurrentUser(){

@@ -1,5 +1,6 @@
 package com.money_track.demo.controllers;
 
+import com.money_track.demo.entities.DTO.CategoryTotalDTO;
 import com.money_track.demo.entities.DTO.LaunchDTO;
 import com.money_track.demo.entities.DTO.LaunchRequestDTO;
 import com.money_track.demo.entities.Launch;
@@ -67,4 +68,24 @@ public class LaunchController {
         launchService.deleteLaunchById(id);
         return ResponseEntity.noContent().build();
     }
+
+    /*@GetMapping("/dashboard")
+    public ResponseEntity<List<BigDecimal>> dashboardBalances(){
+        BigDecimal totalRevenue = financeService.getTotalRevenue();
+        BigDecimal totalExpense = financeService.getTotalExpense();
+        BigDecimal totalBalance = financeService.getTotalBalance();
+        BigDecimal totalRevenueMonth = financeService.getTotalRevenueByMonth(2025,9);
+        BigDecimal totalExpenseByMonth = financeService.getTotalExpenseByMonth(2025,9);
+        BigDecimal totalBalanceByMonth = financeService.getTotalBalanceByMonth(2025,9);
+        return ResponseEntity.ok().body(List.of(totalRevenue,totalExpense,totalBalance,totalRevenueMonth,totalExpenseByMonth,totalBalanceByMonth));
+    }
+
+    @GetMapping("/dashboardCategory")
+    public ResponseEntity<List<List<CategoryTotalDTO>>> dashboardCategories(){
+        List<CategoryTotalDTO> totalRevenue = financeService.getTotalRevenueByCategories();
+        List<CategoryTotalDTO> totalExpenses = financeService.getTotalExpenseBCategories();
+        List<CategoryTotalDTO> totalRevenueMonth = financeService.getTotalRevenueByCategoriesByMonth(2025,9);
+        List<CategoryTotalDTO> totalExpenseMonth = financeService.getTotalExpenseByCategoriesByMonth(2025,9);
+        return ResponseEntity.ok().body(List.of(totalRevenue,totalExpenses,totalRevenueMonth,totalExpenseMonth));
+    }*/
 }
