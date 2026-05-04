@@ -1,6 +1,8 @@
 package com.money_track.demo.repositories;
 
 import com.money_track.demo.entities.DTO.CategoryTotalDTO;
+import com.money_track.demo.entities.DTO.LaunchDTO;
+import com.money_track.demo.entities.DTO.LaunchInterface;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.TypeValue;
@@ -42,4 +44,7 @@ public interface LaunchRepository extends JpaRepository<Launch,Long> {
 
     @Query(value = "select ct.name as name, sum(ln.value) as totalValue from launches as ln join categories as ct on ln.category_id = ct.id where ln.user_id = :user_id and ct.type_value = 'EXPENSE' and ln.date between :startDate and :endDate group by ct.name", nativeQuery = true)
     List<CategoryTotalDTO> getTotalExpenseByCategoriesByMonth(@Param("user_id") Long user_id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query(value = "select ln.id,ln.description,ln.category_id,ln.value,ln.date from launches as ln where user_id = 2 order by id desc limit 5",nativeQuery = true) //tive que utilizar interface projection por problema em transformar Date em LocalDate da query
+    List<LaunchInterface> getLastLaunches(Long user_id);
 }

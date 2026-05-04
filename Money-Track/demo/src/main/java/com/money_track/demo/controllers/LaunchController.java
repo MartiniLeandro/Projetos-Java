@@ -1,9 +1,8 @@
 package com.money_track.demo.controllers;
 
-import com.money_track.demo.entities.DTO.CategoryTotalDTO;
+import com.money_track.demo.entities.DTO.DashboardHome;
 import com.money_track.demo.entities.DTO.LaunchDTO;
 import com.money_track.demo.entities.DTO.LaunchRequestDTO;
-import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.enums.TypeValue;
 import com.money_track.demo.services.FinanceService;
 import com.money_track.demo.services.LaunchService;
@@ -12,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -69,23 +67,8 @@ public class LaunchController {
         return ResponseEntity.noContent().build();
     }
 
-    /*@GetMapping("/dashboard")
-    public ResponseEntity<List<BigDecimal>> dashboardBalances(){
-        BigDecimal totalRevenue = financeService.getTotalRevenue();
-        BigDecimal totalExpense = financeService.getTotalExpense();
-        BigDecimal totalBalance = financeService.getTotalBalance();
-        BigDecimal totalRevenueMonth = financeService.getTotalRevenueByMonth(2025,9);
-        BigDecimal totalExpenseByMonth = financeService.getTotalExpenseByMonth(2025,9);
-        BigDecimal totalBalanceByMonth = financeService.getTotalBalanceByMonth(2025,9);
-        return ResponseEntity.ok().body(List.of(totalRevenue,totalExpense,totalBalance,totalRevenueMonth,totalExpenseByMonth,totalBalanceByMonth));
+    @GetMapping("/dashboard")
+    public ResponseEntity<DashboardHome> dashboardBalances(){
+        return ResponseEntity.ok().body(financeService.getDashboardData());
     }
-
-    @GetMapping("/dashboardCategory")
-    public ResponseEntity<List<List<CategoryTotalDTO>>> dashboardCategories(){
-        List<CategoryTotalDTO> totalRevenue = financeService.getTotalRevenueByCategories();
-        List<CategoryTotalDTO> totalExpenses = financeService.getTotalExpenseBCategories();
-        List<CategoryTotalDTO> totalRevenueMonth = financeService.getTotalRevenueByCategoriesByMonth(2025,9);
-        List<CategoryTotalDTO> totalExpenseMonth = financeService.getTotalExpenseByCategoriesByMonth(2025,9);
-        return ResponseEntity.ok().body(List.of(totalRevenue,totalExpenses,totalRevenueMonth,totalExpenseMonth));
-    }*/
 }

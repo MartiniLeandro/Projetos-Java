@@ -1,6 +1,9 @@
 package com.money_track.demo.services;
 
 import com.money_track.demo.entities.DTO.CategoryTotalDTO;
+import com.money_track.demo.entities.DTO.DashboardHome;
+import com.money_track.demo.entities.DTO.LaunchDTO;
+import com.money_track.demo.entities.DTO.LaunchInterface;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.repositories.LaunchRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -77,6 +80,20 @@ public class FinanceService {
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
         return launchRepository.getTotalExpenseByCategoriesByMonth(userId, startDate, endDate);
+    }
+
+    public List<LaunchInterface> getLastLaunches(){
+        return launchRepository.getLastLaunches(getCurrentUser());
+    }
+
+    public DashboardHome getDashboardData(){
+        BigDecimal totalRevenueMonth = getTotalRevenueByMonth(2025,9);
+        BigDecimal totalExpenseByMonth = getTotalExpenseByMonth(2025,9);
+        BigDecimal totalBalanceByMonth = getTotalBalanceByMonth(2025,9);
+        List<CategoryTotalDTO> totalRevenueCategoriesMonth = getTotalRevenueByCategoriesByMonth(2025,9);
+        List<CategoryTotalDTO> totalExpenseCategoriesMonth = getTotalExpenseByCategoriesByMonth(2025,9);
+        List<LaunchInterface> lastLaunches = getLastLaunches();
+        return new DashboardHome(totalRevenueMonth,totalExpenseByMonth,totalBalanceByMonth,totalRevenueCategoriesMonth, totalExpenseCategoriesMonth, lastLaunches);
     }
 
     private Long getCurrentUser(){
