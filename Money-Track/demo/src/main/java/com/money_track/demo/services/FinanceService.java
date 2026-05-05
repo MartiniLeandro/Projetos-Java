@@ -38,7 +38,7 @@ public class FinanceService {
         return totalRevenue.subtract(totalExpense);
     }
 
-    public BigDecimal getTotalRevenueByMonth(int year, int month){
+    public BigDecimal getTotalRevenueByMonth(Integer year, Integer month){
         Long userId = getCurrentUser();
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
@@ -46,7 +46,7 @@ public class FinanceService {
         return valorTotal != null ? valorTotal : BigDecimal.ZERO;
     }
 
-    public BigDecimal getTotalExpenseByMonth(int year, int month){
+    public BigDecimal getTotalExpenseByMonth(Integer year, Integer month){
         Long userId = getCurrentUser();
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
@@ -54,7 +54,7 @@ public class FinanceService {
         return valorTotal != null ? valorTotal : BigDecimal.ZERO;
     }
 
-    public BigDecimal getTotalBalanceByMonth(int year, int month){
+    public BigDecimal getTotalBalanceByMonth(Integer year, Integer month){
         BigDecimal totalRevenue = getTotalRevenueByMonth(year, month);
         BigDecimal totalExpense = getTotalExpenseByMonth(year, month);
         return totalRevenue.subtract(totalExpense);
@@ -68,31 +68,36 @@ public class FinanceService {
         return launchRepository.getTotalExpenseByCategories(getCurrentUser());
     }
 
-    public List<CategoryTotalDTO> getTotalRevenueByCategoriesByMonth(int year, int month){
+    public List<CategoryTotalDTO> getTotalRevenueByCategoriesByMonth(Integer year, Integer month){
         Long userId = getCurrentUser();
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
         return launchRepository.getTotalRevenueByCategoriesByMonth(userId, startDate, endDate);
     }
 
-    public List<CategoryTotalDTO> getTotalExpenseByCategoriesByMonth(int year, int month){
+    public List<CategoryTotalDTO> getTotalExpenseByCategoriesByMonth(Integer year, Integer month){
         Long userId = getCurrentUser();
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
         return launchRepository.getTotalExpenseByCategoriesByMonth(userId, startDate, endDate);
     }
 
-    public List<LaunchInterface> getLastLaunches(){
-        return launchRepository.getLastLaunches(getCurrentUser());
+    public List<LaunchInterface> getLastLaunches(Integer year, Integer month){
+        Long userId = getCurrentUser();
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+        return launchRepository.getLastLaunches(userId, startDate, endDate);
     }
 
-    public DashboardHome getDashboardData(){
-        BigDecimal totalRevenueMonth = getTotalRevenueByMonth(2025,9);
-        BigDecimal totalExpenseByMonth = getTotalExpenseByMonth(2025,9);
-        BigDecimal totalBalanceByMonth = getTotalBalanceByMonth(2025,9);
-        List<CategoryTotalDTO> totalRevenueCategoriesMonth = getTotalRevenueByCategoriesByMonth(2025,9);
-        List<CategoryTotalDTO> totalExpenseCategoriesMonth = getTotalExpenseByCategoriesByMonth(2025,9);
-        List<LaunchInterface> lastLaunches = getLastLaunches();
+    public DashboardHome getDashboardData(Integer year, Integer month){
+        Integer finalYear = (year != null) ? year : 2025; //valor padrão que tem lançamento no banco de dados para o user teste
+        Integer finalMonth = (month != null) ? month : 9; //valor padrão que tem lançamento no banco de dados para o user teste
+        BigDecimal totalRevenueMonth = getTotalRevenueByMonth(finalYear, finalMonth);
+        BigDecimal totalExpenseByMonth = getTotalExpenseByMonth(finalYear, finalMonth);
+        BigDecimal totalBalanceByMonth = getTotalBalanceByMonth(finalYear, finalMonth);
+        List<CategoryTotalDTO> totalRevenueCategoriesMonth = getTotalRevenueByCategoriesByMonth(finalYear, finalMonth);
+        List<CategoryTotalDTO> totalExpenseCategoriesMonth = getTotalExpenseByCategoriesByMonth(finalYear, finalMonth);
+        List<LaunchInterface> lastLaunches = getLastLaunches(finalYear, finalMonth);
         return new DashboardHome(totalRevenueMonth,totalExpenseByMonth,totalBalanceByMonth,totalRevenueCategoriesMonth, totalExpenseCategoriesMonth, lastLaunches);
     }
 

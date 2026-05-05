@@ -68,7 +68,7 @@ public class LaunchController {
     }
 
     @GetMapping("/dashboard")
-    public ResponseEntity<DashboardHome> dashboardBalances(){
-        return ResponseEntity.ok().body(financeService.getDashboardData());
+    public ResponseEntity<DashboardHome> dashboardBalances(@RequestParam(required = false) Integer year, @RequestParam(required = false) Integer month){
+        return ResponseEntity.ok().body(financeService.getDashboardData(year,month));
     }
 }
