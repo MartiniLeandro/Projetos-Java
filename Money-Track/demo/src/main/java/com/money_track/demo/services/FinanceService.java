@@ -1,15 +1,13 @@
 package com.money_track.demo.services;
 
-import com.money_track.demo.entities.DTO.CategoryTotalDTO;
-import com.money_track.demo.entities.DTO.DashboardHome;
-import com.money_track.demo.entities.DTO.LaunchDTO;
-import com.money_track.demo.entities.DTO.LaunchInterface;
+import com.money_track.demo.entities.DTO.*;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.repositories.LaunchRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -60,26 +58,30 @@ public class FinanceService {
         return totalRevenue.subtract(totalExpense);
     }
 
-    public List<CategoryTotalDTO> getTotalRevenueByCategories(){
+    public List<CategoryTotalDTO> getTotalRevenueByCategories(){ //adicionar depois com a porcentagem
         return launchRepository.getTotalRevenueByCategories(getCurrentUser());
     }
 
-    public List<CategoryTotalDTO> getTotalExpenseBCategories(){
+    public List<CategoryTotalDTO> getTotalExpenseBCategories(){ //adicionar depois com a porcentagem
         return launchRepository.getTotalExpenseByCategories(getCurrentUser());
     }
 
-    public List<CategoryTotalDTO> getTotalRevenueByCategoriesByMonth(Integer year, Integer month){
+    public List<CategoryTotalPorcentagemDTO> getTotalRevenueByCategoriesByMonth(Integer year, Integer month){
         Long userId = getCurrentUser();
+        BigDecimal total = getTotalRevenueByMonth(year, month);
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
-        return launchRepository.getTotalRevenueByCategoriesByMonth(userId, startDate, endDate);
+        List<CategoryTotalDTO> categories = launchRepository.getTotalRevenueByCategoriesByMonth(userId, startDate, endDate);
+        return getCategoriesWithPorcentagem(categories, total);
     }
 
-    public List<CategoryTotalDTO> getTotalExpenseByCategoriesByMonth(Integer year, Integer month){
+    public List<CategoryTotalPorcentagemDTO> getTotalExpenseByCategoriesByMonth(Integer year, Integer month){
         Long userId = getCurrentUser();
+        BigDecimal total = getTotalExpenseByMonth(year, month);
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
-        return launchRepository.getTotalExpenseByCategoriesByMonth(userId, startDate, endDate);
+        List<CategoryTotalDTO> categories = launchRepository.getTotalExpenseByCategoriesByMonth(userId, startDate, endDate);
+        return getCategoriesWithPorcentagem(categories, total);
     }
 
     public List<LaunchInterface> getLastLaunches(Integer year, Integer month){
@@ -95,8 +97,8 @@ public class FinanceService {
         BigDecimal totalRevenueMonth = getTotalRevenueByMonth(finalYear, finalMonth);
         BigDecimal totalExpenseByMonth = getTotalExpenseByMonth(finalYear, finalMonth);
         BigDecimal totalBalanceByMonth = getTotalBalanceByMonth(finalYear, finalMonth);
-        List<CategoryTotalDTO> totalRevenueCategoriesMonth = getTotalRevenueByCategoriesByMonth(finalYear, finalMonth);
-        List<CategoryTotalDTO> totalExpenseCategoriesMonth = getTotalExpenseByCategoriesByMonth(finalYear, finalMonth);
+        List<CategoryTotalPorcentagemDTO> totalRevenueCategoriesMonth = getTotalRevenueByCategoriesByMonth(finalYear, finalMonth);
+        List<CategoryTotalPorcentagemDTO> totalExpenseCategoriesMonth = getTotalExpenseByCategoriesByMonth(finalYear, finalMonth);
         List<LaunchInterface> lastLaunches = getLastLaunches(finalYear, finalMonth);
         return new DashboardHome(totalRevenueMonth,totalExpenseByMonth,totalBalanceByMonth,totalRevenueCategoriesMonth, totalExpenseCategoriesMonth, lastLaunches);
     }
@@ -104,5 +106,16 @@ public class FinanceService {
     private Long getCurrentUser(){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return user.getId();
+    }
+
+    private List<CategoryTotalPorcentagemDTO> getCategoriesWithPorcentagem(List<CategoryTotalDTO> categories, BigDecimal total){
+        return categories.stream().map(categoryTotal -> {
+            BigDecimal valorCategoria = new BigDecimal(categoryTotal.totalValue());
+            BigDecimal porcentagem = BigDecimal.ZERO;
+            if(total.compareTo(BigDecimal.ZERO) > 0){
+                porcentagem = valorCategoria.divide(total,4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+            }
+            return new CategoryTotalPorcentagemDTO(categoryTotal.name(),categoryTotal.totalValue(),porcentagem);
+        }).toList();
     }
 }

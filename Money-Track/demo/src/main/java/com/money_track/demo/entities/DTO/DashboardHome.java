@@ -7,7 +7,7 @@ public record DashboardHome(
         BigDecimal totalRevenueMonth,
         BigDecimal totalExpenseMonth,
         BigDecimal totalBalanceMonth,
-        List<CategoryTotalDTO> totalRevenueCategoriesMonth,
-        List<CategoryTotalDTO> totalExpenseCategoriesMonth,
+        List<CategoryTotalPorcentagemDTO> totalRevenueCategoriesMonth,
+        List<CategoryTotalPorcentagemDTO> totalExpenseCategoriesMonth,
         List<LaunchInterface> lastLaunches
 ) {}
