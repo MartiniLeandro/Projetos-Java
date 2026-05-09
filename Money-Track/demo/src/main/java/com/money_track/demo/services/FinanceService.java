@@ -92,8 +92,8 @@ public class FinanceService {
     }
 
     public DashboardHome getDashboardData(Integer year, Integer month){
-        Integer finalYear = (year != null) ? year : 2025; //valor padrão que tem lançamento no banco de dados para o user teste
-        Integer finalMonth = (month != null) ? month : 9; //valor padrão que tem lançamento no banco de dados para o user teste
+        Integer finalYear = (year != null) ? year : LocalDate.now().getYear();
+        Integer finalMonth = (month != null) ? month : LocalDate.now().getMonthValue();
         BigDecimal totalRevenueMonth = getTotalRevenueByMonth(finalYear, finalMonth);
         BigDecimal totalExpenseByMonth = getTotalExpenseByMonth(finalYear, finalMonth);
         BigDecimal totalBalanceByMonth = getTotalBalanceByMonth(finalYear, finalMonth);

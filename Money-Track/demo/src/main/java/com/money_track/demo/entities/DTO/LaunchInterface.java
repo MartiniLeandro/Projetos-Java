@@ -8,4 +8,6 @@ public interface LaunchInterface {
     String getDescription();
     BigDecimal getValue();
     LocalDate getDate();
+    String getCategory();
+    String getTypeValue();
 }
