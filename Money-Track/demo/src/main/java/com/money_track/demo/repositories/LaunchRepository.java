@@ -3,6 +3,7 @@ package com.money_track.demo.repositories;
 import com.money_track.demo.entities.DTO.CategoryTotalDTO;
 import com.money_track.demo.entities.DTO.LaunchDTO;
 import com.money_track.demo.entities.DTO.LaunchInterface;
+import com.money_track.demo.entities.DTO.TypeValuesDTO;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.TypeValue;
@@ -45,6 +46,16 @@ public interface LaunchRepository extends JpaRepository<Launch,Long> {
     @Query(value = "select ct.name as name, sum(ln.value) as totalValue from launches as ln join categories as ct on ln.category_id = ct.id where ln.user_id = :user_id and ct.type_value = 'EXPENSE' and ln.date between :startDate and :endDate group by ct.name", nativeQuery = true)
     List<CategoryTotalDTO> getTotalExpenseByCategoriesByMonth(@Param("user_id") Long user_id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query(value = "select ln.id,ln.description,ct.name as category, ct.type_value as type_value, ln.value,ln.date from launches as ln join categories as ct on ln.category_id = ct.id where user_id = :user_id and ln.date between :startDate and :endDate order by id desc limit 8",nativeQuery = true) //tive que utilizar interface projection por problema em transformar Date em LocalDate da query
+    @Query(value = "select ln.id,ln.description,ct.name as category, ct.type_value as type_value, ln.value,ln.date from launches as ln join categories as ct on ln.category_id = ct.id where user_id = :user_id and ln.date between :startDate and :endDate order by ln.date desc limit 8",nativeQuery = true) //tive que utilizar interface projection por problema em transformar Date em LocalDate da query
     List<LaunchInterface> getLastLaunches(@Param("user_id") Long user_id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query(value = "select l.* from launches as l join categories as c on l.category_id = c.id where l.user_id = :user_id and (:type_value is null or c.type_value = :type_value) and (:category_id is null or c.id = :category_id) and (:startDate is null or l.date >= :startDate) and (:endDate is null or l.date <= :endDate) ;", nativeQuery = true) //adicionar paginação
+    List<Launch> getLaunchesWithFilters(@Param("user_id") Long user_id, @Param("type_value") TypeValue typeValue, @Param("category_id") Long category_id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query(value = "select c.type_value, sum(l.value) from launches as l join categories as c on l.category_id = c.id where l.user_id = :user_id and l.date between :startDate and :endDate group by c.type_value", nativeQuery = true)
+    List<TypeValuesDTO> getTypeValuesByDate(@Param("user_id") Long user_Id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query(value = "select c.name, sum(l.value) from launches as l join categories as c on l.category_id = c.id where l.user_id = :user_id and l.date between :startDate and :endDate and c.type_value = 'EXPENSE' group by c.name order by sum(l.value) desc limit 5", nativeQuery = true)
+    List<CategoryTotalDTO> getTotalMostExpensiveCategoriesByDate(@Param("user_id") Long user_Id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
 }

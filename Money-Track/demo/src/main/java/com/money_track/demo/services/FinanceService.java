@@ -62,7 +62,7 @@ public class FinanceService {
         return launchRepository.getTotalRevenueByCategories(getCurrentUser());
     }
 
-    public List<CategoryTotalDTO> getTotalExpenseBCategories(){ //adicionar depois com a porcentagem
+    public List<CategoryTotalDTO> getTotalExpenseByCategories(){ //adicionar depois com a porcentagem
         return launchRepository.getTotalExpenseByCategories(getCurrentUser());
     }
 

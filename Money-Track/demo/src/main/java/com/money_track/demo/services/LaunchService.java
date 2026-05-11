@@ -3,6 +3,7 @@ package com.money_track.demo.services;
 import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.LaunchDTO;
 import com.money_track.demo.entities.DTO.LaunchRequestDTO;
+import com.money_track.demo.entities.DTO.LaunchesFilterDTO;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.TypeValue;
@@ -84,23 +85,11 @@ public class LaunchService {
         launchRepository.delete(deletedLaunch);
     }
 
-    public List<LaunchDTO> filterLaunchByCategory(String categoryName){
+    public List<LaunchDTO> getLaunchesWithFilter(LaunchesFilterDTO data){ //utilizar pageable depois
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Category category = categoryRepository.findByName(categoryName);
-        List<Launch> launchesByCategory = user.getLaunches().stream().filter(launch -> launch.getCategory().getId().equals(category.getId())).toList();
-        return launchesByCategory.stream().map(LaunchDTO::new).toList();
+        List<Launch> launches = launchRepository.getLaunchesWithFilters(user.getId(), data.typeValue(), data.categoryId(), data.initialDate(), data.finalDate());
+        return launches.stream().map(LaunchDTO::new).toList();
     }
 
-    public List<LaunchDTO> filterLaunchByDate(LocalDate initialDate, LocalDate finalDate){
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Launch> launchesByDate = launchRepository.findByUserAndDateBetween(user,initialDate,finalDate);
-        return launchesByDate.stream().map(LaunchDTO::new).toList();
-
-    }
-
-    public List<LaunchDTO> filterByTypeValue(TypeValue typeValue){
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Launch> launchesByTypeValue = launchRepository.findByUserAndCategory_TypeValue(user,typeValue);
-        return launchesByTypeValue.stream().map(LaunchDTO::new).toList();
-    }
+    //falta colocar método acima no controller, e adicionar os dois novos métodos do repository aqui no service e no controller
 }

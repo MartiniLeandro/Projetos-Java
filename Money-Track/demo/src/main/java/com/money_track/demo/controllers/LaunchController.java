@@ -36,20 +36,6 @@ public class LaunchController {
         return ResponseEntity.ok().body(launchService.findLaunchById(id));
     }
 
-    @GetMapping("/filterByCategory")
-    public ResponseEntity<List<LaunchDTO>> findByCategory(@RequestParam String category){
-        return ResponseEntity.ok().body(launchService.filterLaunchByCategory(category));
-    }
-
-    @GetMapping("/filterByDate")
-    public ResponseEntity<List<LaunchDTO>> findByDate(@RequestParam LocalDate initialDate,@RequestParam LocalDate finalDate){
-        return ResponseEntity.ok().body(launchService.filterLaunchByDate(initialDate,finalDate));
-    }
-
-    @GetMapping("filterByTypeValue")
-    public ResponseEntity<List<LaunchDTO>> findByTypeValue(@RequestParam TypeValue typeValue){
-        return ResponseEntity.ok().body(launchService.filterByTypeValue(typeValue));
-    }
 
     @PostMapping("/create")
     public ResponseEntity<LaunchDTO> createLaunch(@RequestBody @Valid LaunchRequestDTO launch){
