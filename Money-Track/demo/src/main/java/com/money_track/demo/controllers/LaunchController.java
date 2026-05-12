@@ -1,9 +1,6 @@
 package com.money_track.demo.controllers;
 
-import com.money_track.demo.entities.DTO.DashboardHome;
-import com.money_track.demo.entities.DTO.LaunchDTO;
-import com.money_track.demo.entities.DTO.LaunchRequestDTO;
-import com.money_track.demo.entities.enums.TypeValue;
+import com.money_track.demo.entities.DTO.*;
 import com.money_track.demo.services.FinanceService;
 import com.money_track.demo.services.LaunchService;
 import jakarta.validation.Valid;
@@ -26,12 +23,12 @@ public class LaunchController {
         this.financeService = financeService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<Page<LaunchDTO>> findAllLaunches(@RequestParam Integer page, @RequestParam Integer size){
         return ResponseEntity.ok().body(launchService.findAllLaunches(page,size));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public ResponseEntity<LaunchDTO> findLaunchById(@PathVariable @Valid Long id){
         return ResponseEntity.ok().body(launchService.findLaunchById(id));
     }
@@ -56,5 +53,20 @@ public class LaunchController {
     @GetMapping("/dashboard")
     public ResponseEntity<DashboardHome> dashboardBalances(@RequestParam(required = false) Integer year, @RequestParam(required = false) Integer month){
         return ResponseEntity.ok().body(financeService.getDashboardData(year,month));
+    }
+
+    @GetMapping("/teste")
+    public ResponseEntity<List<LaunchDTO>> getLaunchesByFilters(@ModelAttribute LaunchesFilterDTO data){
+        return ResponseEntity.ok().body(launchService.getLaunchesWithFilter(data));
+    }
+
+    @GetMapping("/teste2")
+    public ResponseEntity<TypeValuesDTO>  getTypeValuesByFilters(@ModelAttribute LaunchesFilterDTO data){
+        return ResponseEntity.ok().body(launchService.getTypeValuesByDate(data.initialDate(), data.finalDate()));
+    }
+
+    @GetMapping("/teste3")
+    public ResponseEntity<List<CategoryTotalDTO>>  getCategoriesMostExpensives(@ModelAttribute LaunchesFilterDTO data){
+        return ResponseEntity.ok().body(launchService.getCategoryTotalByDate(data.initialDate(), data.finalDate()));
     }
 }

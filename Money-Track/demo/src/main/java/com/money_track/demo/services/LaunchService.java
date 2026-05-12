@@ -1,12 +1,9 @@
 package com.money_track.demo.services;
 
 import com.money_track.demo.entities.Category;
-import com.money_track.demo.entities.DTO.LaunchDTO;
-import com.money_track.demo.entities.DTO.LaunchRequestDTO;
-import com.money_track.demo.entities.DTO.LaunchesFilterDTO;
+import com.money_track.demo.entities.DTO.*;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.User;
-import com.money_track.demo.entities.enums.TypeValue;
 import com.money_track.demo.exceptions.IsNotYoursException;
 import com.money_track.demo.exceptions.NegativeNumberException;
 import com.money_track.demo.exceptions.NotFoundException;
@@ -19,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -85,11 +81,21 @@ public class LaunchService {
         launchRepository.delete(deletedLaunch);
     }
 
-    public List<LaunchDTO> getLaunchesWithFilter(LaunchesFilterDTO data){ //utilizar pageable depois
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Launch> launches = launchRepository.getLaunchesWithFilters(user.getId(), data.typeValue(), data.categoryId(), data.initialDate(), data.finalDate());
+    public List<LaunchDTO> getLaunchesWithFilter(LaunchesFilterDTO data){ //utilizar pageable
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); //retornar o método dos valores e das categorias junto com esse, como se fosse outro dashboard, ou criar outro método
+
+        List<Launch> launches = launchRepository.getLaunchesWithFilters(user.getId(), data.typeValue() != null ? data.typeValue().name() : null, data.categoryId(), data.initialDate(), data.finalDate());
         return launches.stream().map(LaunchDTO::new).toList();
     }
 
-    //falta colocar método acima no controller, e adicionar os dois novos métodos do repository aqui no service e no controller
+    public TypeValuesDTO getTypeValuesByDate(LocalDate startDate, LocalDate endDate){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return launchRepository.getTypeValuesByDate(user.getId(), startDate, endDate);
+    }
+
+    public List<CategoryTotalDTO> getCategoryTotalByDate(LocalDate startDate, LocalDate endDate){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return launchRepository.getTotalMostExpensiveCategoriesByDate(user.getId(), startDate, endDate);
+    }
+
 }
