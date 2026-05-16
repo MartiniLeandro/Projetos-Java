@@ -57,5 +57,4 @@ public interface LaunchRepository extends JpaRepository<Launch,Long> {
 
     @Query(value = "select c.name, coalesce(sum(l.value),0) from launches as l join categories as c on l.category_id = c.id where l.user_id = :user_id and l.date between :startDate and :endDate and c.type_value = 'EXPENSE' group by c.name order by sum(l.value) desc limit 5", nativeQuery = true)
     List<CategoryTotalDTO> getTotalMostExpensiveCategoriesByDate(@Param("user_id") Long user_Id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
-
 }

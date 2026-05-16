@@ -12,28 +12,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class FinanceService {
+public class DashboardService {
 
     private final LaunchRepository launchRepository;
 
-    public FinanceService(LaunchRepository launchRepository) {
+    public DashboardService(LaunchRepository launchRepository) {
         this.launchRepository = launchRepository;
-    }
-
-    public BigDecimal getTotalRevenue(){
-        BigDecimal total =  launchRepository.getTotalRevenue(getCurrentUser());
-        return total != null ? total : BigDecimal.ZERO;
-    }
-
-    public BigDecimal getTotalExpense(){
-        BigDecimal total = launchRepository.getTotalExpense(getCurrentUser());
-        return total != null ? total : BigDecimal.ZERO;
-    }
-
-    public BigDecimal getTotalBalance(){
-        BigDecimal totalRevenue = getTotalRevenue();
-        BigDecimal totalExpense = getTotalExpense();
-        return totalRevenue.subtract(totalExpense);
     }
 
     public BigDecimal getTotalRevenueByMonth(Integer year, Integer month){
@@ -56,14 +40,6 @@ public class FinanceService {
         BigDecimal totalRevenue = getTotalRevenueByMonth(year, month);
         BigDecimal totalExpense = getTotalExpenseByMonth(year, month);
         return totalRevenue.subtract(totalExpense);
-    }
-
-    public List<CategoryTotalDTO> getTotalRevenueByCategories(){ //adicionar depois com a porcentagem
-        return launchRepository.getTotalRevenueByCategories(getCurrentUser());
-    }
-
-    public List<CategoryTotalDTO> getTotalExpenseByCategories(){ //adicionar depois com a porcentagem
-        return launchRepository.getTotalExpenseByCategories(getCurrentUser());
     }
 
     public List<CategoryTotalPorcentagemDTO> getTotalRevenueByCategoriesByMonth(Integer year, Integer month){
@@ -116,6 +92,6 @@ public class FinanceService {
                 porcentagem = valorCategoria.divide(total,4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
             }
             return new CategoryTotalPorcentagemDTO(categoryTotal.name(),categoryTotal.totalValue(),porcentagem);
-        }).toList();
+        }).sorted((a,b) -> b.totalValue().compareTo(a.totalValue())).toList();
     }
 }

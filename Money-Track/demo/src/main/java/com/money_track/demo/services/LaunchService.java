@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -82,20 +83,35 @@ public class LaunchService {
     }
 
     public List<LaunchDTO> getLaunchesWithFilter(LaunchesFilterDTO data){ //utilizar pageable
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); //retornar o método dos valores e das categorias junto com esse, como se fosse outro dashboard, ou criar outro método
-
-        List<Launch> launches = launchRepository.getLaunchesWithFilters(user.getId(), data.typeValue() != null ? data.typeValue().name() : null, data.categoryId(), data.initialDate(), data.finalDate());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LocalDate initialDate = data.initialDate() != null ? data.initialDate() : LocalDate.now().withDayOfMonth(1);
+        LocalDate  finalDate = data.finalDate() != null ? data.finalDate() : LocalDate.now();
+        List<Launch> launches = launchRepository.getLaunchesWithFilters(user.getId(), data.typeValue() != null ? data.typeValue().name() : null, data.categoryId(), initialDate, finalDate);
         return launches.stream().map(LaunchDTO::new).toList();
     }
 
-    public TypeValuesDTO getTypeValuesByDate(LocalDate startDate, LocalDate endDate){
+    public TypeValuesDTO getTypeValuesByDate(LocalDate initialDate, LocalDate finalDate){ //adicionar os filtros para deixar o gráfico dinamico
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return launchRepository.getTypeValuesByDate(user.getId(), startDate, endDate);
+        LocalDate inicialDate = initialDate != null ? initialDate : LocalDate.now().withDayOfMonth(1);
+        LocalDate  endDate = finalDate != null ? finalDate : LocalDate.now();
+        return launchRepository.getTypeValuesByDate(user.getId(), inicialDate, endDate);
     }
 
-    public List<CategoryTotalDTO> getCategoryTotalByDate(LocalDate startDate, LocalDate endDate){
+    public List<CategoryTotalDTO> getCategoryTotalByDate(LocalDate initialDate, LocalDate finalDate){ //adicionar os filtros para deixar o gráfico dinamico
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return launchRepository.getTotalMostExpensiveCategoriesByDate(user.getId(), startDate, endDate);
+        LocalDate inicialDate = initialDate != null ? initialDate : LocalDate.now().withDayOfMonth(1);
+        LocalDate endDate = finalDate != null ? finalDate : LocalDate.now();
+        return launchRepository.getTotalMostExpensiveCategoriesByDate(user.getId(), inicialDate, endDate);
     }
+
+    public LaunchesDataDTO getLaunchesData(LaunchesFilterDTO filter){
+        List<LaunchDTO> launches = getLaunchesWithFilter(filter);
+        TypeValuesDTO typeValues = getTypeValuesByDate(filter.initialDate(),  filter.finalDate());
+        List<CategoryTotalDTO> categoriesTotal = getCategoryTotalByDate(filter.initialDate(), filter.finalDate());
+        int totalLaunches = launches.size();
+        Double total = typeValues.revenue() - typeValues.expense();
+        return new LaunchesDataDTO(launches, typeValues, totalLaunches, total, categoriesTotal);
+    }
+
 
 }
