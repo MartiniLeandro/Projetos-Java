@@ -2,6 +2,8 @@ package com.money_track.demo.services;
 
 import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.CategoryDTO;
+import com.money_track.demo.entities.DTO.TypeValuesDTO;
+import com.money_track.demo.entities.enums.TypeValue;
 import com.money_track.demo.exceptions.AlreadyExistsException;
 import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.repositories.CategoryRepository;
@@ -10,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CategoryService {
@@ -29,6 +33,11 @@ public class CategoryService {
     public CategoryDTO findCategoryById(Long id){
         Category category = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe categoria com este ID"));
         return new CategoryDTO(category);
+    }
+
+    public List<CategoryDTO> findAllCategoriesByTypeValue(TypeValue typeValue){
+        List<Category> categories = categoryRepository.findAllByTypeValue(typeValue.name());
+        return categories.stream().map(CategoryDTO::new).toList();
     }
 
     @Transactional

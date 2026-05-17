@@ -109,7 +109,7 @@ public class LaunchService {
         TypeValuesDTO typeValues = getTypeValuesByDate(filter.initialDate(),  filter.finalDate());
         List<CategoryTotalDTO> categoriesTotal = getCategoryTotalByDate(filter.initialDate(), filter.finalDate());
         int totalLaunches = launches.size();
-        Double total = typeValues.revenue() - typeValues.expense();
+        Double total = typeValues.revenue() - typeValues.expense(); //deixar dinamico com os filtros
         return new LaunchesDataDTO(launches, typeValues, totalLaunches, total, categoriesTotal);
     }
 

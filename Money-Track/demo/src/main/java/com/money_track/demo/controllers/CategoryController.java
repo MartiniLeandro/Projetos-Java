@@ -2,6 +2,7 @@ package com.money_track.demo.controllers;
 
 import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.CategoryDTO;
+import com.money_track.demo.entities.enums.TypeValue;
 import com.money_track.demo.services.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,11 @@ public class CategoryController {
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDTO> findUserById(@PathVariable @Valid Long id){
         return ResponseEntity.ok().body(categoryService.findCategoryById(id));
+    }
+
+    @GetMapping(params = "typeValue")
+    public ResponseEntity<List<CategoryDTO>> findAllCategoriesByTypeValue(@RequestParam TypeValue typeValue){
+        return ResponseEntity.ok().body(categoryService.findAllCategoriesByTypeValue(typeValue));
     }
 
     @PostMapping("/admin/createCategory")
