@@ -36,7 +36,7 @@ public class CategoryService {
     }
 
     public List<CategoryDTO> findAllCategoriesByTypeValue(TypeValue typeValue){
-        List<Category> categories = categoryRepository.findAllByTypeValue(typeValue.name());
+        List<Category> categories = categoryRepository.findAllByTypeValue(typeValue != null ? typeValue.name() : null);
         return categories.stream().map(CategoryDTO::new).toList();
     }
 

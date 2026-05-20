@@ -32,8 +32,8 @@ public class CategoryController {
         return ResponseEntity.ok().body(categoryService.findCategoryById(id));
     }
 
-    @GetMapping(params = "typeValue")
-    public ResponseEntity<List<CategoryDTO>> findAllCategoriesByTypeValue(@RequestParam TypeValue typeValue){
+    @GetMapping("/filter")
+    public ResponseEntity<List<CategoryDTO>> findAllCategoriesByTypeValue(@RequestParam(required = false) TypeValue typeValue){
         return ResponseEntity.ok().body(categoryService.findAllCategoriesByTypeValue(typeValue));
     }
 

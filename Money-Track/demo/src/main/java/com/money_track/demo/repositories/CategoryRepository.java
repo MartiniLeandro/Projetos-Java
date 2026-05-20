@@ -14,6 +14,6 @@ public interface CategoryRepository extends JpaRepository<Category,Long> {
     Category findByName(String name);
     Page<Category> findAll(Pageable pageable);
 
-    @Query(value = "select * from categories where type_value = :type_value", nativeQuery = true)
+    @Query(value = "select * from categories where (:type_value is null or type_value = :type_value)", nativeQuery = true)
     List<Category> findAllByTypeValue(String type_value);
 }

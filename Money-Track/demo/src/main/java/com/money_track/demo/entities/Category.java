@@ -27,6 +27,8 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private TypeValue typeValue;
 
+    private String icon;
+
     public Category(CategoryDTO categoryDTO) {
         this.name = categoryDTO.name();
         this.typeValue = categoryDTO.typeValue();
