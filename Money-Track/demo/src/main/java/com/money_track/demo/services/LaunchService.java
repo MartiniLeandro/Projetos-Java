@@ -60,7 +60,7 @@ public class LaunchService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(launch.value() < 0) throw new NegativeNumberException("Value não pode ser negativo");
         Launch updatedLaunch = launchRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe launch com este ID"));
-        if(!user.getLaunches().contains(updatedLaunch)){
+        if(!updatedLaunch.getUser().getId().equals(user.getId())){
             throw new IsNotYoursException("Este launch não pertence a você");
         }
         Category category = categoryRepository.findById(launch.categoryId()).orElseThrow(() -> new NotFoundException("Não existe category com este ID"));
@@ -76,7 +76,7 @@ public class LaunchService {
     public void deleteLaunchById(Long id){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Launch deletedLaunch = launchRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe launch com este ID"));
-        if(!user.getLaunches().contains(deletedLaunch)){
+        if(!deletedLaunch.getUser().getId().equals(user.getId())){
             throw new IsNotYoursException("Este launch não pertence a você");
         }
         launchRepository.delete(deletedLaunch);

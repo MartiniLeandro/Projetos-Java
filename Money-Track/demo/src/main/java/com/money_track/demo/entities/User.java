@@ -1,5 +1,6 @@
 package com.money_track.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.money_track.demo.entities.enums.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -47,6 +48,7 @@ public class User implements UserDetails {
     private Roles role = Roles.ROLE_USER;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Launch> launches = new ArrayList<>();
 
     @Override
