@@ -4,6 +4,7 @@ import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.*;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.User;
+import com.money_track.demo.entities.enums.TypeValue;
 import com.money_track.demo.exceptions.IsNotYoursException;
 import com.money_track.demo.exceptions.NegativeNumberException;
 import com.money_track.demo.exceptions.NotFoundException;
@@ -90,26 +91,40 @@ public class LaunchService {
         return launches.stream().map(LaunchDTO::new).toList();
     }
 
-    public TypeValuesDTO getTypeValuesByDate(LocalDate initialDate, LocalDate finalDate){ //adicionar os filtros para deixar o gráfico dinamico
+    public TypeValuesDTO getTypeValuesByLaunches(List<LaunchDTO> launches){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        LocalDate inicialDate = initialDate != null ? initialDate : LocalDate.now().withDayOfMonth(1);
-        LocalDate  endDate = finalDate != null ? finalDate : LocalDate.now();
-        return launchRepository.getTypeValuesByDate(user.getId(), inicialDate, endDate);
+        Double revenue = 0.0 ,expense = 0.0;
+        for(LaunchDTO launch : launches){
+            if(launch.category().getTypeValue() == TypeValue.REVENUE){
+                revenue +=  launch.value();
+            }else {
+                expense +=  launch.value();
+            }
+        }
+
+        return new TypeValuesDTO(revenue,expense);
     }
 
-    public List<CategoryTotalDTO> getCategoryTotalByDate(LocalDate initialDate, LocalDate finalDate){ //adicionar os filtros para deixar o gráfico dinamico
+    public List<CategoryTotalDTO> getCategoryTotalByDate(LocalDate initialDate, LocalDate finalDate){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LocalDate inicialDate = initialDate != null ? initialDate : LocalDate.now().withDayOfMonth(1);
         LocalDate endDate = finalDate != null ? finalDate : LocalDate.now();
         return launchRepository.getTotalMostExpensiveCategoriesByDate(user.getId(), inicialDate, endDate);
     }
 
+    public BigDecimal getTotalByAllLaunches(){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        BigDecimal totalRevenue = launchRepository.getTotalRevenue(user.getId());
+        BigDecimal totalExpense = launchRepository.getTotalExpense(user.getId());
+        return totalRevenue.subtract(totalExpense);
+    }
+
     public LaunchesDataDTO getLaunchesData(LaunchesFilterDTO filter){
         List<LaunchDTO> launches = getLaunchesWithFilter(filter);
-        TypeValuesDTO typeValues = getTypeValuesByDate(filter.initialDate(),  filter.finalDate());
+        TypeValuesDTO typeValues = getTypeValuesByLaunches(launches);
         List<CategoryTotalDTO> categoriesTotal = getCategoryTotalByDate(filter.initialDate(), filter.finalDate());
         int totalLaunches = launches.size();
-        Double total = typeValues.revenue() - typeValues.expense(); //deixar dinamico com os filtros
+        BigDecimal total = getTotalByAllLaunches();
         return new LaunchesDataDTO(launches, typeValues, totalLaunches, total, categoriesTotal);
     }
 
