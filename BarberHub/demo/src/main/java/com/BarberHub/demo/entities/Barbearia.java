@@ -38,6 +38,8 @@ public class Barbearia {
     @CollectionTable(name = "barbearia_horarios", joinColumns = @JoinColumn(name = "barbearia_id"))
     private List<DataHoraBarbearia> horarios;
 
+    private String imagemPerfil;
+
     @ElementCollection
     @CollectionTable(name = "barbearia_imagens", joinColumns = @JoinColumn(name = "barbearia_id"))
     private List<String> urlImagens;

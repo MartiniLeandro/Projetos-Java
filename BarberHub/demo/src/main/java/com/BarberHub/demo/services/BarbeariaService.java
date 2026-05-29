@@ -3,6 +3,7 @@ package com.BarberHub.demo.services;
 import com.BarberHub.demo.entities.Barbearia;
 import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaResponseDTO;
 import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaRequestDTO;
+import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaResumoDTO;
 import com.BarberHub.demo.entities.DataHoraBarbearia;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import com.BarberHub.demo.entities.Endereco;
@@ -36,11 +37,11 @@ public class BarbeariaService {
     }
 
     //CLIENTE, BARBEIRO
-    public List<BarbeariaResponseDTO> findAllBarbearias(String token){
+    public List<BarbeariaResumoDTO> findAllBarbearias(String token){
         User user = userService.findUserByToken(token);
         if (user.getRole() != RoleUser.BARBEIRO && user.getRole() != RoleUser.CLIENTE) throw new InvalidRoleException("Você não tem permissão para esta ação");
         List<Barbearia> barbearias = barbeariaRepository.findAll();
-        return barbearias.stream().map(BarbeariaResponseDTO::new).toList();
+        return barbearias.stream().map(BarbeariaResumoDTO::new).toList();
     }
 
     //CLIENTE, BARBEIRO

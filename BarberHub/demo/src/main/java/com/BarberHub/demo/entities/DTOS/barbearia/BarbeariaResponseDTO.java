@@ -8,7 +8,7 @@ import com.BarberHub.demo.entities.DTOS.servico.ServicoDTO;
 
 import java.util.List;
 
-public record BarbeariaResponseDTO(Long id, String nome, String telefone, EnderecoDTO endereco, List<BarbeiroDTO> barbeiros, List<ServicoDTO> servicos) {
+public record BarbeariaResponseDTO(Long id, String nome, String telefone, EnderecoDTO endereco, List<BarbeiroDTO> barbeiros, List<ServicoDTO> servicos, String imagemPerfil) {
     public BarbeariaResponseDTO(Barbearia barbearia){
         this(
             barbearia.getId(),
@@ -16,7 +16,8 @@ public record BarbeariaResponseDTO(Long id, String nome, String telefone, Endere
             barbearia.getTelefone(),
             new EnderecoDTO(barbearia.getEndereco()),
             barbearia.getBarbeiros().stream().map(BarbeiroDTO::new).toList(),
-            barbearia.getServicos().stream().map(ServicoDTO::new).toList()
+            barbearia.getServicos().stream().map(ServicoDTO::new).toList(),
+            barbearia.getImagemPerfil()
         );
     }
 }
