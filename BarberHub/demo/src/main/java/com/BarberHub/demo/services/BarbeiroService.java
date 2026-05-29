@@ -4,13 +4,17 @@ import com.BarberHub.demo.entities.Barbearia;
 import com.BarberHub.demo.entities.Barbeiro;
 import com.BarberHub.demo.entities.DTOS.barbeiro.BarbeiroRequestDTO;
 import com.BarberHub.demo.entities.DTOS.barbeiro.BarbeiroResponseDTO;
+import com.BarberHub.demo.entities.DTOS.user.RegisterUserDTO;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
+import com.BarberHub.demo.entities.ENUMS.StatusUsers;
 import com.BarberHub.demo.entities.User;
 import com.BarberHub.demo.exceptions.InvalidRoleException;
 import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.BarbeariaRepository;
 import com.BarberHub.demo.repositories.BarbeiroRepository;
+import com.BarberHub.demo.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,11 +26,15 @@ public class BarbeiroService {
     private final BarbeiroRepository barbeiroRepository;
     private final BarbeariaRepository barbeariaRepository;
     private final CreateUserService userService;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public BarbeiroService(BarbeiroRepository barbeiroRepository, BarbeariaRepository barbeariaRepository, CreateUserService userService) {
+    public BarbeiroService(BarbeiroRepository barbeiroRepository, BarbeariaRepository barbeariaRepository, CreateUserService userService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.barbeiroRepository = barbeiroRepository;
         this.barbeariaRepository = barbeariaRepository;
         this.userService = userService;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     //ADMIN
@@ -51,6 +59,23 @@ public class BarbeiroService {
         userService.findUserByToken(token);
         Barbeiro barbeiro = barbeiroRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe barbeiro com este ID"));
         return  new BarbeiroResponseDTO(barbeiro);
+    }
+
+    //BARBEARIA
+    @Transactional
+    public BarbeiroResponseDTO createBarbeiro(RegisterUserDTO data, String token){
+        User user = userService.findUserByToken(token);
+        if(user.getBarbearia() == null){
+            throw new InvalidRoleException("É necessário estar logado como como uma barbearia para criar um barbeiro");
+        }
+        if(userRepository.existsByEmail(data.email())){
+            throw new ArithmeticException("Este email já está sendo utilizado");
+        }
+        User newUser = User.builder().email(data.email()).password(passwordEncoder.encode(data.password())).role(RoleUser.BARBEIRO).build();
+        User savedUser = userRepository.save(newUser);
+        Barbeiro newBarbeiro = Barbeiro.builder().nome(data.nome()).telefone(data.telefone()).user(savedUser).barbearia(user.getBarbearia()).status(StatusUsers.ATIVO).build();
+        Barbeiro savedBarbeiro = barbeiroRepository.save(newBarbeiro);
+        return new BarbeiroResponseDTO(savedBarbeiro);
     }
 
     //BARBEIRO
