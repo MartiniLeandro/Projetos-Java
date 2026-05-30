@@ -87,7 +87,7 @@ public class LaunchService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LocalDate initialDate = data.initialDate() != null ? data.initialDate() : LocalDate.now().withDayOfMonth(1);
         LocalDate  finalDate = data.finalDate() != null ? data.finalDate() : LocalDate.now();
-        List<Launch> launches = launchRepository.getLaunchesWithFilters(user.getId(), data.typeValue() != null ? data.typeValue().name() : null, data.categoryId(), initialDate, finalDate);
+        List<Launch> launches = launchRepository.getLaunchesWithFilters(user.getId(), data.typeValue() != null ? data.typeValue().name() : null, data.categoryId(), initialDate, finalDate, data.description());
         return launches.stream().map(LaunchDTO::new).toList();
     }
 

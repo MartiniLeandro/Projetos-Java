@@ -21,6 +21,7 @@ public interface LaunchRepository extends JpaRepository<Launch,Long> {
     List<Launch> findByUserAndDateBetween(User user, LocalDate initialDate, LocalDate finalDate);
     List<Launch> findByUserAndCategory_TypeValue(User user, TypeValue typeValue);
     Page<Launch> findAllLaunchesByUser(Pageable pageable,User user);
+    List<Launch> findByDescriptionContainingIgnoreCase(String description);
 
     @Query(value = "select sum(ln.value) from launches as ln inner join categories as ct on ln.category_id = ct.id where ln.user_id = :user_id and ct.type_value = 'REVENUE'", nativeQuery = true)
     BigDecimal getTotalRevenue(@Param("user_id") Long user_id);
@@ -49,8 +50,8 @@ public interface LaunchRepository extends JpaRepository<Launch,Long> {
     @Query(value = "select ln.id,ln.description,ct.name as category, ct.type_value as type_value, ln.value,ln.date from launches as ln join categories as ct on ln.category_id = ct.id where user_id = :user_id and ln.date between :startDate and :endDate order by ln.date desc limit 8",nativeQuery = true) //tive que utilizar interface projection por problema em transformar Date em LocalDate da query
     List<LaunchInterface> getLastLaunches(@Param("user_id") Long user_id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query(value = "select l.* from launches as l join categories as c on l.category_id = c.id where l.user_id = :user_id and (:type_value is null or c.type_value = :type_value) and (:category_id is null or c.id = :category_id) and (cast(:startDate as date) is null or l.date >= :startDate) and (cast(:endDate as date) is null or l.date <= :endDate) order by date desc", nativeQuery = true) //adicionar paginação
-    List<Launch> getLaunchesWithFilters(@Param("user_id") Long user_id, @Param("type_value") String typeValue, @Param("category_id") Long category_id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    @Query(value = "select l.* from launches as l join categories as c on l.category_id = c.id where l.user_id = :user_id and (:type_value is null or c.type_value = :type_value) and (:category_id is null or c.id = :category_id) and (cast(:startDate as date) is null or l.date >= :startDate) and (cast(:endDate as date) is null or l.date <= :endDate) and (:description is null or l.description ilike concat('%', :description, '%')) order by date desc", nativeQuery = true) //adicionar paginação
+    List<Launch> getLaunchesWithFilters(@Param("user_id") Long user_id, @Param("type_value") String typeValue, @Param("category_id") Long category_id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("description") String description);
 
     @Query(value = "select coalesce(sum(case when c.type_value = 'REVENUE' then l.value end), 0) as revenue, coalesce(sum(case when c.type_value = 'EXPENSE' then l.value end), 0) as expense from launches as l join categories as c on l.category_id = c.id where l.user_id = :user_id and l.date between :startDate and :endDate", nativeQuery = true)
     TypeValuesDTO getTypeValuesByDate(@Param("user_id") Long user_Id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
