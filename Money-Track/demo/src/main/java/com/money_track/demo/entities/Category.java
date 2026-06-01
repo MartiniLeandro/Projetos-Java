@@ -27,7 +27,15 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private TypeValue typeValue;
 
+    @Column(name = "icon")
     private String icon;
+
+    @Column(name= "color", length = 7)
+    private String color;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Category(CategoryDTO categoryDTO) {
         this.name = categoryDTO.name();
