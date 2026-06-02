@@ -4,10 +4,10 @@ import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.TypeValue;
 
-public record CategoryDTO(Long id, String name, TypeValue typeValue, String icon, String color, Long userId) {
+public record CategoryDTO(Long id, String name, TypeValue typeValue, String icon, String color) {
     public CategoryDTO(Category category) {
         this(
-                category.getId(), category.getName(), category.getTypeValue(), category.getIcon(),  category.getColor(), category.getUser().getId() !=  null ? category.getUser().getId() : null
+                category.getId(), category.getName(), category.getTypeValue(), category.getIcon(),  category.getColor()
         );
     }
 }

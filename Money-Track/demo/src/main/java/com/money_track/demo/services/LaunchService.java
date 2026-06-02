@@ -95,7 +95,7 @@ public class LaunchService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Double revenue = 0.0 ,expense = 0.0;
         for(LaunchDTO launch : launches){
-            if(launch.category().getTypeValue() == TypeValue.REVENUE){
+            if(launch.category().typeValue() == TypeValue.REVENUE){
                 revenue +=  launch.value();
             }else {
                 expense +=  launch.value();
