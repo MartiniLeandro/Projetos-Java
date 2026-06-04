@@ -40,6 +40,8 @@ public class Category {
     public Category(CategoryDTO categoryDTO) {
         this.name = categoryDTO.name();
         this.typeValue = categoryDTO.typeValue();
+        this.icon = categoryDTO.icon();
+        this.color = categoryDTO.color();
     }
 
 }

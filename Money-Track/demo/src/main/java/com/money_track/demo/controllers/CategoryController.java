@@ -23,8 +23,8 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<CategoryDTO>> findAllCategories(@RequestParam Integer page, @RequestParam Integer size){
-        return ResponseEntity.ok().body(categoryService.findAllCategories(page,size));
+    public ResponseEntity<List<CategoryDTO>> findAllCategories(){
+        return ResponseEntity.ok().body(categoryService.findGlobalAndUserCategories());
     }
 
     @GetMapping("/{id}")
