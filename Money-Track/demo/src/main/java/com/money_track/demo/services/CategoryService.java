@@ -44,7 +44,7 @@ public class CategoryService {
         return new CategoryDTO(category);
     }
 
-    public List<CategoryDTO> findAllCategoriesByTypeValue(TypeValue typeValue){ //NÃO CORRIGIDO
+    public List<CategoryDTO> findAllCategoriesByTypeValue(TypeValue typeValue){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Category> categories = categoryRepository.findAllByTypeValueAndUserId(typeValue != null ? typeValue.name() : null, user.getId());
         return categories.stream().map(CategoryDTO::new).toList();

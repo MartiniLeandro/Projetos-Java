@@ -14,7 +14,7 @@ public interface CategoryRepository extends JpaRepository<Category,Long> {
     boolean existsByNameAndTypeValueAndUserId(String name, TypeValue type, Long userId);
     Category findByName(String name);
 
-    @Query(value = "select * from categories where (:type_value is null or type_value = :type_value and (user_id is null or user_id = :userId) order by name asc", nativeQuery = true)
+    @Query(value = "select * from categories where (:type_value is null or type_value = :type_value) and (user_id is null or user_id = :userId) order by name asc", nativeQuery = true)
     List<Category> findAllByTypeValueAndUserId(@Param("type_value") String type_value, @Param("userId") Long userId);
 
     @Query(value = "select * from categories where user_id is null or user_id = :userId order by name asc", nativeQuery = true)
