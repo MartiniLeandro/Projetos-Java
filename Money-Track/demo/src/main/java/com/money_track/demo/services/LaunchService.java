@@ -127,6 +127,4 @@ public class LaunchService {
         BigDecimal total = getTotalByAllLaunches();
         return new LaunchesDataDTO(launches, typeValues, totalLaunches, total, categoriesTotal);
     }
-
-
 }

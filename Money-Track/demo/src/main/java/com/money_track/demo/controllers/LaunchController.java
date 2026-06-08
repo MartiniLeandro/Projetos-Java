@@ -2,13 +2,15 @@ package com.money_track.demo.controllers;
 
 import com.money_track.demo.entities.DTO.*;
 import com.money_track.demo.services.DashboardService;
+import com.money_track.demo.services.ExportLaunchesService;
 import com.money_track.demo.services.LaunchService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/user/launches")
@@ -16,10 +18,12 @@ public class LaunchController {
 
     private final LaunchService launchService;
     private final DashboardService dashboardService;
+    private final ExportLaunchesService exportLaunchesService;
 
-    public LaunchController(LaunchService launchService, DashboardService dashboardService) {
+    public LaunchController(LaunchService launchService, DashboardService dashboardService, ExportLaunchesService exportLaunchesService) {
         this.launchService = launchService;
         this.dashboardService = dashboardService;
+        this.exportLaunchesService = exportLaunchesService;
     }
 
     @GetMapping("/all")
@@ -57,5 +61,23 @@ public class LaunchController {
     @GetMapping("/data")
     public ResponseEntity<LaunchesDataDTO> getLaunchesByFilters(@ModelAttribute LaunchesFilterDTO data){
         return ResponseEntity.ok().body(launchService.getLaunchesData(data));
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> exportToExcel(@ModelAttribute LaunchesFilterDTO data){
+        byte[] excelBytes = exportLaunchesService.CreateExcelFile(data);
+
+        if (excelBytes.length == 0) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+
+        headers.setContentDispositionFormData("attachment", "launches_report.xlsx");
+
+        return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+
     }
 }
