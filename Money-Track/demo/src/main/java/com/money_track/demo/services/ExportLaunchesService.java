@@ -10,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -36,9 +35,11 @@ public class ExportLaunchesService {
             Font font = workbook.createFont();
             font.setBold(true);
             headerStyle.setFont(font);
+            headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
             Row headerRow = sheet.createRow(0);
-            String[] columns = {"ID", "Description", "Value", "Date", "Type", "Category"};
+            String[] columns = {"Date","Description","Category","Type","Value"};
 
             for (int i = 0; i < columns.length; i++) {
                 Cell cell = headerRow.createCell(i);
@@ -50,19 +51,21 @@ public class ExportLaunchesService {
             for (Launch launch : launches) {
                 Row row = sheet.createRow(rowNum++);
 
-                row.createCell(0).setCellValue(launch.getId().toString());
+                row.createCell(0).setCellValue(launch.getDate().toString());
                 row.createCell(1).setCellValue(launch.getDescription());
-                row.createCell(2).setCellValue(launch.getValue());
-                row.createCell(3).setCellValue(launch.getDate());
-                row.createCell(4).setCellValue(launch.getCategory().getTypeValue().name());
-                row.createCell(5).setCellValue(launch.getCategory().getName());
+                row.createCell(2).setCellValue(launch.getCategory().getName());
+                row.createCell(3).setCellValue(launch.getCategory().getTypeValue().name());
+                row.createCell(4).setCellValue(launch.getValue());
+            }
+
+            for(int i=0;i<columns.length;i++){
+                sheet.autoSizeColumn(i);
             }
 
             workbook.write(out);
             return out.toByteArray();
         }catch (IOException e){
-            e.printStackTrace();
-            return new byte[0];
+           throw new RuntimeException("Falha interna ao gerar o arquivo excel: " + e.getMessage());
         }
     }
 }
