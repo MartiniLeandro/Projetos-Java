@@ -35,6 +35,7 @@ public class User implements UserDetails {
 
     @CPF
     @NotBlank
+    @Column(unique = true, length = 11)
     private String cpf;
 
     @NotBlank

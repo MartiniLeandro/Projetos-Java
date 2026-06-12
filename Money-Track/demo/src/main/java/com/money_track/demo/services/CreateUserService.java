@@ -4,6 +4,7 @@ import com.money_track.demo.entities.DTO.LoginDTO;
 import com.money_track.demo.entities.DTO.RegisterDTO;
 import com.money_track.demo.entities.DTO.UserDTO;
 import com.money_track.demo.entities.User;
+import com.money_track.demo.entities.enums.Roles;
 import com.money_track.demo.exceptions.AlreadyExistsException;
 import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.exceptions.UnauthorizedException;
@@ -51,10 +52,11 @@ public class CreateUserService {
 
     @Transactional
     public UserDTO register(RegisterDTO registerDTO){
+        String cpfLimpo = registerDTO.cpf().replaceAll("\\D", "");
         if(userRepository.existsByEmail(registerDTO.email())) throw new AlreadyExistsException("Este email já está cadastrado");
-        if(userRepository.existsByCpf(registerDTO.cpf())) throw new AlreadyExistsException("Este CPF já está cadastrado");
+        if(userRepository.existsByCpf(cpfLimpo)) throw new AlreadyExistsException("Este CPF já está cadastrado");
         String passwordEncoded = passwordEncoder.encode(registerDTO.password());
-        User newUser = User.builder().name(registerDTO.name()).cpf(registerDTO.cpf()).email(registerDTO.email()).password(passwordEncoded).build();
+        User newUser = User.builder().name(registerDTO.name()).cpf(cpfLimpo).email(registerDTO.email()).password(passwordEncoded).role(Roles.ROLE_USER).build();
         User savedUser = userRepository.save(newUser);
         return new UserDTO(savedUser);
     }
