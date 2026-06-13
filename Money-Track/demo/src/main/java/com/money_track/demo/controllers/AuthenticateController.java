@@ -40,6 +40,4 @@ public class AuthenticateController {
     public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid RegisterDTO registerDTO){
         return ResponseEntity.ok().body(createUserService.register(registerDTO));
     }
-
-
 }

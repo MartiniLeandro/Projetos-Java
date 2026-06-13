@@ -1,5 +1,10 @@
 package com.money_track.demo.services;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.money_track.demo.entities.DTO.LoginDTO;
 import com.money_track.demo.entities.DTO.RegisterDTO;
 import com.money_track.demo.entities.DTO.UserDTO;
@@ -11,6 +16,7 @@ import com.money_track.demo.exceptions.UnauthorizedException;
 import com.money_track.demo.repositories.UserRepository;
 import com.money_track.demo.security.TokenService;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +24,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class CreateUserService {
@@ -27,6 +35,9 @@ public class CreateUserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
+
+    @Value("${api.google.client-id}")
+    private String googleId;
 
     public CreateUserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenService tokenService) {
         this.userRepository = userRepository;
@@ -59,5 +70,50 @@ public class CreateUserService {
         User newUser = User.builder().name(registerDTO.name()).cpf(cpfLimpo).email(registerDTO.email()).password(passwordEncoded).role(Roles.ROLE_USER).build();
         User savedUser = userRepository.save(newUser);
         return new UserDTO(savedUser);
+    }
+
+    public GoogleIdToken.Payload verifyGoogleToken(String tokenGoogle){
+        try{
+            NetHttpTransport httpTransport = new NetHttpTransport();
+            GsonFactory jsonFactory = GsonFactory.getDefaultInstance();
+
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(httpTransport, jsonFactory)
+                    .setAudience(Collections.singleton(googleId))
+                    .build();
+
+            GoogleIdToken token = verifier.verify(tokenGoogle);
+
+            if(token != null){
+                return token.getPayload();
+            }else {
+                throw new RuntimeException("Token do Google inválido");
+            }
+        }catch (Exception e){
+            throw new RuntimeException("Erro ao autenticar com o Google: " + e.getMessage());
+        }
+    }
+
+    public String loginWithGoogle(String tokenGoogle){
+        GoogleIdToken.Payload payload = verifyGoogleToken(tokenGoogle);
+        String email = payload.getEmail();
+
+        if(!userRepository.existsByEmail(email)) throw new NotFoundException("Não existe usuário com este email");
+        User user = userRepository.findUserByEmail(email);
+
+        return tokenService.generateToken(user);
+    }
+
+    public String registerWithGoogle(String tokenGoogle, String cpf){
+        GoogleIdToken.Payload payload = verifyGoogleToken(tokenGoogle);
+        String email = payload.getEmail();
+        String name = (String) payload.get("name");
+
+        if(userRepository.existsByEmail(email)) throw new AlreadyExistsException("Este email já está sendo utilizado");
+
+        String passwordEncoded = passwordEncoder.encode(UUID.randomUUID().toString());
+        User user = User.builder().name(name).cpf(cpf.replaceAll("\\D", "")).email(email).password(passwordEncoded).role(Roles.ROLE_USER).build();
+        User savedUser = userRepository.save(user);
+
+        return tokenService.generateToken(savedUser);
     }
 }
