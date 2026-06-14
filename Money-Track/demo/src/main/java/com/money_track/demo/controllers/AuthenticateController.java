@@ -1,8 +1,6 @@
 package com.money_track.demo.controllers;
 
-import com.money_track.demo.entities.DTO.LoginDTO;
-import com.money_track.demo.entities.DTO.RegisterDTO;
-import com.money_track.demo.entities.DTO.UserDTO;
+import com.money_track.demo.entities.DTO.*;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
 import com.money_track.demo.exceptions.AlreadyExistsException;
@@ -11,6 +9,7 @@ import com.money_track.demo.repositories.UserRepository;
 import com.money_track.demo.security.TokenService;
 import com.money_track.demo.services.CreateUserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,5 +38,17 @@ public class AuthenticateController {
     @PostMapping("/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid RegisterDTO registerDTO){
         return ResponseEntity.ok().body(createUserService.register(registerDTO));
+    }
+
+    @PostMapping("/login/google")
+    public ResponseEntity<TokenResponseDTO> googleLogin(@RequestBody @Valid GoogleLoginDTO googleLoginDTO){
+        String jwtToken = createUserService.loginWithGoogle(googleLoginDTO);
+        return ResponseEntity.ok().body(new TokenResponseDTO(jwtToken));
+    }
+
+    @PostMapping("/register/google")
+    public ResponseEntity<TokenResponseDTO> googleRegister(@RequestBody @Valid GoogleRegisterDTO googleRegisterDTO){
+        String jwtToken = createUserService.registerWithGoogle(googleRegisterDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new TokenResponseDTO(jwtToken));
     }
 }

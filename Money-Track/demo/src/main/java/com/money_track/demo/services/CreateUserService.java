@@ -5,9 +5,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import com.money_track.demo.entities.DTO.LoginDTO;
-import com.money_track.demo.entities.DTO.RegisterDTO;
-import com.money_track.demo.entities.DTO.UserDTO;
+import com.money_track.demo.entities.DTO.*;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
 import com.money_track.demo.exceptions.AlreadyExistsException;
@@ -93,8 +91,8 @@ public class CreateUserService {
         }
     }
 
-    public String loginWithGoogle(String tokenGoogle){
-        GoogleIdToken.Payload payload = verifyGoogleToken(tokenGoogle);
+    public String loginWithGoogle(GoogleLoginDTO tokenGoogle){
+        GoogleIdToken.Payload payload = verifyGoogleToken(tokenGoogle.tokenGoogle());
         String email = payload.getEmail();
 
         if(!userRepository.existsByEmail(email)) throw new NotFoundException("Não existe usuário com este email");
@@ -103,15 +101,15 @@ public class CreateUserService {
         return tokenService.generateToken(user);
     }
 
-    public String registerWithGoogle(String tokenGoogle, String cpf){
-        GoogleIdToken.Payload payload = verifyGoogleToken(tokenGoogle);
+    public String registerWithGoogle(GoogleRegisterDTO googleRegister){
+        GoogleIdToken.Payload payload = verifyGoogleToken(googleRegister.token());
         String email = payload.getEmail();
         String name = (String) payload.get("name");
 
         if(userRepository.existsByEmail(email)) throw new AlreadyExistsException("Este email já está sendo utilizado");
 
         String passwordEncoded = passwordEncoder.encode(UUID.randomUUID().toString());
-        User user = User.builder().name(name).cpf(cpf.replaceAll("\\D", "")).email(email).password(passwordEncoded).role(Roles.ROLE_USER).build();
+        User user = User.builder().name(name).cpf(googleRegister.cpf().replaceAll("\\D", "")).email(email).password(passwordEncoded).role(Roles.ROLE_USER).build();
         User savedUser = userRepository.save(user);
 
         return tokenService.generateToken(savedUser);
