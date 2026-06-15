@@ -102,14 +102,16 @@ public class CreateUserService {
     }
 
     public String registerWithGoogle(GoogleRegisterDTO googleRegister){
-        GoogleIdToken.Payload payload = verifyGoogleToken(googleRegister.token());
+        GoogleIdToken.Payload payload = verifyGoogleToken(googleRegister.tokenGoogle());
         String email = payload.getEmail();
         String name = (String) payload.get("name");
 
         if(userRepository.existsByEmail(email)) throw new AlreadyExistsException("Este email já está sendo utilizado");
 
         String passwordEncoded = passwordEncoder.encode(UUID.randomUUID().toString());
-        User user = User.builder().name(name).cpf(googleRegister.cpf().replaceAll("\\D", "")).email(email).password(passwordEncoded).role(Roles.ROLE_USER).build();
+        String cpfUser =  googleRegister.cpf().replaceAll("\\D", "");
+        if(userRepository.existsByCpf(cpfUser)) throw new AlreadyExistsException("Este CPF já está sendo utilizado");
+        User user = User.builder().name(name).cpf(cpfUser).email(email).password(passwordEncoded).role(Roles.ROLE_USER).build();
         User savedUser = userRepository.save(user);
 
         return tokenService.generateToken(savedUser);
