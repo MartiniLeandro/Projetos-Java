@@ -1,5 +1,6 @@
 package com.money_track.demo.controllers;
 
+import com.money_track.demo.entities.DTO.ProfileDTO;
 import com.money_track.demo.entities.DTO.UserDTO;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.services.UserService;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/users")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -27,6 +28,11 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> findUserById(@PathVariable @Valid Long id){
         return ResponseEntity.ok().body(userService.findUserById(id));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<ProfileDTO> findProfileUser(){
+        return ResponseEntity.ok().body(userService.getProfileUser());
     }
 
     @PutMapping("/update/{id}")

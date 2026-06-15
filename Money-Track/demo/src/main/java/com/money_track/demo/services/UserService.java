@@ -1,5 +1,6 @@
 package com.money_track.demo.services;
 
+import com.money_track.demo.entities.DTO.ProfileDTO;
 import com.money_track.demo.entities.DTO.UserDTO;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
@@ -34,8 +35,17 @@ public class UserService {
         return new UserDTO(user);
     }
 
+    @PreAuthorize("hasRole('USER')")
+    public ProfileDTO getProfileUser(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findUserByEmail(email);
+        if(user == null) throw new NotFoundException("Não existe User com este email"); //para não ter que acessar o banco de dados 2 vezes, economizando memória
+        String firstName = user.getName().trim().split(" ")[0];
+        return new ProfileDTO(user.getEmail(), firstName);
+    }
+
     @Transactional
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PreAuthorize("hasRole('USER')")
     public UserDTO updateUser(UserDTO user, Long id){
         User userLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User updatedUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe user com este ID"));
