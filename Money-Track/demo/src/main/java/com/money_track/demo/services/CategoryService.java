@@ -1,6 +1,7 @@
 package com.money_track.demo.services;
 
 import com.money_track.demo.entities.Category;
+import com.money_track.demo.entities.DTO.CategoriesDataDTO;
 import com.money_track.demo.entities.DTO.CategoryDTO;
 import com.money_track.demo.entities.DTO.TypeValuesDTO;
 import com.money_track.demo.entities.User;
@@ -78,5 +79,13 @@ public class CategoryService {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe categoria com este ID"));
         if(category.getUser() == null || !Objects.equals(category.getUser().getId(), user.getId())) throw new IsNotYoursException("Esta categoria é global ou não é sua");
         categoryRepository.delete(category);
+    }
+
+    public CategoriesDataDTO getCategoryData(){
+        List<CategoryDTO> allCategories = findGlobalAndUserCategories();
+        int TotalQuantity = allCategories.size();
+        int ExpenseQuantity = (int) allCategories.stream().filter(category -> category.typeValue() == TypeValue.EXPENSE).count();
+        int RevenueQuantity = (int) allCategories.stream().filter(category -> category.typeValue() == TypeValue.REVENUE).count();
+        return new CategoriesDataDTO(allCategories, TotalQuantity, ExpenseQuantity, RevenueQuantity);
     }
 }

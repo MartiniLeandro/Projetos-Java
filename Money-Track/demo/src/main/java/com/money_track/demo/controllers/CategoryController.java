@@ -1,6 +1,7 @@
 package com.money_track.demo.controllers;
 
 import com.money_track.demo.entities.Category;
+import com.money_track.demo.entities.DTO.CategoriesDataDTO;
 import com.money_track.demo.entities.DTO.CategoryDTO;
 import com.money_track.demo.entities.enums.TypeValue;
 import com.money_track.demo.services.CategoryService;
@@ -37,17 +38,23 @@ public class CategoryController {
         return ResponseEntity.ok().body(categoryService.findAllCategoriesByTypeValue(typeValue));
     }
 
-    @PostMapping("/admin/createCategory")
+    @GetMapping("/data")
+    public ResponseEntity<CategoriesDataDTO> findAllCategoriesData(){
+        return ResponseEntity.ok().body(categoryService.getCategoryData());
+    }
+
+    //alterar métodos de create, update e delete(estão para admin)
+    @PostMapping("/admin/create")
     public ResponseEntity<CategoryDTO> createCategory(@RequestBody @Valid CategoryDTO category){
         return ResponseEntity.ok().body(categoryService.createCategory(category));
     }
 
-    @PutMapping("admin/updateCategory/{id}")
+    @PutMapping("admin/update/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody @Valid CategoryDTO category, @PathVariable @Valid Long id){
         return ResponseEntity.ok().body(categoryService.updateCategory(category,id));
     }
 
-    @DeleteMapping("admin/deleteCategory/{id}")
+    @DeleteMapping("admin/delete/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable @Valid Long id){
         categoryService.deleteCategoryById(id);
         return ResponseEntity.noContent().build();
