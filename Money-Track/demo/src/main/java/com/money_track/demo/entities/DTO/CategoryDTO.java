@@ -4,10 +4,22 @@ import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.TypeValue;
 
-public record CategoryDTO(Long id, String name, TypeValue typeValue, String icon, String color) {
+public record CategoryDTO(Long id, String name, TypeValue typeValue, String icon, String color, Long userId) {
     public CategoryDTO(Category category) {
         this(
-                category.getId(), category.getName(), category.getTypeValue(), category.getIcon(),  category.getColor()
+                category.getId(), category.getName(), category.getTypeValue(), category.getIcon(),  category.getColor(), extrairUserId(category)
         );
+    }
+
+    private static Long extrairUserId(Category category){
+        if (category == null) {
+            return null;
+        }
+
+        if (category.getUser() == null) {
+            return null;
+        }
+
+        return category.getUser().getId();
     }
 }

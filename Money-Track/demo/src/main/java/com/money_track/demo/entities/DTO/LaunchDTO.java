@@ -1,6 +1,5 @@
 package com.money_track.demo.entities.DTO;
 
-import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.Launch;
 
 import java.time.LocalDate;
