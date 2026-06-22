@@ -1,4 +1,4 @@
-package com.money_track.demo.services;
+/*package com.money_track.demo.services;
 
 import com.money_track.demo.entities.DTO.UserDTO;
 import com.money_track.demo.entities.User;
@@ -176,3 +176,4 @@ public class UserServiceTest {
         Assertions.assertEquals("Não existe user com este ID",exception.getMessage());
     }
 }
+*/

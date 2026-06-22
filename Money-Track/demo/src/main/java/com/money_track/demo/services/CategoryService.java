@@ -62,7 +62,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryDTO updateCategory(CategoryDTO categoryDTO,Long id){
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO,Long id){ //RESOLVER O SEGUNDO IF
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Category updatedCategory = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe categoria com este ID"));
         if(updatedCategory.getUser() == null || !updatedCategory.getUser().getId().equals(user.getId())) throw new IsNotYoursException("Esta categoria é global ou não é sua");
