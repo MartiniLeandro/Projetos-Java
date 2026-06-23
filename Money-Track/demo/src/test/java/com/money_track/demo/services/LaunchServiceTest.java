@@ -1,7 +1,9 @@
-/*package com.money_track.demo.services;
+package com.money_track.demo.services;
 
 import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.LaunchDTO;
+import com.money_track.demo.entities.DTO.LaunchRequestDTO;
+import com.money_track.demo.entities.DTO.LaunchesFilterDTO;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
@@ -21,6 +23,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -47,59 +55,69 @@ public class LaunchServiceTest {
     @Mock
     private CategoryRepository categoryRepository;
 
+    @Mock
+    private SecurityContext securityContext;
+
+    @Mock
+    private Authentication authentication;
+
     @InjectMocks
     private LaunchService launchService;
 
     private Launch launch1,launch2;
     private User user1;
     private Category category1,category2;
+    private LaunchRequestDTO launchRequestDTO;
 
     @BeforeEach
     void setup(){
-        user1 = new User("user","702.413.770-30","user@email.com","user123", Roles.ROLE_USER);
-        category1 = new Category("salary", TypeValue.REVENUE);
-        category2 = new Category("school", TypeValue.EXPENSE);
-        category1.setId(1L);
-        category2.setId(2L);
+        user1 = new User(1L,"user","702.413.770-30","user@email.com","user123", Roles.ROLE_USER, new ArrayList<>());
+        category1 = new Category(1L,"salary", TypeValue.REVENUE,"salary","green",user1);
+        category2 = new Category(2L,"school", TypeValue.EXPENSE,"school","red",user1);
 
-        launch1 = new Launch("salary",category1,1500.0, LocalDate.of(2025,6,1),user1);
-        launch2 = new Launch("school",category2,500.0, LocalDate.of(2025,6,2),user1);
-        launch1.setId(1L);
-        launch2.setId(2L);
+        launch1 = new Launch(1L,"salary",category1,1500.0, LocalDate.of(2025,6,1),user1);
+        launch2 = new Launch(2L,"school",category2,500.0, LocalDate.of(2025,6,2),user1);
         user1.setLaunches(List.of(launch1,launch2));
+        launchRequestDTO = new LaunchRequestDTO("recebendo salário",1L,1520.0,LocalDate.now());
 
-        when(tokenService.validateToken(anyString())).thenReturn("user@email.com");
-        when(userRepository.findUserByEmail("user@email.com")).thenReturn(user1);
-
+        when(authentication.getPrincipal()).thenReturn(user1);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
     }
 
     @DisplayName("test find all launches SUCCESS")
     @Test
     void testFindAllLaunchesSuccess(){
+        List<Launch> launches = List.of(launch1,launch2);
+        Page<Launch> launchesPage = new PageImpl<>(launches);
 
-        List<LaunchDTO> allLaunches = launchService.findAllLaunches("fake-token");
+        when(launchRepository.findAllLaunchesByUser(any(Pageable.class),any(User.class))).thenReturn(launchesPage);
+        Page<LaunchDTO> allLaunches = launchService.findAllLaunches(0,2);
 
         Assertions.assertNotNull(allLaunches);
-        Assertions.assertEquals(2,allLaunches.size());
+        Assertions.assertEquals(2,allLaunches.getTotalElements());
+        List<LaunchDTO> conteudoDaPagina = allLaunches.getContent();
+        Assertions.assertEquals("salary", conteudoDaPagina.getFirst().description());
     }
 
-    @DisplayName("test final all launches FAILED")
+    @DisplayName("test find all launches FAILED")
     @Test
     void testFindAllLaunchesFailed(){
-        when(launchService.findAllLaunches("fake-token")).thenThrow(new RuntimeException("Erro interno"));
+        when(launchRepository.findAllLaunchesByUser(any(Pageable.class),any(User.class))).thenReturn(Page.empty());
+        Page<LaunchDTO> launches = launchService.findAllLaunches(0,2);
 
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> launchService.findAllLaunches("fake-token"));
-        Assertions.assertEquals("Erro interno", exception.getMessage());
+        Assertions.assertNotNull(launches);
+        Assertions.assertTrue(launches.isEmpty());
     }
 
     @DisplayName("test find launch by id SUCCESS")
     @Test
     void testFindLaunchByIdSuccess(){
         when(launchRepository.findById(anyLong())).thenReturn(Optional.of(launch1));
-        LaunchDTO launch = launchService.findLaunchById("fake-token",1L);
+        LaunchDTO launch = launchService.findLaunchById(1L);
 
-        Assertions.assertEquals(1500.0,launch.getValue());
-
+        Assertions.assertNotNull(launch);
+        Assertions.assertEquals("salary", launch.description());
     }
 
     @DisplayName("test find launch by id FAILED case1")
@@ -107,7 +125,7 @@ public class LaunchServiceTest {
     void testFindLaunchByIdFailed1(){
         when(launchRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> launchService.findLaunchById("fake-token",anyLong()));
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> launchService.findLaunchById(1L));
 
         Assertions.assertEquals("Não existe launch com este ID",exception.getMessage());
     }
@@ -118,7 +136,7 @@ public class LaunchServiceTest {
         user1.setLaunches(new ArrayList<>());
         when(launchRepository.findById(1L)).thenReturn(Optional.of(launch1));
 
-        IsNotYoursException exception = Assertions.assertThrows(IsNotYoursException.class, () -> launchService.findLaunchById("fake-token",1L));
+        IsNotYoursException exception = Assertions.assertThrows(IsNotYoursException.class, () -> launchService.findLaunchById(1L));
 
         Assertions.assertEquals("este launch não pertence a você",exception.getMessage());
 
@@ -128,28 +146,28 @@ public class LaunchServiceTest {
     @Test
     void testCreateLaunchSuccess(){
         when(categoryRepository.findById(any())).thenReturn(Optional.of(category1));
-        when(launchRepository.save(any())).thenReturn(launch2);
-        LaunchDTO launch = launchService.createLaunch(launch2,"fake-token");
+        when(launchRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        LaunchDTO launch = launchService.createLaunch(launchRequestDTO);
 
-        Assertions.assertEquals("school",launch.getDescription());
+        Assertions.assertNotNull(launch);
+        Assertions.assertEquals("recebendo salário",launch.description());
     }
 
-    @DisplayName("test create launch FAILED case1")
+    @DisplayName("test create launch FAILED 1")
     @Test
     void testCreateLaunchFailed1(){
         when(categoryRepository.findById(any())).thenReturn(Optional.empty());
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> launchService.createLaunch(launchRequestDTO));
 
-        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> launchService.createLaunch(launch2,"fake-token"));
         Assertions.assertEquals("Não existe category com este ID",exception.getMessage());
     }
 
-    @DisplayName("test create launch FAILED case2")
+    @DisplayName("test create launch FAILED 2")
     @Test
     void testCreateLaunchFailed2(){
-        when(categoryRepository.findById(any())).thenReturn(Optional.of(category1));
-        launch2.setValue(-50D);
+        LaunchRequestDTO dtoInvalido = new LaunchRequestDTO("teste",2L,-320.0,LocalDate.now());
+        NegativeNumberException exception = Assertions.assertThrows(NegativeNumberException.class, () ->launchService.createLaunch(dtoInvalido));
 
-        NegativeNumberException exception = Assertions.assertThrows(NegativeNumberException.class, () ->launchService.createLaunch(launch2,"fake-token"));
         Assertions.assertEquals("Value não pode ser negativo",exception.getMessage());
         verify(launchRepository, never()).save(any(Launch.class));
     }
@@ -158,111 +176,102 @@ public class LaunchServiceTest {
     @Test
     void testUpdateLaunchSuccess(){
         when(launchRepository.findById(anyLong())).thenReturn(Optional.of(launch1));
-        when(categoryRepository.existsById(anyLong())).thenReturn(true);
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(category1));
-        when(launchRepository.save(any())).thenReturn(launch1);
+        when(launchRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        LaunchDTO launchDTO = launchService.updateLaunch(1L,launchRequestDTO);
 
-        LaunchDTO launchDTO = launchService.updateLaunch(1L,launch2,"fake-token");
         Assertions.assertNotNull(launchDTO);
-        Assertions.assertEquals("school", launchDTO.getDescription());
+        Assertions.assertEquals("recebendo salário", launchDTO.description());
 
     }
 
-    @DisplayName("test update launch FAILED case1")
+    @DisplayName("test update launch FAILED 1")
     @Test
-    void testUpdateLaunchFailed1(){
+    void testUpdateFailed1(){
+        LaunchRequestDTO dtoInvalido = new LaunchRequestDTO("teste",2L,-320.0,LocalDate.now());
+
+        NegativeNumberException exception = Assertions.assertThrows(NegativeNumberException.class, () -> launchService.updateLaunch(1L,dtoInvalido));
+        Assertions.assertEquals("Value não pode ser negativo",exception.getMessage());
+    }
+
+    @DisplayName("test update launch FAILED 2")
+    @Test
+    void testUpdateLaunchFailed2(){
         when(launchRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> launchService.updateLaunch(1L,launch2,"fake-token"));
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> launchService.updateLaunch(1L,launchRequestDTO));
         Assertions.assertEquals("Não existe launch com este ID",exception.getMessage());
     }
 
-    @DisplayName("test update launch FAILED case2")
+   @DisplayName("test update launch FAILED 3")
     @Test
-    void testUpdateFailed2(){
-        user1.setLaunches(new ArrayList<>());
+    void testUpdateFailed3(){
+        User user2 = new User(2L,"user2","702.413.770-30","user2@email.com","user123", Roles.ROLE_USER, new ArrayList<>());
+        launch1.setUser(user2);
         when(launchRepository.findById(1L)).thenReturn(Optional.of(launch1));
 
-        IsNotYoursException exception = Assertions.assertThrows(IsNotYoursException.class, () -> launchService.updateLaunch(1L,launch1,"fake-token"));
+        IsNotYoursException exception = Assertions.assertThrows(IsNotYoursException.class, () -> launchService.updateLaunch(1L,launchRequestDTO));
         Assertions.assertEquals("Este launch não pertence a você",exception.getMessage());
     }
 
-    @DisplayName("test update launch FAILED case3")
-    @Test
-    void testUpdateFailed3(){
-        when(launchRepository.findById(anyLong())).thenReturn(Optional.of(launch2));
-        when(categoryRepository.existsById(anyLong())).thenReturn(false);
-
-        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> launchService.updateLaunch(1L,launch1,"fake-token"));
-        Assertions.assertEquals("Não existe esta category",exception.getMessage());
-    }
-
-    @DisplayName("test update launch FAILED case4")
+    @DisplayName("test update launch FAILED 4")
     @Test
     void testUpdateFailed4(){
         when(launchRepository.findById(anyLong())).thenReturn(Optional.of(launch2));
-        when(categoryRepository.existsById(anyLong())).thenReturn(true);
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> launchService.updateLaunch(1L,launch1,"fake-token"));
-        Assertions.assertEquals("Não existe category com este ID", exception.getMessage());
-    }
-
-    @DisplayName("test update launch FAILED case5")
-    @Test
-    void testUpdateFailed5(){
-        when(launchRepository.findById(anyLong())).thenReturn(Optional.of(launch2));
-        launch1.setValue(-50D);
-        when(categoryRepository.existsById(anyLong())).thenReturn(true);
-        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(category1));
-
-        NegativeNumberException exception = Assertions.assertThrows(NegativeNumberException.class, () -> launchService.updateLaunch(1L,launch1,"fake-token"));
-        Assertions.assertEquals("Value não pode ser negativo",exception.getMessage());
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> launchService.updateLaunch(1L,launchRequestDTO));
+        Assertions.assertEquals("Não existe category com este ID",exception.getMessage());
     }
 
     @DisplayName("test delete launch SUCCESS")
     @Test
     void testDeleteLaunchSuccess(){
         when(launchRepository.findById(anyLong())).thenReturn(Optional.of(launch1));
-        launchService.deleteLaunchById(1L,"fake-token");
+        doNothing().when(launchRepository).delete(launch1);
+        launchService.deleteLaunchById(1L);
 
-        verify(launchRepository).deleteById(1L);
+        verify(launchRepository).delete(launch1);
     }
 
 
-    @DisplayName("test delete launch FAILED case1")
+    @DisplayName("test delete launch FAILED 1")
     @Test
     void testDeleteLaunchFailed1(){
         when(launchRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> launchService.deleteLaunchById(1L,"fake-token"));
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> launchService.deleteLaunchById(1L));
         Assertions.assertEquals("Não existe launch com este ID",exception.getMessage());
         verify(launchRepository, never()).deleteById(anyLong());
     }
 
-    @DisplayName("test delete launch FAILED case2")
+    @DisplayName("test delete launch FAILED 2")
     @Test
     void testDeleteLaunchFailed2(){
-        when(launchRepository.findById(1L)).thenReturn(Optional.of(launch1));
         user1.setLaunches(new ArrayList<>());
+        User user = new User();
+        user.setId(99L);
+        launch1.setUser(user);
+        when(launchRepository.findById(anyLong())).thenReturn(Optional.of(launch1));
 
-        IsNotYoursException exception = Assertions.assertThrows(IsNotYoursException.class, () -> launchService.deleteLaunchById(1L, "fake-token"));
+        IsNotYoursException exception = Assertions.assertThrows(IsNotYoursException.class, () -> launchService.deleteLaunchById(1L));
         Assertions.assertEquals("Este launch não pertence a você", exception.getMessage());
         verify(launchRepository, never()).deleteById(anyLong());
     }
 
-    @DisplayName("test filter launch by category SUCCESS")
+    @DisplayName("test filter launches by filters SUCCESS")
     @Test
     void testFilterLaunchByCategorySuccess(){
-        when(categoryRepository.findByName(anyString())).thenReturn(category1);
-        List<LaunchDTO> launchesByCategory = launchService.filterLaunchByCategory(category1.getName(),"fake-token");
+        LaunchesFilterDTO data = new LaunchesFilterDTO(LocalDate.now(),LocalDate.now(),TypeValue.REVENUE,1L,"teste");
+        when(launchRepository.getLaunchesWithFilters(anyLong(),anyString(),anyLong(),any(LocalDate.class),any(LocalDate.class),anyString())).thenReturn(List.of(launch1,launch2));
+        List<LaunchDTO> launchesByFilter = launchService.getLaunchesWithFilter(data);
 
-        Assertions.assertNotNull(launchesByCategory);
-        Assertions.assertEquals(1,launchesByCategory.size());
-        Assertions.assertEquals("salary", launchesByCategory.getFirst().getDescription());
+        Assertions.assertNotNull(launchesByFilter);
+        Assertions.assertEquals(2,launchesByFilter.size());
+        Assertions.assertEquals("salary", launchesByFilter.getFirst().description());
     }
 
-    @DisplayName("test filter launch by category FAILED")
+    /*@DisplayName("test filter launch by category FAILED")
     @Test
     void testFilterLaunchByCategoryFailed(){
         user1.setLaunches(new ArrayList<>());
@@ -311,5 +320,6 @@ public class LaunchServiceTest {
         Assertions.assertNotNull(launchesByTypeValue);
         Assertions.assertTrue(launchesByTypeValue.isEmpty());
     }
+    */
+
 }
-*/
