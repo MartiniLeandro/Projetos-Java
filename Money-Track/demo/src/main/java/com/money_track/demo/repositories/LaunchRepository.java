@@ -25,13 +25,13 @@ public interface LaunchRepository extends JpaRepository<Launch,Long> {
     @Query(value = "select sum(ln.value) from launches as ln inner join categories as ct on ln.category_id = ct.id where ln.user_id = :user_id and ct.type_value = 'REVENUE'", nativeQuery = true)
     BigDecimal getTotalRevenue(@Param("user_id") Long user_id);
 
-    @Query(value = "select sum(ln.value) from launches as ln inner join categories as ct on ln.category_id = ct.id where ln.user_id = :user_id and ct.type_value = 'EXPENSE'", nativeQuery = true)
+    @Query(value = "select coalesce(sum(ln.value)) from launches as ln inner join categories as ct on ln.category_id = ct.id where ln.user_id = :user_id and ct.type_value = 'EXPENSE'", nativeQuery = true)
     BigDecimal getTotalExpense(@Param("user_id") Long user_id);
 
-    @Query(value = "select sum(ln.value) from launches as ln join categories as ct on ln.category_id = ct.id where ln.user_id = :user_id and ct.type_value = 'REVENUE' and ln.date between :startDate and :endDate", nativeQuery = true)
+    @Query(value = "select coalesce(sum(ln.value)) from launches as ln join categories as ct on ln.category_id = ct.id where ln.user_id = :user_id and ct.type_value = 'REVENUE' and ln.date between :startDate and :endDate", nativeQuery = true)
     BigDecimal getTotalRevenueByMonth(@Param("user_id") Long user_id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query(value = "select sum(ln.value) from launches as ln join categories as ct on ln.category_id = ct.id where ln.user_id = :user_id and ct.type_value = 'EXPENSE' and ln.date between :startDate and :endDate", nativeQuery = true)
+    @Query(value = "select coalesce(sum(ln.value)) from launches as ln join categories as ct on ln.category_id = ct.id where ln.user_id = :user_id and ct.type_value = 'EXPENSE' and ln.date between :startDate and :endDate", nativeQuery = true)
     BigDecimal getTotalExpenseByMonth(@Param("user_id") Long user_id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     @Query(value = "select ct.name as name, sum(ln.value) as totalValue from launches as ln join categories as ct on ln.category_id = ct.id where ln.user_id = :user_id and ct.type_value = 'REVENUE' group by ct.name", nativeQuery = true)

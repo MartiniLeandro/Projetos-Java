@@ -1,9 +1,7 @@
 package com.money_track.demo.services;
 
 import com.money_track.demo.entities.Category;
-import com.money_track.demo.entities.DTO.LaunchDTO;
-import com.money_track.demo.entities.DTO.LaunchRequestDTO;
-import com.money_track.demo.entities.DTO.LaunchesFilterDTO;
+import com.money_track.demo.entities.DTO.*;
 import com.money_track.demo.entities.Launch;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
@@ -30,6 +28,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,12 +44,6 @@ public class LaunchServiceTest {
 
     @Mock
     private LaunchRepository launchRepository;
-
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private TokenService tokenService;
 
     @Mock
     private CategoryRepository categoryRepository;
@@ -271,55 +264,68 @@ public class LaunchServiceTest {
         Assertions.assertEquals("salary", launchesByFilter.getFirst().description());
     }
 
-    /*@DisplayName("test filter launch by category FAILED")
+    @DisplayName("test filter launch by filters FAILED")
     @Test
     void testFilterLaunchByCategoryFailed(){
         user1.setLaunches(new ArrayList<>());
-        List<LaunchDTO> launchesByCategory = launchService.filterLaunchByCategory(category1.getName(),"fake-token");
+        LaunchesFilterDTO data = new LaunchesFilterDTO(LocalDate.now(),LocalDate.now(),TypeValue.REVENUE,1L,"teste");
+        when(launchRepository.getLaunchesWithFilters(anyLong(),anyString(),anyLong(),any(LocalDate.class),any(LocalDate.class),anyString())).thenReturn(Collections.emptyList());
+        List<LaunchDTO> launchesByCategory = launchService.getLaunchesWithFilter(data);
 
         Assertions.assertNotNull(launchesByCategory);
         Assertions.assertTrue(launchesByCategory.isEmpty());
     }
 
-    @DisplayName("test filter launch by date SUCCESS")
+    @DisplayName("Test to obtain the total value of transactions by typeValue SUCCESS")
     @Test
-    void testFilterLaunchByDateSuccess(){
-        when(launchRepository.findByUserAndDateBetween(user1,LocalDate.of(2025,5,1), LocalDate.of(2025,6,30))).thenReturn(List.of(launch1,launch2));
-        List<LaunchDTO> launchesByDate = launchService.filterLaunchByDate(LocalDate.of(2025,5,1), LocalDate.of(2025,6,30),"fake-token");
+    void testGetTypeValuesByLaunchesSuccess(){
+        List<LaunchDTO> launches = List.of(launch1,launch2).stream().map(LaunchDTO::new).toList();
+        TypeValuesDTO data = launchService.getTypeValuesByLaunches(launches);
 
-        Assertions.assertNotNull(launchesByDate);
-        Assertions.assertEquals(2,launchesByDate.size());
+        Assertions.assertNotNull(data);
+        Assertions.assertEquals(1500.0,data.revenue());
+        Assertions.assertEquals(500.0,data.expense());
     }
 
-    @DisplayName("test filter launch by date FAILED")
+    @DisplayName("get total category by date SUCCESS")
     @Test
-    void testFilterLaunchByDateFailed(){
-        when(launchRepository.findByUserAndDateBetween(user1,LocalDate.of(2025,5,1), LocalDate.of(2025,6,30))).thenReturn(Collections.emptyList());
-        List<LaunchDTO> launchesByDate = launchService.filterLaunchByDate(LocalDate.of(2025,5,1), LocalDate.of(2025,6,30),"fake-token");
+    void testGetTotalCategoryByDateSuccess(){
+        CategoryTotalDTO categoryTotalDTO1 = new CategoryTotalDTO("salary",1500.0);
+        CategoryTotalDTO categoryTotalDTO2 = new CategoryTotalDTO("school",500.0);
+        when(launchRepository.getTotalMostExpensiveCategoriesByDate(anyLong(),any(LocalDate.class),any(LocalDate.class))).thenReturn(List.of(categoryTotalDTO1,categoryTotalDTO2));
+        List<CategoryTotalDTO> categoriesTotal = launchService.getCategoryTotalByDate(LocalDate.now().withDayOfMonth(1), LocalDate.now());
 
-        Assertions.assertNotNull(launchesByDate);
-        Assertions.assertTrue(launchesByDate.isEmpty());
+        Assertions.assertNotNull(categoriesTotal);
+        Assertions.assertEquals(2,categoriesTotal.size());
     }
 
-    @DisplayName("test filter by type value SUCCESS")
+    @DisplayName("test get total value by all launches")
     @Test
-    void testFilterLaunchByTypeValueSuccess(){
-        when(launchRepository.findByUserAndCategory_TypeValue(user1,TypeValue.EXPENSE)).thenReturn(List.of(launch2));
-        List<LaunchDTO> launchesByTypeValue = launchService.filterByTypeValue("fake-token",TypeValue.EXPENSE);
+    void testGetTotalValueByAllLaunchesSuccess(){
+        when(launchRepository.getTotalRevenue(anyLong())).thenReturn(BigDecimal.valueOf(1500));
+        when(launchRepository.getTotalExpense(anyLong())).thenReturn(BigDecimal.valueOf(500));
+        BigDecimal value = launchService.getTotalByAllLaunches();
 
-        Assertions.assertNotNull(launchesByTypeValue);
-        Assertions.assertEquals(1,launchesByTypeValue.size());
-    }
+        Assertions.assertNotNull(value);
+        Assertions.assertEquals(1000,value.doubleValue());
+        }
 
-    @DisplayName("test filter by type value FAILED")
+    @DisplayName("test get launches data SUCCESS")
     @Test
-    void testFilterLaunchByTypeValueFailed(){
-        when(launchRepository.findByUserAndCategory_TypeValue(user1,TypeValue.EXPENSE)).thenReturn(Collections.emptyList());
-        List<LaunchDTO> launchesByTypeValue = launchService.filterByTypeValue("fake-token",TypeValue.EXPENSE);
+    void testGetLaunchesDataSuccess(){
+        LaunchesFilterDTO filters = new LaunchesFilterDTO(LocalDate.now(),LocalDate.now(),TypeValue.REVENUE,1L,"teste");
+        when(launchRepository.getLaunchesWithFilters(anyLong(), any(), anyLong(), any(LocalDate.class), any(LocalDate.class), anyString())).thenReturn(List.of(launch1));
+        when(launchRepository.getTotalMostExpensiveCategoriesByDate( anyLong(),any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(new CategoryTotalDTO("salary", 1500.0)));
+        when(launchRepository.getTotalRevenue(anyLong())).thenReturn(new BigDecimal("1500.00"));
+        when(launchRepository.getTotalExpense(anyLong())).thenReturn(BigDecimal.ZERO);
+        LaunchesDataDTO data = launchService.getLaunchesData(filters);
 
-        Assertions.assertNotNull(launchesByTypeValue);
-        Assertions.assertTrue(launchesByTypeValue.isEmpty());
+        Assertions.assertNotNull(data);
+
+        Assertions.assertEquals(1, data.launches().size());
+        Assertions.assertEquals("salary", data.launches().getFirst().description()); // Ajuste se seu record usar outro nome
+        Assertions.assertEquals(1, data.totalLaunches());
+        Assertions.assertEquals(new BigDecimal("1500.00"), data.totalValue());
     }
-    */
 
 }
