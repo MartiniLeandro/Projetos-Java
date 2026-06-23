@@ -29,6 +29,7 @@ public class UserService {
         List<User> allUsers = userRepository.findAll();
         return allUsers.stream().map(UserDTO::new).toList();
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     public UserDTO findUserById(Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("não existe User com este ID"));
