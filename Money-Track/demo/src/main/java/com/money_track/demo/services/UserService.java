@@ -5,6 +5,7 @@ import com.money_track.demo.entities.DTO.UserDTO;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
 import com.money_track.demo.exceptions.AlreadyExistsException;
+import com.money_track.demo.exceptions.IsNotYoursException;
 import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.repositories.UserRepository;
 import jakarta.transaction.Transactional;
@@ -38,8 +39,7 @@ public class UserService {
 
     @PreAuthorize("hasRole('USER')")
     public ProfileDTO getProfileUser(){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findUserByEmail(email);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(user == null) throw new NotFoundException("Não existe User com este email"); //para não ter que acessar o banco de dados 2 vezes, economizando memória
         String firstName = user.getName().trim().split(" ")[0];
         return new ProfileDTO(user.getEmail(), firstName);
@@ -50,7 +50,7 @@ public class UserService {
     public UserDTO updateUser(UserDTO user, Long id){
         User userLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User updatedUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe user com este ID"));
-        if(!Objects.equals(userLogado.getEmail(), updatedUser.getEmail()) && userLogado.getRole() != Roles.ROLE_ADMIN) throw new RuntimeException("Você não tem permissão para realizar esta ação");
+        if(!Objects.equals(userLogado.getEmail(), updatedUser.getEmail()) && userLogado.getRole() != Roles.ROLE_ADMIN) throw new IsNotYoursException("Você não tem permissão para realizar esta ação");
         updatedUser.setName(user.name());
         updatedUser.setCpf(user.cpf());
         if(userRepository.existsByEmail(user.email()) && !updatedUser.getEmail().equals(user.email())) throw new AlreadyExistsException("Este email já está cadastrado");

@@ -4,6 +4,8 @@ import com.money_track.demo.entities.DTO.ProfileDTO;
 import com.money_track.demo.entities.DTO.UserDTO;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
+import com.money_track.demo.exceptions.AlreadyExistsException;
+import com.money_track.demo.exceptions.IsNotYoursException;
 import com.money_track.demo.exceptions.NotFoundException;
 import com.money_track.demo.repositories.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.*;
 
@@ -46,8 +47,8 @@ public class UserServiceTest {
         user = new User(1L,"user","702.413.770-30","user@email.com","user123", Roles.ROLE_USER, new ArrayList<>());
         admin = new User(2L,"admin","730.136.230-71","admin@email.com","admin123", Roles.ROLE_ADMIN, new ArrayList<>());
 
-        when(authentication.getName()).thenReturn("user@email.com");
-        when(securityContext.getAuthentication()).thenReturn(authentication);
+        lenient().when(authentication.getPrincipal()).thenReturn(user);
+        lenient().when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
     }
 
@@ -87,7 +88,7 @@ public class UserServiceTest {
     @Test
     void testFindUserByIdFailed(){
         when(userRepository.findById(any())).thenReturn(Optional.empty());
-        NotFoundException exception =  Assertions.assertThrows(NotFoundException.class, () -> userService.findUserById(anyLong()));
+        NotFoundException exception =  Assertions.assertThrows(NotFoundException.class, () -> userService.findUserById(1L));
 
         Assertions.assertEquals("não existe User com este ID", exception.getMessage());
     }
@@ -95,7 +96,6 @@ public class UserServiceTest {
     @DisplayName("test get profile user success")
     @Test
     void testGetProfileUserSuccess(){
-        when(userRepository.findUserByEmail(anyString())).thenReturn(user);
         ProfileDTO profile = userService.getProfileUser();
 
         Assertions.assertNotNull(profile);
@@ -103,48 +103,63 @@ public class UserServiceTest {
         Assertions.assertEquals("user",profile.name());
     }
 
-    /*@DisplayName("test get profile user failed")
+    @DisplayName("test get profile user failed")
     @Test
     void testGetProfileUserFailed(){
-        User user2 = new User();
-        when(userRepository.findUserByEmail(anyString())).thenReturn(user2);
+        when(authentication.getPrincipal()).thenReturn(null);
         NotFoundException exception =  Assertions.assertThrows(NotFoundException.class, () -> userService.getProfileUser());
 
         Assertions.assertEquals("Não existe User com este email",exception.getMessage());
     }
-
     @DisplayName("test update User SUCCESS")
     @Test
     void testUpdateUserSuccess(){
+        UserDTO userDTO = new UserDTO(3L,"user teste", "13270080925","userteste@email.com",Roles.ROLE_USER);
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        when(passwordEncoder.encode(anyString())).thenReturn("senha-criptografada");
-        when(userRepository.save(any())).thenReturn(user);
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArgument(0));
 
-        UserDTO updatedUser = userService.updateUser(admin,1L);
+        UserDTO updatedUser = userService.updateUser(userDTO,1L);
 
         Assertions.assertNotNull(updatedUser);
-        Assertions.assertEquals("admin", updatedUser.getName());
-        Assertions.assertEquals("admin@email.com", updatedUser.getEmail());
+        Assertions.assertEquals("user teste", updatedUser.name());
+        Assertions.assertEquals("userteste@email.com", updatedUser.email());
     }
 
-    @DisplayName("test update User FAILED case1")
+    @DisplayName("test update User FAILED 1")
     @Test
     void testUpdateUserFailed1(){
+        UserDTO userDTO = new UserDTO(3L,"user teste", "13270080925","userteste@email.com",Roles.ROLE_USER);
+
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> userService.updateUser(admin,1L));
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> userService.updateUser(userDTO,1L));
 
         Assertions.assertEquals("Não existe user com este ID", exception.getMessage());
     }
 
-    @DisplayName("test update User FAILED case2")
+    @DisplayName("test update User FAILED 2")
     @Test
     void testUpdateUserFailed2(){
-        User user2 = new User("Leandro","702.413.770-30","user2@email.com","pass123",Roles.ROLE_USER);
-        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(userRepository.existsByEmail(user2.getEmail())).thenReturn(true);
+        UserDTO userDTO = new UserDTO(3L,"user teste", "13270080925","userteste@email.com",Roles.ROLE_USER);
+        User user2 = new User(4L,"user2","702.413.770-32","user2@email.com","user123", Roles.ROLE_USER, new ArrayList<>());
 
-        AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> userService.updateUser(user2, user.getId()));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user2));
+
+        IsNotYoursException exception = Assertions.assertThrows(IsNotYoursException.class, () -> userService.updateUser(userDTO, 1L));
+
+        Assertions.assertEquals("Você não tem permissão para realizar esta ação",exception.getMessage());
+    }
+
+    @DisplayName("test update User FAILED 3")
+    @Test
+    void testUpdateUserFailed3(){
+        UserDTO userDTO = new UserDTO(3L,"user teste", "13270080925","admin@email.com",Roles.ROLE_USER);
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+
+        AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> userService.updateUser(userDTO, 1L));
 
         Assertions.assertEquals("Este email já está cadastrado",exception.getMessage());
     }
@@ -152,19 +167,19 @@ public class UserServiceTest {
     @DisplayName("test delete user SUCCESS")
     @Test
     void testeDeleteUserSuccess(){
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         userService.deleteUser(1L);
 
         verify(userRepository).deleteById(1L);
 
     }
 
-    @DisplayName("test delete user FAILED")
+   @DisplayName("test delete user FAILED")
     @Test
     void testeDeleteUserFailed() {
-        doThrow(new NotFoundException("Não existe user com este ID")).when(userRepository).deleteById(any());
+        when(userRepository.existsById(anyLong())).thenReturn(false);
         NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> userService.deleteUser(1L));
 
-        verify(userRepository).deleteById(1L);
         Assertions.assertEquals("Não existe user com este ID",exception.getMessage());
-    }*/
+    }
 }
