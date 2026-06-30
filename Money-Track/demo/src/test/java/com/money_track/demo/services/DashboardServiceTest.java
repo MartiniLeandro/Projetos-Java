@@ -27,7 +27,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,9 +60,8 @@ public class DashboardServiceTest {
     void testGetTotalRevenueByCategoriesByMonthSuccess() {
         CategoryTotalDTO category1 = new CategoryTotalDTO("salary", 1500.0);
         CategoryTotalDTO category2 = new CategoryTotalDTO("freelancer", 350.0);
-        when(launchRepository.getTotalRevenueByMonth(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(BigDecimal.valueOf(1850));
         when(launchRepository.getTotalRevenueByCategoriesByMonth(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(category1, category2));
-        List<CategoryTotalPorcentagemDTO> categoriesTotal = dashboardService.getTotalRevenueByCategoriesByMonth(2026, 6);
+        List<CategoryTotalPorcentagemDTO> categoriesTotal = dashboardService.getTotalRevenueByCategoriesByMonth(2026, 6,BigDecimal.valueOf(1850));
 
         Assertions.assertNotNull(categoriesTotal);
         Assertions.assertEquals(2, categoriesTotal.size());
@@ -77,9 +75,8 @@ public class DashboardServiceTest {
     @DisplayName("test get total revenue by categories EMPTY")
     @Test
     void testGetTotalRevenueByCategoriesByMonthEmpty(){
-        when(launchRepository.getTotalRevenueByMonth(anyLong(), any(), any())).thenReturn(BigDecimal.ZERO);
         when(launchRepository.getTotalRevenueByCategoriesByMonth(anyLong(), any(), any())).thenReturn(Collections.emptyList());
-        List<CategoryTotalPorcentagemDTO> categoriesTotal = dashboardService.getTotalRevenueByCategoriesByMonth(2026, 6);
+        List<CategoryTotalPorcentagemDTO> categoriesTotal = dashboardService.getTotalRevenueByCategoriesByMonth(2026, 6, BigDecimal.ZERO);
 
         Assertions.assertNotNull(categoriesTotal);
         Assertions.assertTrue(categoriesTotal.isEmpty());
@@ -90,8 +87,7 @@ public class DashboardServiceTest {
     void testGetTotalRevenueByCategoriesByMonthZeroTotal(){
         CategoryTotalDTO category1 = new CategoryTotalDTO("salary", 0.0);
         when(launchRepository.getTotalRevenueByCategoriesByMonth(anyLong(), any(), any())).thenReturn(List.of(category1));
-        when(launchRepository.getTotalRevenueByMonth(anyLong(), any(), any())).thenReturn(BigDecimal.ZERO);
-        List<CategoryTotalPorcentagemDTO> categoriesTotal = dashboardService.getTotalRevenueByCategoriesByMonth(2026, 6);
+        List<CategoryTotalPorcentagemDTO> categoriesTotal = dashboardService.getTotalRevenueByCategoriesByMonth(2026, 6, BigDecimal.ZERO);
 
         Assertions.assertNotNull(categoriesTotal);
         Assertions.assertEquals(BigDecimal.ZERO, categoriesTotal.getFirst().porcentagem());
@@ -102,9 +98,8 @@ public class DashboardServiceTest {
     void testGetTotalExpenseByCategoriesByMonthSuccess() {
         CategoryTotalDTO category1 = new CategoryTotalDTO("school", 1500.0);
         CategoryTotalDTO category2 = new CategoryTotalDTO("academy", 350.0);
-        when(launchRepository.getTotalExpenseByMonth(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(BigDecimal.valueOf(1850));
         when(launchRepository.getTotalExpenseByCategoriesByMonth(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(category1, category2));
-        List<CategoryTotalPorcentagemDTO> categoriesTotal = dashboardService.getTotalExpenseByCategoriesByMonth(2026, 6);
+        List<CategoryTotalPorcentagemDTO> categoriesTotal = dashboardService.getTotalExpenseByCategoriesByMonth(2026, 6, BigDecimal.valueOf(1850));
 
         Assertions.assertNotNull(categoriesTotal);
         Assertions.assertEquals(2, categoriesTotal.size());
@@ -118,9 +113,8 @@ public class DashboardServiceTest {
     @DisplayName("test get total expense by categories EMPTY")
     @Test
     void testGetTotalExpenseByCategoriesByMonthEmpty(){
-        when(launchRepository.getTotalExpenseByMonth(anyLong(), any(), any())).thenReturn(BigDecimal.ZERO);
         when(launchRepository.getTotalExpenseByCategoriesByMonth(anyLong(), any(), any())).thenReturn(Collections.emptyList());
-        List<CategoryTotalPorcentagemDTO> categoriesTotal = dashboardService.getTotalExpenseByCategoriesByMonth(2026, 6);
+        List<CategoryTotalPorcentagemDTO> categoriesTotal = dashboardService.getTotalExpenseByCategoriesByMonth(2026, 6, BigDecimal.ZERO);
 
         Assertions.assertNotNull(categoriesTotal);
         Assertions.assertTrue(categoriesTotal.isEmpty());
@@ -130,9 +124,8 @@ public class DashboardServiceTest {
     @Test
     void testGetTotalExpenseByCategoriesByMonthZeroTotal(){
         CategoryTotalDTO category1 = new CategoryTotalDTO("salary", 0.0);
-        when(launchRepository.getTotalExpenseByMonth(anyLong(), any(), any())).thenReturn(BigDecimal.ZERO);
         when(launchRepository.getTotalExpenseByCategoriesByMonth(anyLong(), any(), any())).thenReturn(List.of(category1));
-        List<CategoryTotalPorcentagemDTO> categoriesTotal = dashboardService.getTotalExpenseByCategoriesByMonth(2026, 6);
+        List<CategoryTotalPorcentagemDTO> categoriesTotal = dashboardService.getTotalExpenseByCategoriesByMonth(2026, 6, BigDecimal.ZERO);
 
         Assertions.assertNotNull(categoriesTotal);
         Assertions.assertEquals(BigDecimal.ZERO, categoriesTotal.getFirst().porcentagem());
