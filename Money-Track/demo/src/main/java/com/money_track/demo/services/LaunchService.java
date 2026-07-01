@@ -119,12 +119,21 @@ public class LaunchService {
         return totalRevenue.subtract(totalExpense);
     }
 
-    public LaunchesDataDTO getLaunchesData(LaunchesFilterDTO filter){
+    public Double getTotalByPeriodLaunches(List<LaunchDTO> launches){
+        Double revenueTotal = 0.0,  expenseTotal = 0.0;
+        for(LaunchDTO launch : launches){
+            if(launch.category().typeValue() == TypeValue.REVENUE) revenueTotal += launch.value();
+            else expenseTotal += launch.value();
+        }
+        return revenueTotal - expenseTotal;
+    }
+
+    public LaunchesDataDTO getLaunchesData(LaunchesFilterDTO filter){ //falta mexer nos testes unitários
         List<LaunchDTO> launches = getLaunchesWithFilter(filter);
         TypeValuesDTO typeValues = getTypeValuesByLaunches(launches);
         List<CategoryTotalDTO> categoriesTotal = getCategoryTotalByDate(filter.initialDate(), filter.finalDate());
-        int totalLaunches = launches.size();
+        Double totalByPeriodLaunches = getTotalByPeriodLaunches(launches);
         BigDecimal total = getTotalByAllLaunches();
-        return new LaunchesDataDTO(launches, typeValues, totalLaunches, total, categoriesTotal);
+        return new LaunchesDataDTO(launches, typeValues, totalByPeriodLaunches, total, categoriesTotal);
     }
 }

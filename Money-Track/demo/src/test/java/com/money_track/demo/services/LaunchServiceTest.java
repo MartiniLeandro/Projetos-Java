@@ -324,7 +324,7 @@ public class LaunchServiceTest {
 
         Assertions.assertEquals(1, data.launches().size());
         Assertions.assertEquals("salary", data.launches().getFirst().description()); // Ajuste se seu record usar outro nome
-        Assertions.assertEquals(1, data.totalLaunches());
+        Assertions.assertEquals(1500.0, data.totalValueByPeriodLaunches());
         Assertions.assertEquals(new BigDecimal("1500.00"), data.totalValue());
     }
 

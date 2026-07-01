@@ -3,7 +3,6 @@ package com.money_track.demo.services;
 import com.money_track.demo.entities.DTO.CategoryTotalDTO;
 import com.money_track.demo.entities.DTO.CategoryTotalPorcentagemDTO;
 import com.money_track.demo.entities.DTO.DashboardHome;
-import com.money_track.demo.entities.DTO.LaunchInterface;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
 import com.money_track.demo.repositories.LaunchRepository;
@@ -142,7 +141,6 @@ public class DashboardServiceTest {
         when(launchRepository.getTotalRevenueByMonth(anyLong(), any(), any())).thenReturn(BigDecimal.valueOf(2000));
         when(launchRepository.getTotalExpenseByMonth(anyLong(), any(), any())).thenReturn(BigDecimal.valueOf(1500));
         when(launchRepository.getTotalRevenueByCategoriesByMonth(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(categoryRevenue1, categoryRevenue2));
-        when(launchRepository.getTotalExpenseByMonth(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(BigDecimal.valueOf(1500));
         when(launchRepository.getTotalExpenseByCategoriesByMonth(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(categoryExpense1, categoryExpense2));
         when(launchRepository.getLastLaunches(anyLong(), any(), any())).thenReturn(List.of());
         DashboardHome dashboardData = dashboardService.getDashboardData(2026,6);
