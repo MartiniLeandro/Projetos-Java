@@ -3,6 +3,7 @@ package com.money_track.demo.services;
 import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.CategoriesDataDTO;
 import com.money_track.demo.entities.DTO.CategoryDTO;
+import com.money_track.demo.entities.DTO.CategoryFilterDTO;
 import com.money_track.demo.entities.DTO.TypeValuesDTO;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.TypeValue;
@@ -30,9 +31,9 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<CategoryDTO> findGlobalAndUserCategories() {
+    public List<CategoryDTO> findGlobalAndUserCategories(CategoryFilterDTO data) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Category> allCategories = categoryRepository.findGlobalAndUserCategories(user.getId());
+        List<Category> allCategories = categoryRepository.findGlobalAndUserCategories(user.getId(), data.name(), data.typeValue());
         return allCategories.stream().map(CategoryDTO::new).toList();
     }
 
@@ -81,8 +82,8 @@ public class CategoryService {
         categoryRepository.delete(category);
     }
 
-    public CategoriesDataDTO getCategoryData(){
-        List<CategoryDTO> allCategories = findGlobalAndUserCategories();
+    public CategoriesDataDTO getCategoryData(CategoryFilterDTO data){
+        List<CategoryDTO> allCategories = findGlobalAndUserCategories(data);
         int TotalQuantity = allCategories.size();
         int ExpenseQuantity = (int) allCategories.stream().filter(category -> category.typeValue() == TypeValue.EXPENSE).count();
         int RevenueQuantity = (int) allCategories.stream().filter(category -> category.typeValue() == TypeValue.REVENUE).count();

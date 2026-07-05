@@ -3,6 +3,7 @@ package com.money_track.demo.controllers;
 import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.CategoriesDataDTO;
 import com.money_track.demo.entities.DTO.CategoryDTO;
+import com.money_track.demo.entities.DTO.CategoryFilterDTO;
 import com.money_track.demo.entities.enums.TypeValue;
 import com.money_track.demo.services.CategoryService;
 import jakarta.validation.Valid;
@@ -24,8 +25,8 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> findAllCategories(){
-        return ResponseEntity.ok().body(categoryService.findGlobalAndUserCategories());
+    public ResponseEntity<List<CategoryDTO>> findAllCategories(@ModelAttribute CategoryFilterDTO data){
+        return ResponseEntity.ok().body(categoryService.findGlobalAndUserCategories(data));
     }
 
     @GetMapping("/{id}")
@@ -39,8 +40,8 @@ public class CategoryController {
     }
 
     @GetMapping("/data")
-    public ResponseEntity<CategoriesDataDTO> findAllCategoriesData(){
-        return ResponseEntity.ok().body(categoryService.getCategoryData());
+    public ResponseEntity<CategoriesDataDTO> findAllCategoriesData(@ModelAttribute CategoryFilterDTO data){
+        return ResponseEntity.ok().body(categoryService.getCategoryData(data));
     }
 
     //alterar métodos de create, update e delete(estão para admin)

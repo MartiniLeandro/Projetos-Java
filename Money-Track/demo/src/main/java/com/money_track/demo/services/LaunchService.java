@@ -128,7 +128,7 @@ public class LaunchService {
         return revenueTotal - expenseTotal;
     }
 
-    public LaunchesDataDTO getLaunchesData(LaunchesFilterDTO filter){ //falta mexer nos testes unitários
+    public LaunchesDataDTO getLaunchesData(LaunchesFilterDTO filter){
         List<LaunchDTO> launches = getLaunchesWithFilter(filter);
         TypeValuesDTO typeValues = getTypeValuesByLaunches(launches);
         List<CategoryTotalDTO> categoriesTotal = getCategoryTotalByDate(filter.initialDate(), filter.finalDate());
