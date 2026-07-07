@@ -66,8 +66,8 @@ public class DashboardService {
     }
 
     public DashboardHome getDashboardData(Integer year, Integer month){ //alterar métodos para não ir tantas vezes no banco de dados
-        Integer finalYear = (year != null) ? year : LocalDate.now().getYear();
-        Integer finalMonth = (month != null) ? month : LocalDate.now().getMonthValue();
+        Integer finalYear = 2026;//(year != null) ? year : LocalDate.now().getYear(); valores padrões para testes no frontend
+        Integer finalMonth = 6; //(month != null) ? month : LocalDate.now().getMonthValue(); valores padrões para testes no frontend
         BigDecimal totalRevenueMonth = getTotalRevenueByMonth(finalYear, finalMonth);
         BigDecimal totalExpenseByMonth = getTotalExpenseByMonth(finalYear, finalMonth);
         BigDecimal totalBalanceByMonth = getTotalBalanceByMonth(totalRevenueMonth, totalExpenseByMonth);

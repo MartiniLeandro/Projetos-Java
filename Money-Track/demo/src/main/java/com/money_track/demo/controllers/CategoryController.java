@@ -44,18 +44,17 @@ public class CategoryController {
         return ResponseEntity.ok().body(categoryService.getCategoryData(data));
     }
 
-    //alterar métodos de create, update e delete(estão para admin)
-    @PostMapping("/admin/create")
+    @PostMapping("/create")
     public ResponseEntity<CategoryDTO> createCategory(@RequestBody @Valid CategoryDTO category){
         return ResponseEntity.ok().body(categoryService.createCategory(category));
     }
 
-    @PutMapping("admin/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody @Valid CategoryDTO category, @PathVariable @Valid Long id){
         return ResponseEntity.ok().body(categoryService.updateCategory(category,id));
     }
 
-    @DeleteMapping("admin/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable @Valid Long id){
         categoryService.deleteCategoryById(id);
         return ResponseEntity.noContent().build();

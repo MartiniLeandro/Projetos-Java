@@ -16,6 +16,6 @@ public interface CategoryRepository extends JpaRepository<Category,Long> {
     @Query(value = "select * from categories where (:type_value is null or type_value = :type_value) and (user_id is null or user_id = :userId) order by name asc", nativeQuery = true)
     List<Category> findAllByTypeValueAndUserId(@Param("type_value") String type_value, @Param("userId") Long userId);
 
-    @Query(value = "select * from categories where (user_id is null or user_id = :userId) and (:type_value is null or type_value= :type_value) and (:name is null or name ilike concat('%', :name, '%')) order by name asc", nativeQuery = true)
+    @Query(value = "select * from categories where (user_id is null or user_id = :userId) and (:type_value is null or type_value= :type_value) and (:name is null or name ilike concat('%', :name, '%')) order by user_id asc", nativeQuery = true)
     List<Category> findGlobalAndUserCategories(@Param("userId") Long userId, @Param("name") String name, @Param("type_value") String type_value);
 }
