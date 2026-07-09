@@ -70,6 +70,8 @@ public class CategoryService {
         if(categoryRepository.existsByNameAndTypeValueAndUserId(categoryDTO.name(),categoryDTO.typeValue(), user.getId()) && !updatedCategory.getName().equals(categoryDTO.name())) throw new AlreadyExistsException("Já existe uma category com este nome e tipo");
         updatedCategory.setName(categoryDTO.name());
         updatedCategory.setTypeValue(categoryDTO.typeValue());
+        updatedCategory.setIcon(categoryDTO.icon());
+        updatedCategory.setColor(categoryDTO.color());
         Category savedCategory = categoryRepository.save(updatedCategory);
         return new CategoryDTO(savedCategory);
     }

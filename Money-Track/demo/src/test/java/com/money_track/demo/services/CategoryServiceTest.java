@@ -3,6 +3,7 @@ package com.money_track.demo.services;
 import com.money_track.demo.entities.Category;
 import com.money_track.demo.entities.DTO.CategoriesDataDTO;
 import com.money_track.demo.entities.DTO.CategoryDTO;
+import com.money_track.demo.entities.DTO.CategoryFilterDTO;
 import com.money_track.demo.entities.User;
 import com.money_track.demo.entities.enums.Roles;
 import com.money_track.demo.entities.enums.TypeValue;
@@ -70,8 +71,8 @@ public class CategoryServiceTest {
     @DisplayName("test find all categories by user SUCCESS")
     @Test
     void testFindGlobalAndUserCategoriesSuccess(){
-        when(categoryRepository.findGlobalAndUserCategories(anyLong())).thenReturn(List.of(category1,category2));
-        List<CategoryDTO> allCategories = categoryService.findGlobalAndUserCategories();
+        when(categoryRepository.findGlobalAndUserCategories(anyLong(),anyString(),anyString())).thenReturn(List.of(category1,category2));
+        List<CategoryDTO> allCategories = categoryService.findGlobalAndUserCategories(new CategoryFilterDTO("fake-filter","fake-filter"));
 
         Assertions.assertNotNull(allCategories);
         Assertions.assertEquals("salary",allCategories.getFirst().name());
@@ -81,8 +82,8 @@ public class CategoryServiceTest {
     @DisplayName("test find all categories by user FAILED")
     @Test
     void testFindAllCategoriesFailed(){
-        when(categoryRepository.findGlobalAndUserCategories(anyLong())).thenReturn(Collections.emptyList());
-        List<CategoryDTO> allCategories = categoryService.findGlobalAndUserCategories();
+        when(categoryRepository.findGlobalAndUserCategories(anyLong(),anyString(),anyString())).thenReturn(Collections.emptyList());
+        List<CategoryDTO> allCategories = categoryService.findGlobalAndUserCategories(new CategoryFilterDTO("fake-filter","fake-filter"));
 
         Assertions.assertNotNull(allCategories);
         Assertions.assertTrue(allCategories.isEmpty());
@@ -254,8 +255,8 @@ public class CategoryServiceTest {
     @DisplayName("test get categories data SUCCESS")
     @Test
     void testGetCategoriesDataSuccess(){
-        when(categoryRepository.findGlobalAndUserCategories(anyLong())).thenReturn(List.of(category1, category2));
-        CategoriesDataDTO data = categoryService.getCategoryData();
+        when(categoryRepository.findGlobalAndUserCategories(anyLong(), anyString(), anyString())).thenReturn(List.of(category1, category2));
+        CategoriesDataDTO data = categoryService.getCategoryData(new CategoryFilterDTO("fake-filter", "fake-filter"));
 
         Assertions.assertNotNull(data);
         Assertions.assertEquals(2, data.TotalQuantity());
