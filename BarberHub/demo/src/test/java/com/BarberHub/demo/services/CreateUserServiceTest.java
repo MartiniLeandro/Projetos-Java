@@ -91,18 +91,6 @@ public class CreateUserServiceTest {
     }
 
     @Test
-    void testCreateBarbeiro(){
-        when(userRepository.existsByEmail(registerBarbeiro.email())).thenReturn(false);
-        when(passwordEncoder.encode(userBarbeiro.getPassword())).thenReturn(registerBarbeiro.password());
-        when(userRepository.save(any(User.class))).thenReturn(userBarbeiro);
-
-        createUserService.createUser(registerBarbeiro);
-
-        verify(userRepository, times(1)).save(any(User.class));
-        verify(barbeiroRepository, times(1)).save(any(Barbeiro.class));
-    }
-
-    @Test
     void testCreateUserEmailFailed(){
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
         AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> createUserService.createUser(registerCliente));

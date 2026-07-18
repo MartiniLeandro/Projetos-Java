@@ -90,12 +90,15 @@ public class BarbeariaService {
     @Transactional
     public void deleteBarbeariaById(Long id, String token){
         User user = userService.findUserByToken(token);
-        if(user.getBarbearia() == null && user.getRole() != RoleUser.ADMIN) throw new NotFoundException("Você não possui uma barbearia");
-        try{
-            barbeariaRepository.deleteById(id);
-        }catch (NotFoundException e){
-            throw new NotFoundException("Não existe barbearia com este ID");
+        Barbearia deletedBarbearia = barbeariaRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe Barbearia com este ID"));
+
+        boolean isAdmin = user.getRole() == RoleUser.ADMIN;
+        boolean isDonoDaBarbearia = user.getBarbearia() != null && user.getBarbearia().getId().equals(id);
+
+        if (!isAdmin && !isDonoDaBarbearia) {
+            throw new InvalidRoleException("Você não tem permissão para deletar esta barbearia");
         }
+        barbeariaRepository.delete(deletedBarbearia);
     }
 
     // MAIS PARA FRENTE: filtro por endereço e adicionar imagens
