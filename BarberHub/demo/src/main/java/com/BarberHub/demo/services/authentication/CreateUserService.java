@@ -1,4 +1,4 @@
-package com.BarberHub.demo.services;
+package com.BarberHub.demo.services.authentication;
 
 import com.BarberHub.demo.entities.*;
 import com.BarberHub.demo.entities.DTOS.user.LoginUserDTO;
@@ -10,7 +10,6 @@ import com.BarberHub.demo.exceptions.InvalidRoleException;
 import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.exceptions.UnauthorizedException;
 import com.BarberHub.demo.repositories.BarbeariaRepository;
-import com.BarberHub.demo.repositories.BarbeiroRepository;
 import com.BarberHub.demo.repositories.ClienteRepository;
 import com.BarberHub.demo.repositories.UserRepository;
 import com.BarberHub.demo.security.TokenService;

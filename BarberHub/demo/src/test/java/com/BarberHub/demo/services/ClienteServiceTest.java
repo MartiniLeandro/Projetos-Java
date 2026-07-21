@@ -9,6 +9,8 @@ import com.BarberHub.demo.entities.User;
 import com.BarberHub.demo.exceptions.InvalidRoleException;
 import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.ClienteRepository;
+import com.BarberHub.demo.services.authentication.CreateUserService;
+import com.BarberHub.demo.services.cliente.ClienteService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

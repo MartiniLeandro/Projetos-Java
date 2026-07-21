@@ -2,7 +2,7 @@ package com.BarberHub.demo.controllers;
 
 import com.BarberHub.demo.entities.DTOS.agendamento.AgendamentoRequestDTO;
 import com.BarberHub.demo.entities.DTOS.agendamento.AgendamentoResponseDTO;
-import com.BarberHub.demo.services.AgendamentoService;
+import com.BarberHub.demo.services.agendamento.AgendamentoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

@@ -12,6 +12,8 @@ import com.BarberHub.demo.exceptions.InvalidRoleException;
 import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.BarbeariaRepository;
 import com.BarberHub.demo.repositories.BarbeiroRepository;
+import com.BarberHub.demo.services.authentication.CreateUserService;
+import com.BarberHub.demo.services.barbeiro.BarbeiroService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

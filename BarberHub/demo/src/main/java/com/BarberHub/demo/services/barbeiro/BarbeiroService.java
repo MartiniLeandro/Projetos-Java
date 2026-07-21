@@ -1,4 +1,4 @@
-package com.BarberHub.demo.services;
+package com.BarberHub.demo.services.barbeiro;
 
 import com.BarberHub.demo.entities.Barbearia;
 import com.BarberHub.demo.entities.Barbeiro;
@@ -13,6 +13,7 @@ import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.BarbeariaRepository;
 import com.BarberHub.demo.repositories.BarbeiroRepository;
 import com.BarberHub.demo.repositories.UserRepository;
+import com.BarberHub.demo.services.authentication.CreateUserService;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

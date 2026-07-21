@@ -2,8 +2,7 @@ package com.BarberHub.demo.controllers;
 
 import com.BarberHub.demo.entities.DTOS.servico.ServicoRequestDTO;
 import com.BarberHub.demo.entities.DTOS.servico.ServicoResponseDTO;
-import com.BarberHub.demo.services.ServicoService;
-import jakarta.validation.Valid;
+import com.BarberHub.demo.services.servico.ServicoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

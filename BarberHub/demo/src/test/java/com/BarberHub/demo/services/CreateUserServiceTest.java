@@ -8,6 +8,7 @@ import com.BarberHub.demo.repositories.BarbeariaRepository;
 import com.BarberHub.demo.repositories.BarbeiroRepository;
 import com.BarberHub.demo.repositories.ClienteRepository;
 import com.BarberHub.demo.repositories.UserRepository;
+import com.BarberHub.demo.services.authentication.CreateUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

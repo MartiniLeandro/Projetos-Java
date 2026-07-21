@@ -1,4 +1,4 @@
-package com.BarberHub.demo.services;
+package com.BarberHub.demo.services.authentication;
 
 import com.BarberHub.demo.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;

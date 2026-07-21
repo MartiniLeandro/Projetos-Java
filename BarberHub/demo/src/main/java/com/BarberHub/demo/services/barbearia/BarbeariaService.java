@@ -1,4 +1,4 @@
-package com.BarberHub.demo.services;
+package com.BarberHub.demo.services.barbearia;
 
 import com.BarberHub.demo.entities.Barbearia;
 import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaResponseDTO;
@@ -14,6 +14,7 @@ import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.BarbeariaRepository;
 import com.BarberHub.demo.repositories.BarbeiroRepository;
 import com.BarberHub.demo.repositories.ServicoRepository;
+import com.BarberHub.demo.services.authentication.CreateUserService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.BarberHub.demo.services;
+package com.BarberHub.demo.services.agendamento;
 
 import com.BarberHub.demo.entities.*;
 import com.BarberHub.demo.entities.DTOS.agendamento.AgendamentoRequestDTO;
@@ -10,6 +10,7 @@ import com.BarberHub.demo.exceptions.InvalidRoleException;
 import com.BarberHub.demo.exceptions.IsNotYoursException;
 import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.*;
+import com.BarberHub.demo.services.authentication.CreateUserService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

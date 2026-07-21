@@ -3,7 +3,7 @@ package com.BarberHub.demo.controllers;
 import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaRequestDTO;
 import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaResponseDTO;
 import com.BarberHub.demo.entities.DTOS.barbearia.BarbeariaResumoDTO;
-import com.BarberHub.demo.services.BarbeariaService;
+import com.BarberHub.demo.services.barbearia.BarbeariaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

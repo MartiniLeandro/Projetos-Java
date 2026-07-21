@@ -1,4 +1,4 @@
-package com.BarberHub.demo.services;
+package com.BarberHub.demo.services.cliente;
 
 import com.BarberHub.demo.entities.Cliente;
 import com.BarberHub.demo.entities.DTOS.cliente.ClienteRequestDTO;
@@ -8,6 +8,7 @@ import com.BarberHub.demo.entities.User;
 import com.BarberHub.demo.exceptions.InvalidRoleException;
 import com.BarberHub.demo.exceptions.NotFoundException;
 import com.BarberHub.demo.repositories.ClienteRepository;
+import com.BarberHub.demo.services.authentication.CreateUserService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

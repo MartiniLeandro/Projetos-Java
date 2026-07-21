@@ -2,7 +2,7 @@ package com.BarberHub.demo.controllers;
 
 import com.BarberHub.demo.entities.DTOS.cliente.ClienteRequestDTO;
 import com.BarberHub.demo.entities.DTOS.cliente.ClienteResponseDTO;
-import com.BarberHub.demo.services.ClienteService;
+import com.BarberHub.demo.services.cliente.ClienteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

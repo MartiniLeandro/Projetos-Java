@@ -6,6 +6,8 @@ import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import com.BarberHub.demo.entities.ENUMS.StatusCorte;
 import com.BarberHub.demo.entities.ENUMS.StatusUsers;
 import com.BarberHub.demo.repositories.*;
+import com.BarberHub.demo.services.agendamento.AgendamentoService;
+import com.BarberHub.demo.services.authentication.CreateUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
