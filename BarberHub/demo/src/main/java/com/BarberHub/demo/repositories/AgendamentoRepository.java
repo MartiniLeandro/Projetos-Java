@@ -4,6 +4,7 @@ import com.BarberHub.demo.entities.Agendamento;
 import com.BarberHub.demo.entities.Barbearia;
 import com.BarberHub.demo.entities.Barbeiro;
 import com.BarberHub.demo.entities.Cliente;
+import com.BarberHub.demo.entities.DTOS.agendamento.FinancialResumoInterface;
 import com.BarberHub.demo.entities.DTOS.agendamento.ServicosQuantidadeInterface;
 import com.BarberHub.demo.entities.ENUMS.StatusCorte;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,5 +29,8 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento,Long> {
 
     @Query(value = "select ser.nome as nome, count(ser.nome) as quantidade from agendamentos as age inner join servicos as ser on age.servico_id = ser.id where age.barbearia_id = :barbeariaId and age.status = 'CONCLUIDO' and age.hora_inicial between :startDay and :endDay group by ser.nome",nativeQuery = true)
     List<ServicosQuantidadeInterface> findServicosQuantityByWeek(@Param("barbeariaId") Long barbeariaId, @Param("startDay") LocalDateTime startDay, @Param("endDay") LocalDateTime endDay);
+
+    @Query(value = "SELECT DATE(age.hora_final) AS dia, SUM(ser.preco) AS total FROM agendamentos age INNER JOIN servicos ser ON ser.id = age.servico_id WHERE age.barbearia_id = :barbeariaId and age.status = 'CONCLUIDO' and age.hora_final BETWEEN :startDay AND :endDay GROUP BY DATE(age.hora_final) ORDER BY DATE(age.hora_final);", nativeQuery = true)
+    List<FinancialResumoInterface> findFinancialResumeByWeek(@Param("barbeariaId") Long barbeariaId, @Param("startDay") LocalDateTime startDay, @Param("endDay") LocalDateTime endDay);
 
 }

@@ -1,5 +1,6 @@
 package com.BarberHub.demo.services.dashboard;
 
+import com.BarberHub.demo.entities.DTOS.agendamento.FinancialResumoInterface;
 import com.BarberHub.demo.entities.DTOS.agendamento.ServicosQuantidadeInterface;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import com.BarberHub.demo.entities.ENUMS.StatusCorte;
@@ -57,6 +58,13 @@ public class DashboardBarbeariaService {
         LocalDateTime startDay = date.with(DayOfWeek.MONDAY).atStartOfDay();
         LocalDateTime endDay = date.atTime(LocalTime.MAX);
         return agendamentoRepository.findServicosQuantityByWeek(user.getBarbearia().getId(),startDay,endDay);
+    }
+
+    public List<FinancialResumoInterface> getFinancialResumeWeek(LocalDate date, User user){
+        if(user.getRole() != RoleUser.BARBEARIA || user.getBarbearia() == null) throw new InvalidRoleException("Você não pode realizar esta ação");
+        LocalDateTime startDay = date.with(DayOfWeek.MONDAY).atStartOfDay();
+        LocalDateTime endDay = date.with(DayOfWeek.SUNDAY).atTime(LocalTime.MAX);
+        return agendamentoRepository.findFinancialResumeByWeek(user.getBarbearia().getId(),startDay,endDay);
     }
 
 }
