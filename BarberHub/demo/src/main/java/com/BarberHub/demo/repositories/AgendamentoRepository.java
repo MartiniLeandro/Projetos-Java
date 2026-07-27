@@ -4,6 +4,7 @@ import com.BarberHub.demo.entities.Agendamento;
 import com.BarberHub.demo.entities.Barbearia;
 import com.BarberHub.demo.entities.Barbeiro;
 import com.BarberHub.demo.entities.Cliente;
+import com.BarberHub.demo.entities.DTOS.agendamento.CortesQuantityPerDayByWeekInterface;
 import com.BarberHub.demo.entities.DTOS.agendamento.FinancialResumoInterface;
 import com.BarberHub.demo.entities.DTOS.agendamento.ServicosQuantidadeInterface;
 import com.BarberHub.demo.entities.ENUMS.StatusCorte;
@@ -21,6 +22,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento,Long> {
     List<Agendamento> findAllByCliente(Cliente cliente);
     List<Agendamento> findByBarbeariaIdAndHoraInicialBetween(Long barbeariaId, LocalDateTime inicio, LocalDateTime fim);
     List<Agendamento> findByBarbeiroIdAndHoraInicialBetween(Long idBarbeiro, LocalDateTime inicio, LocalDateTime fim);
+    List<Agendamento> findTop5ByBarbeariaIdAndHoraInicialBetweenOrderByHoraInicialAsc(Long barbeariaId, LocalDateTime startDay, LocalDateTime endDay);
     long countByBarbeariaIdAndHoraInicialBetween(Long barbeariaId, LocalDateTime startDay, LocalDateTime endDay);
     long countByBarbeariaIdAndStatusCorteAndHoraInicialBetween(Long barbeariaId, StatusCorte statusCorte, LocalDateTime startDay, LocalDateTime endDay);
 
@@ -33,4 +35,6 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento,Long> {
     @Query(value = "SELECT DATE(age.hora_final) AS dia, SUM(ser.preco) AS total FROM agendamentos age INNER JOIN servicos ser ON ser.id = age.servico_id WHERE age.barbearia_id = :barbeariaId and age.status = 'CONCLUIDO' and age.hora_final BETWEEN :startDay AND :endDay GROUP BY DATE(age.hora_final) ORDER BY DATE(age.hora_final);", nativeQuery = true)
     List<FinancialResumoInterface> findFinancialResumeByWeek(@Param("barbeariaId") Long barbeariaId, @Param("startDay") LocalDateTime startDay, @Param("endDay") LocalDateTime endDay);
 
+    @Query(value = "SELECT DATE(age.hora_final) AS dia, COUNT(age.id) AS quantidade FROM agendamentos age INNER JOIN servicos ser ON ser.id = age.servico_id WHERE age.barbearia_id = :barbeariaId and age.hora_final BETWEEN :startDay AND :endDay GROUP BY DATE(age.hora_final) ORDER BY DATE(age.hora_final);", nativeQuery = true)
+    List<CortesQuantityPerDayByWeekInterface> findCortesQuantityPerDayByWeek(@Param("barbeariaId") Long barbeariaId, @Param("startDay") LocalDateTime startDay, @Param("endDay") LocalDateTime endDay);
 }
