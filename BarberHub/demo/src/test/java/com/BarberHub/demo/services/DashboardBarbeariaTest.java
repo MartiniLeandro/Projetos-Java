@@ -1,13 +1,10 @@
 package com.BarberHub.demo.services;
 
-import com.BarberHub.demo.entities.Agendamento;
-import com.BarberHub.demo.entities.Barbearia;
+import com.BarberHub.demo.entities.*;
 import com.BarberHub.demo.entities.DTOS.agendamento.*;
 import com.BarberHub.demo.entities.DTOS.dashboard.barbearia.DashboardBarbeariaDataDTO;
 import com.BarberHub.demo.entities.ENUMS.RoleUser;
 import com.BarberHub.demo.entities.ENUMS.StatusCorte;
-import com.BarberHub.demo.entities.Servico;
-import com.BarberHub.demo.entities.User;
 import com.BarberHub.demo.exceptions.InvalidRoleException;
 import com.BarberHub.demo.repositories.AgendamentoRepository;
 import com.BarberHub.demo.services.dashboard.DashboardBarbeariaService;
@@ -70,12 +67,13 @@ public class DashboardBarbeariaTest {
 
         testDate = LocalDate.now();
 
-        // Setup das dependências do Agendamento para o DTO não dar NullPointerException
         User cliente = new User();
+        cliente.setCliente(new Cliente());
         cliente.getCliente().setNome("Cliente Teste");
 
         User barbeiro = new User();
-        barbeiro.getCliente().setNome("Barbeiro Teste");
+        barbeiro.setBarbeiro(new Barbeiro());
+        barbeiro.getBarbeiro().setNome("Barbeiro Teste");
 
         Servico servico = new Servico();
         servico.setNome("Corte Teste");
@@ -89,21 +87,17 @@ public class DashboardBarbeariaTest {
         agendamentoMock.setServico(servico);
     }
 
-    // --- TESTE DE CAMINHO FELIZ (Tudo preenchido corretamente) ---
-
     @Test
     void testGetDashboardBarbeariaInformation_Success() {
-        // 1. Mock de todas as Projections (Interfaces)
         ServicosQuantidadeInterface servicoProj = mock(ServicosQuantidadeInterface.class);
         FinancialResumoInterface financeiroProj = mock(FinancialResumoInterface.class);
         CortesQuantityPerDayByWeekInterface cortesProj = mock(CortesQuantityPerDayByWeekInterface.class);
 
-        // 2. Ensinando o mock do repositório a responder a todas as consultas que os métodos privados farão
         when(agendamentoRepository.countByBarbeariaIdAndHoraInicialBetween(eq(1L), any(), any()))
                 .thenReturn(20L);
 
         when(agendamentoRepository.countByBarbeariaIdAndStatusCorteAndHoraInicialBetween(eq(1L), eq(StatusCorte.CONCLUIDO), any(), any()))
-                .thenReturn(15L); // Vai servir tanto pro dia quanto pra semana no teste
+                .thenReturn(15L);
 
         when(agendamentoRepository.getReceitaOfTheDay(eq(1L), any(), any()))
                 .thenReturn(500.75);
@@ -120,10 +114,8 @@ public class DashboardBarbeariaTest {
         when(agendamentoRepository.findTop5ByBarbeariaIdAndHoraInicialBetweenOrderByHoraInicialAsc(eq(1L), any(), any()))
                 .thenReturn(List.of(agendamentoMock));
 
-        // 3. Execução da chamada única
         DashboardBarbeariaDataDTO result = dashboardBarbeariaService.getDashboardBarbeariaInformation(validUser, testDate);
 
-        // 4. Validações do "Super DTO"
         Assertions.assertNotNull(result);
         Assertions.assertEquals(20L, result.agendamentosQuantity());
         Assertions.assertEquals(15L, result.agendamentosRealizadosQuantityDay());
@@ -134,48 +126,36 @@ public class DashboardBarbeariaTest {
         Assertions.assertEquals(1, result.financialResume().size());
         Assertions.assertEquals(1, result.cortesQuantityWeek().size());
 
-        // Valida se o DTO de agendamento também converteu certo lá dentro
         Assertions.assertEquals(1, result.agendamentosResume().size());
         Assertions.assertEquals("15:00", result.agendamentosResume().get(0).horario());
     }
 
-    // --- TESTE DE REGRA ESPECÍFICA (Receita Nula) ---
-
     @Test
     void testGetDashboardBarbeariaInformation_WithNullReceita() {
-        // Ensinando o banco a retornar nulo apenas na receita (dia fraco, nenhum corte)
         when(agendamentoRepository.getReceitaOfTheDay(eq(1L), any(), any()))
                 .thenReturn(null);
 
         DashboardBarbeariaDataDTO result = dashboardBarbeariaService.getDashboardBarbeariaInformation(validUser, testDate);
 
-        // O nosso Service deve converter null para 0.0
         Assertions.assertEquals(0.0, result.receitaDate());
     }
-
-    // --- TESTE DE REGRA ESPECÍFICA (Filtro de Horário para Dias Futuros) ---
 
     @Test
     void testGetDashboardBarbeariaInformation_FutureDateLogic() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
 
-        // Executa a chamada
         dashboardBarbeariaService.getDashboardBarbeariaInformation(validUser, tomorrow);
 
-        // Usamos o Captor no único repositório em que a regra do IF faz diferença (o Top5)
-        // para capturar qual "startDay" o método privado enviou.
         verify(agendamentoRepository).findTop5ByBarbeariaIdAndHoraInicialBetweenOrderByHoraInicialAsc(
                 eq(1L), dateCaptor.capture(), any()
         );
 
         LocalDateTime startDaySent = dateCaptor.getValue();
 
-        // Como foi passado amanhã, o startDay deve ser 00:00, e não "agora"
         Assertions.assertEquals(0, startDaySent.getHour());
         Assertions.assertEquals(0, startDaySent.getMinute());
     }
 
-    // --- TESTES DE FALHA E SEGURANÇA ---
 
     @Test
     void testGetDashboardBarbeariaInformation_Failed_InvalidRole() {
