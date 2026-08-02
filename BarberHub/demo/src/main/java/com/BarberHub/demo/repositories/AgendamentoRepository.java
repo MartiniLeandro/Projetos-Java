@@ -4,6 +4,7 @@ import com.BarberHub.demo.entities.Agendamento;
 import com.BarberHub.demo.entities.Barbearia;
 import com.BarberHub.demo.entities.Barbeiro;
 import com.BarberHub.demo.entities.Cliente;
+import com.BarberHub.demo.entities.DTOS.agendamento.AgendamentoResumeInterface;
 import com.BarberHub.demo.entities.DTOS.agendamento.CortesQuantityPerDayByWeekInterface;
 import com.BarberHub.demo.entities.DTOS.agendamento.FinancialResumoInterface;
 import com.BarberHub.demo.entities.DTOS.agendamento.ServicosQuantidadeInterface;
@@ -37,4 +38,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento,Long> {
 
     @Query(value = "SELECT DATE(age.hora_final) AS dia, COUNT(age.id) AS quantidade FROM agendamentos age INNER JOIN servicos ser ON ser.id = age.servico_id WHERE age.barbearia_id = :barbeariaId and age.hora_final BETWEEN :startDay AND :endDay GROUP BY DATE(age.hora_final) ORDER BY DATE(age.hora_final);", nativeQuery = true)
     List<CortesQuantityPerDayByWeekInterface> findCortesQuantityPerDayByWeek(@Param("barbeariaId") Long barbeariaId, @Param("startDay") LocalDateTime startDay, @Param("endDay") LocalDateTime endDay);
+
+    @Query(value = "select age.id as id, age.hora_inicial as horario, cli.nome as cliente, ser.nome as servico, bar.nome as barbeiro, age.status as status from agendamentos as age inner join clientes as cli on age.cliente_id = cli.id inner join servicos as ser on age.servico_id = ser.id inner join barbeiros as bar on age.barbeiro_id = bar.id where age.hora_inicial between :startDay and :endDay and age.barbearia_id = :barbeariaId order by age.hora_inicial asc", nativeQuery = true)
+    List<AgendamentoResumeInterface> findCortesByWeek(@Param("barbeariaId") Long barbeariaId, @Param("startDay") LocalDateTime startDay, @Param("endDay") LocalDateTime endDay);
 }
