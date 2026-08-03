@@ -15,4 +15,15 @@ public record AgendamentoResumeDTO(Long id, String horario, String cliente, Stri
                 data.getStatus().name()
         );
     }
+
+    public AgendamentoResumeDTO(AgendamentoResumeInterface data){
+        this(
+                data.getId(),
+                data.getHorario().toString(),
+                data.getCliente(),
+                data.getServico(),
+                data.getBarbeiro(),
+                data.getStatus().name()
+        );
+    }
 }
