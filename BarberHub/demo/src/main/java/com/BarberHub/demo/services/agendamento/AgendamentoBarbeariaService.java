@@ -23,7 +23,18 @@ public class AgendamentoBarbeariaService {
     public List<AgendamentoResumeDTO> getAgendamentosWeek(LocalDate date, Long barbeariaId){
         LocalDateTime startDay = date.with(DayOfWeek.MONDAY).atStartOfDay();
         LocalDateTime endDay = date.with(DayOfWeek.SUNDAY).atTime(LocalTime.MAX);
-        return agendamentoRepository.findCortesByWeek(barbeariaId,startDay,endDay).stream().map(AgendamentoResumeDTO::new).toList();
+        return agendamentoRepository.findCortesResume(barbeariaId,startDay,endDay).stream().map(AgendamentoResumeDTO::new).toList();
+    }
+
+    public List<AgendamentoResumeDTO> getAgendamentosDay(LocalDate date, Long barbeariaId){
+        LocalDateTime startDay = date.atStartOfDay();
+        LocalDateTime endDay = date.atTime(LocalTime.MAX);
+        return agendamentoRepository.findCortesResume(barbeariaId,startDay,endDay).stream().map(AgendamentoResumeDTO::new).toList();
+    }
+
+    public List<AgendamentoResumeDTO> getNextAgendamentosDay(LocalDateTime date, Long barbeariaId){
+        LocalDateTime endDay = date.toLocalDate().atTime(LocalTime.MAX);
+        return agendamentoRepository.findCortesResume(barbeariaId, date,endDay).stream().map(AgendamentoResumeDTO::new).toList();
     }
 
 }

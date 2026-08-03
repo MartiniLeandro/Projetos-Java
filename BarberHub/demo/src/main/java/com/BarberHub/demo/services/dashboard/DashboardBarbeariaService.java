@@ -3,6 +3,7 @@
     import com.BarberHub.demo.entities.Agendamento;
     import com.BarberHub.demo.entities.DTOS.agendamento.*;
     import com.BarberHub.demo.entities.DTOS.dashboard.barbearia.DashboardBarbeariaDataDTO;
+    import com.BarberHub.demo.entities.DTOS.dashboard.barbearia.ResumeDayDTO;
     import com.BarberHub.demo.entities.ENUMS.RoleUser;
     import com.BarberHub.demo.entities.ENUMS.StatusCorte;
     import com.BarberHub.demo.entities.User;
@@ -102,6 +103,12 @@
         private Long validateUserBarbearia(User user){
             if(user.getRole() != RoleUser.BARBEARIA || user.getBarbearia() == null) throw new InvalidRoleException("Você não pode realizar esta ação");
             return user.getBarbearia().getId();
+        }
+
+        public ResumeDayDTO getResumeDay(LocalDate date, Long barbeariaId){
+            LocalDateTime starDay = date.atStartOfDay();
+            LocalDateTime endDay = date.atTime(LocalTime.MAX);
+            return new ResumeDayDTO(agendamentoRepository.findResumeDay(barbeariaId,starDay,endDay));
         }
 
 
