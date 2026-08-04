@@ -1,0 +1,36 @@
+package com.BarberHub.demo.cliente;
+
+import com.BarberHub.demo.authentication.StatusUsers;
+import com.BarberHub.demo.authentication.User;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "Clientes")
+public class Cliente {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "nome cannot be null")
+    private String nome;
+
+    @NotBlank(message = "telefone cannot be null")
+    private String telefone;
+
+    @NotNull
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Enumerated(EnumType.STRING)
+    private StatusUsers status;
+}

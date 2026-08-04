@@ -1,0 +1,65 @@
+package com.BarberHub.demo.cliente;
+
+import com.BarberHub.demo.cliente.dtos.ClienteRequestDTO;
+import com.BarberHub.demo.cliente.dtos.ClienteResponseDTO;
+import com.BarberHub.demo.authentication.RoleUser;
+import com.BarberHub.demo.authentication.User;
+import com.BarberHub.demo.shared.exceptions.InvalidRoleException;
+import com.BarberHub.demo.shared.exceptions.NotFoundException;
+import com.BarberHub.demo.authentication.CreateUserService;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Objects;
+
+@Service
+public class ClienteService {
+
+    private final ClienteRepository clienteRepository;
+    private final CreateUserService userService;
+
+    public ClienteService(ClienteRepository clienteRepository, CreateUserService userService) {
+        this.clienteRepository = clienteRepository;
+        this.userService = userService;
+    }
+
+    //ADMIN
+    public List<ClienteResponseDTO> findAllClientes(String token){
+        User user = userService.findUserByToken(token);
+        if(user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não tem permissão para esta ação");
+        List<Cliente> clientes = clienteRepository.findAll();
+        return clientes.stream().map(ClienteResponseDTO::new).toList();
+    }
+
+    //ADMIN
+    public ClienteResponseDTO findClientesById(Long id, String token){
+        User user = userService.findUserByToken(token);
+        if(user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não tem permissão para esta ação");
+        Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe cliente com este user"));
+        return new ClienteResponseDTO(cliente);
+    }
+
+    //CLIENTE E ADMIN
+    @Transactional
+    public ClienteResponseDTO updateCliente(Long id, ClienteRequestDTO data, String token){
+        User user = userService.findUserByToken(token);
+        if(user.getCliente() == null && user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não possui permissão para esta ação");
+        Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe cliente com este id"));
+        if(user.getCliente() != null && !Objects.equals(user.getCliente().getId(), cliente.getId()) && user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não tem permissão para esta ação");
+        cliente.setNome(data.nome());
+        cliente.setTelefone(data.telefone());
+        cliente.setStatus(data.status());
+        clienteRepository.save(cliente);
+        return new ClienteResponseDTO(cliente);
+    }
+
+    //ADMIN
+    @Transactional
+    public void deleteCliente(Long id, String token){
+        User user = userService.findUserByToken(token);
+        if(user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não possui permissão para esta ação");
+        if(!clienteRepository.existsById(id)) throw new NotFoundException("Não existe cliente com este ID");
+        clienteRepository.deleteById(id);
+    }
+}
