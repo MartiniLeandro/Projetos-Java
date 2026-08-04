@@ -35,7 +35,7 @@
         private long getAgendamentosRealizadosQuantityByDate(LocalDate date, Long barbeariaId){
             LocalDateTime startDay = date.atStartOfDay();
             LocalDateTime endDay = date.atTime(LocalTime.MAX);
-            return agendamentoRepository.countByBarbeariaIdAndStatusCorteAndHoraInicialBetween(barbeariaId,StatusCorte.CONCLUIDO, startDay, endDay);
+            return agendamentoRepository.countByBarbeariaIdAndStatusAndHoraInicialBetween(barbeariaId,StatusCorte.CONCLUIDO, startDay, endDay);
         }
 
         private Double getReceitaByDate(LocalDate date, Long barbeariaId){
@@ -48,7 +48,7 @@
         private long getAgendamentosRealizadosQuantityByWeek(LocalDate date, Long barbeariaId){
             LocalDateTime startDay = date.with(DayOfWeek.MONDAY).atStartOfDay();
             LocalDateTime endDay = date.atTime(LocalTime.MAX);
-            return agendamentoRepository.countByBarbeariaIdAndStatusCorteAndHoraInicialBetween(barbeariaId,StatusCorte.CONCLUIDO, startDay, endDay);
+            return agendamentoRepository.countByBarbeariaIdAndStatusAndHoraInicialBetween(barbeariaId,StatusCorte.CONCLUIDO, startDay, endDay);
         }
 
         private List<ServicosQuantidadeDTO> getMostPerformedServices(LocalDate date, Long barbeariaId){

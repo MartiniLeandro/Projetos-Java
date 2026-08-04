@@ -24,7 +24,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento,Long> {
     List<Agendamento> findByBarbeiroIdAndHoraInicialBetween(Long idBarbeiro, LocalDateTime inicio, LocalDateTime fim);
     List<Agendamento> findTop5ByBarbeariaIdAndHoraInicialBetweenOrderByHoraInicialAsc(Long barbeariaId, LocalDateTime startDay, LocalDateTime endDay);
     long countByBarbeariaIdAndHoraInicialBetween(Long barbeariaId, LocalDateTime startDay, LocalDateTime endDay);
-    long countByBarbeariaIdAndStatusCorteAndHoraInicialBetween(Long barbeariaId, StatusCorte statusCorte, LocalDateTime startDay, LocalDateTime endDay);
+    long countByBarbeariaIdAndStatusAndHoraInicialBetween(Long barbeariaId, StatusCorte statusCorte, LocalDateTime startDay, LocalDateTime endDay);
 
     @Query(value = "select sum(ser.preco) from agendamentos as age inner join servicos as ser on age.servico_id = ser.id where age.barbearia_id = :barbeariaId and age.status = 'CONCLUIDO' and age.hora_inicial between :startDay and :endDay",nativeQuery = true)
     Double getReceitaOfTheDay(@Param("barbeariaId") Long barbeariaId, @Param("startDay") LocalDateTime startDay, @Param("endDay") LocalDateTime endDay);
