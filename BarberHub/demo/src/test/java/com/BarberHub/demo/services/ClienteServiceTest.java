@@ -1,16 +1,16 @@
 package com.BarberHub.demo.services;
 
-import com.BarberHub.demo.entities.Cliente;
-import com.BarberHub.demo.entities.DTOS.cliente.ClienteRequestDTO;
-import com.BarberHub.demo.entities.DTOS.cliente.ClienteResponseDTO;
-import com.BarberHub.demo.entities.ENUMS.RoleUser;
-import com.BarberHub.demo.entities.ENUMS.StatusUsers;
-import com.BarberHub.demo.entities.User;
-import com.BarberHub.demo.exceptions.InvalidRoleException;
-import com.BarberHub.demo.exceptions.NotFoundException;
-import com.BarberHub.demo.repositories.ClienteRepository;
-import com.BarberHub.demo.services.authentication.CreateUserService;
-import com.BarberHub.demo.services.cliente.ClienteService;
+import com.BarberHub.demo.cliente.Cliente;
+import com.BarberHub.demo.cliente.dtos.ClienteRequestDTO;
+import com.BarberHub.demo.cliente.dtos.ClienteResponseDTO;
+import com.BarberHub.demo.authentication.RoleUser;
+import com.BarberHub.demo.authentication.StatusUsers;
+import com.BarberHub.demo.authentication.User;
+import com.BarberHub.demo.shared.exceptions.InvalidRoleException;
+import com.BarberHub.demo.shared.exceptions.NotFoundException;
+import com.BarberHub.demo.cliente.ClienteRepository;
+import com.BarberHub.demo.authentication.CreateUserService;
+import com.BarberHub.demo.cliente.ClienteService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

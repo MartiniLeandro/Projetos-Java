@@ -1,0 +1,53 @@
+package com.BarberHub.demo.barbearia;
+
+import com.BarberHub.demo.barbearia.dtos.BarbeariaRequestDTO;
+import com.BarberHub.demo.barbearia.dtos.BarbeariaResponseDTO;
+import com.BarberHub.demo.barbearia.dtos.BarbeariaResumoDTO;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/barbearias")
+public class BarbeariaController {
+
+    private final BarbeariaService barbeariaService;
+
+    public BarbeariaController(BarbeariaService barbeariaService) {
+        this.barbeariaService = barbeariaService;
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('CLIENTE','BARBEIRO')")
+    public ResponseEntity<List<BarbeariaResumoDTO>> findAllBarbearias(@RequestHeader("Authorization") String token){
+        return ResponseEntity.ok().body(barbeariaService.findAllBarbearias(token));
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('CLIENTE','BARBEIRO')")
+    public ResponseEntity<BarbeariaResponseDTO> findBarbeariaById(@PathVariable Long id, @RequestHeader("Authorization") String token){
+        return ResponseEntity.ok().body(barbeariaService.findBarbeariaById(id,token));
+    }
+
+    @GetMapping("/nome")
+    @PreAuthorize("hasAnyRole('CLIENTE','BARBEIRO')")
+    public ResponseEntity<List<BarbeariaResponseDTO>> findBarbeariaByNome(@RequestParam String nome, @RequestHeader("Authorization") String token){
+        return ResponseEntity.ok().body(barbeariaService.findBarbeariasByNome(nome,token));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('BARBEARIA')")
+    public ResponseEntity<BarbeariaResponseDTO> updateBarbearia(@PathVariable Long id, @RequestBody BarbeariaRequestDTO barbeariaRequestDTO, @RequestHeader("Authorization") String token){
+        return ResponseEntity.ok().body(barbeariaService.updateBarbearia(id,barbeariaRequestDTO,token));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('BARBEARIA')")
+    public ResponseEntity<Void> deleteBarbearia(@PathVariable Long id, @RequestHeader("Authorization") String token){
+        barbeariaService.deleteBarbeariaById(id,token);
+        return ResponseEntity.noContent().build();
+    }
+
+}

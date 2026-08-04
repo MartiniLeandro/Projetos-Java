@@ -1,14 +1,16 @@
 package com.BarberHub.demo.services;
 
-import com.BarberHub.demo.entities.*;
-import com.BarberHub.demo.entities.DTOS.user.RegisterUserDTO;
-import com.BarberHub.demo.entities.ENUMS.RoleUser;
-import com.BarberHub.demo.exceptions.AlreadyExistsException;
-import com.BarberHub.demo.repositories.BarbeariaRepository;
-import com.BarberHub.demo.repositories.BarbeiroRepository;
-import com.BarberHub.demo.repositories.ClienteRepository;
-import com.BarberHub.demo.repositories.UserRepository;
-import com.BarberHub.demo.services.authentication.CreateUserService;
+import com.BarberHub.demo.authentication.User;
+import com.BarberHub.demo.barbearia.Barbearia;
+import com.BarberHub.demo.cliente.Cliente;
+import com.BarberHub.demo.authentication.dtos.RegisterUserDTO;
+import com.BarberHub.demo.authentication.RoleUser;
+import com.BarberHub.demo.shared.exceptions.AlreadyExistsException;
+import com.BarberHub.demo.barbearia.BarbeariaRepository;
+import com.BarberHub.demo.barbeiro.BarbeiroRepository;
+import com.BarberHub.demo.cliente.ClienteRepository;
+import com.BarberHub.demo.authentication.UserRepository;
+import com.BarberHub.demo.authentication.CreateUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
