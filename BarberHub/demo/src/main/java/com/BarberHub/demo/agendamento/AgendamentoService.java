@@ -1,6 +1,5 @@
 package com.BarberHub.demo.agendamento;
 
-import com.BarberHub.demo.authentication.User;
 import com.BarberHub.demo.barbearia.Barbearia;
 import com.BarberHub.demo.barbearia.BarbeariaRepository;
 import com.BarberHub.demo.barbearia.DataHoraBarbearia;
@@ -11,11 +10,8 @@ import com.BarberHub.demo.cliente.ClienteRepository;
 import com.BarberHub.demo.agendamento.dtos.AgendamentoRequestDTO;
 import com.BarberHub.demo.agendamento.dtos.AgendamentoResponseDTO;
 import com.BarberHub.demo.barbearia.DiasSemana;
-import com.BarberHub.demo.authentication.RoleUser;
-import com.BarberHub.demo.shared.exceptions.InvalidRoleException;
 import com.BarberHub.demo.shared.exceptions.IsNotYoursException;
 import com.BarberHub.demo.shared.exceptions.NotFoundException;
-import com.BarberHub.demo.authentication.CreateUserService;
 import com.BarberHub.demo.servico.Servico;
 import com.BarberHub.demo.servico.ServicoRepository;
 import jakarta.transaction.Transactional;
@@ -36,86 +32,21 @@ public class AgendamentoService {
     private final BarbeiroRepository barbeiroRepository;
     private final ClienteRepository clienteRepository;
     private final ServicoRepository servicoRepository;
-    private final CreateUserService userService;
 
-    public AgendamentoService(AgendamentoRepository agendamentoRepository, BarbeariaRepository barbeariaRepository, BarbeiroRepository barbeiroRepository, ClienteRepository clienteRepository, ServicoRepository servicoRepository, CreateUserService userService) {
+    public AgendamentoService(AgendamentoRepository agendamentoRepository, BarbeariaRepository barbeariaRepository, BarbeiroRepository barbeiroRepository, ClienteRepository clienteRepository, ServicoRepository servicoRepository) {
         this.agendamentoRepository = agendamentoRepository;
         this.barbeariaRepository = barbeariaRepository;
         this.barbeiroRepository = barbeiroRepository;
         this.clienteRepository = clienteRepository;
         this.servicoRepository = servicoRepository;
-        this.userService = userService;
     }
 
-    //ADMIN
-    public List<AgendamentoResponseDTO> findAllAgendamentos(String token){
-        User user = userService.findUserByToken(token);
-        if(user.getRole() != RoleUser.ADMIN) throw new InvalidRoleException("Você não tem permissão para esta ação");
-        List<Agendamento> agendamentos = agendamentoRepository.findAll();
-        return agendamentos.stream().map(AgendamentoResponseDTO::new).toList();
-    }
-
-    //BARBEARIA
-    public List<AgendamentoResponseDTO> findAllAgendamentosByBarbearia(String token){
-        User user = userService.findUserByToken(token);
-        if(user.getBarbearia() == null && user.getRole() != RoleUser.ADMIN) throw new IsNotYoursException("Você não possui permissão para esta ação");
-        List<Agendamento> agendamentos = agendamentoRepository.findAllByBarbearia(user.getBarbearia());
-        return  agendamentos.stream().map(AgendamentoResponseDTO::new).toList();
-    }
-
-    //BARBEIRO e BARBEARIA
-    public List<AgendamentoResponseDTO> findAllAgendamentosByBarbeiro(String token, Long idBarbeiro){
-        User user = userService.findUserByToken(token);
-        if(user.getBarbeiro() != null){
-            return agendamentoRepository.findAllByBarbeiro(user.getBarbeiro()).stream().map(AgendamentoResponseDTO::new).toList();
-        }
-        if(user.getBarbearia() != null){
-            Barbeiro barbeiro = barbeiroRepository.findById(idBarbeiro).orElseThrow(() -> new NotFoundException("Não existe barbeiro com este ID"));
-            if(!barbeiro.getBarbearia().getId().equals(user.getBarbearia().getId())){
-                throw new IsNotYoursException("Você não possui permissão para esta ação");
-            }
-            return agendamentoRepository.findAllByBarbeiro(barbeiro).stream().map(AgendamentoResponseDTO::new).toList();
-        }
-        throw new IsNotYoursException("Acesso negado");
-    }
-
-    //CLIENTE (falta colocar permissão para ADMIN)
-    public List<AgendamentoResponseDTO> findAllAgendamentosByCliente(String token){
-        User user = userService.findUserByToken(token);
-        if(user.getCliente() == null) throw new IsNotYoursException("Você não possui permissão para esta ação");
-        List<Agendamento> agendamentos = agendamentoRepository.findAllByCliente(user.getCliente());
-        return  agendamentos.stream().map(AgendamentoResponseDTO::new).toList();
+    public Agendamento findAgendamentoById(Long id){
+        return agendamentoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe agendamento com este ID"));
     }
 
 
-    //QUALQUER ROLE
-    public AgendamentoResponseDTO findAgendamentoById(Long id, String token){
-        User user = userService.findUserByToken(token);
-        Agendamento agendamento = agendamentoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe agendamento com este ID"));
-        boolean isProprietario = false;
-        switch (user.getRole()){
-            case RoleUser.CLIENTE -> isProprietario = agendamento.getCliente().getId().equals(user.getCliente().getId());
-            case RoleUser.BARBEARIA -> isProprietario = agendamento.getBarbearia().getId().equals(user.getBarbearia().getId());
-            case RoleUser.BARBEIRO -> isProprietario = agendamento.getBarbeiro().getId().equals(user.getBarbeiro().getId());
-            case RoleUser.ADMIN -> isProprietario = true;
-        }
-        if(!isProprietario) throw new IsNotYoursException("Você não tem permissão para visualizar este agendamento");
-        return new AgendamentoResponseDTO(agendamento);
-    }
-
-    //BARBEARIA e BARBEIRO (não precisar obrigatoriamente passar o ID)
-    public List<AgendamentoResponseDTO> findAllAgendamentosByDate(Long idBarbearia, LocalDate data, String token){
-        User user = userService.findUserByToken(token);
-        if(user.getRole() != RoleUser.BARBEARIA && user.getRole() != RoleUser.BARBEIRO) throw new InvalidRoleException("Você não tem permissão para esta ação");
-        LocalDateTime inicioDia = data.atStartOfDay();
-        LocalDateTime finalDia = data.atTime(LocalTime.MAX);
-        List<Agendamento> agendamentos = agendamentoRepository.findByBarbeariaIdAndHoraInicialBetween(idBarbearia, inicioDia, finalDia);
-        return agendamentos.stream().map(AgendamentoResponseDTO::new).toList();
-    }
-
-    //QUALQUER ROLE
-    public List<LocalTime> findHorariosLivres(Long idBarbearia, Long idBarbeiro, LocalDate data, String token){
-        userService.findUserByToken(token);
+    public List<LocalTime> findHorariosLivres(Long idBarbearia, Long idBarbeiro, LocalDate data){
         Barbearia barbearia = barbeariaRepository.findById(idBarbearia).orElseThrow(() -> new NotFoundException("Não existe barbearia com este ID"));
         DiasSemana diaDaSemana = converterDataEnum(data.getDayOfWeek());
         DataHoraBarbearia horariosDiaBarbearia = barbearia.getHorarios().stream()
@@ -133,11 +64,11 @@ public class AgendamentoService {
         LocalTime fechamento = horariosDiaBarbearia.getHorarioFechamento();
 
         while(horarioAtual.isBefore(fechamento)) {
-            boolean ehHoje = data.equals(LocalDate.now());
-            boolean jaPassou = horarioAtual.isBefore(LocalTime.now());
+            boolean itsToday = data.equals(LocalDate.now());
+            boolean alreadyPassed = horarioAtual.isBefore(LocalTime.now());
 
             if (!horasOcupadas.contains(horarioAtual)) {
-                if (!(ehHoje && jaPassou)) {
+                if (!(itsToday && alreadyPassed)) {
                     horariosLivres.add(horarioAtual);
                 }
             }
@@ -148,17 +79,8 @@ public class AgendamentoService {
     }
 
     @Transactional
-    //QUALQUER ROLE (faltando métodos fortes de segurança)
-    public AgendamentoResponseDTO createAgendamento(AgendamentoRequestDTO data, String token){
-
-        User user = userService.findUserByToken(token);
-        Cliente cliente;
-        if(user.getRole() == RoleUser.CLIENTE) {
-            cliente = user.getCliente();
-        } else {
-            cliente = clienteRepository.findById(data.idCliente()).orElseThrow(() -> new NotFoundException("Não existe cliente com este ID"));
-        }
-
+    public AgendamentoResponseDTO createAgendamento(AgendamentoRequestDTO data){
+        Cliente cliente = clienteRepository.findById(data.idCliente()).orElseThrow(() -> new NotFoundException("Não existe cliente com este ID"));
         Barbearia barbearia = barbeariaRepository.findById(data.idBarbearia()).orElseThrow(() -> new NotFoundException("Não existe barbearia com este ID"));
         Barbeiro barbeiro = barbeiroRepository.findById(data.idBarbeiro()).orElseThrow(() -> new NotFoundException("Não existe barbeiro com este ID"));
         Servico servico = servicoRepository.findById(data.idServico()).orElseThrow(() -> new NotFoundException("Não existe Servico com este ID"));
@@ -183,7 +105,6 @@ public class AgendamentoService {
             throw new IsNotYoursException("Este barbeiro não pertence a esta barbearia");
         }
 
-
         Agendamento  agendamento = new Agendamento();
         agendamento.setBarbearia(barbearia);
         agendamento.setBarbeiro(barbeiro);
@@ -192,57 +113,41 @@ public class AgendamentoService {
         agendamento.setHoraInicial(horarioInicio);
         agendamento.setHoraFinal(horarioFinal);
         agendamento.setStatus(StatusCorte.AGENDADO);
-        agendamentoRepository.save(agendamento);
-        return  new AgendamentoResponseDTO(agendamento);
+        Agendamento savedAgendamento = agendamentoRepository.save(agendamento);
+        return  new AgendamentoResponseDTO(savedAgendamento);
     }
 
-    //BARBEARIA E BARBEIRO
     @Transactional
-    public AgendamentoResponseDTO updateAgendamento(Long id, AgendamentoRequestDTO data, String token) {
-        User user = userService.findUserByToken(token);
+    public AgendamentoResponseDTO updateAgendamento(Long id, AgendamentoRequestDTO data) {
+        Agendamento agendamentoOriginal = agendamentoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe agendamento com este ID"));
+        boolean barbeiroChanged = data.idBarbeiro() != null && !data.idBarbeiro().equals(agendamentoOriginal.getBarbeiro().getId());
+        boolean horaChanged = data.hora_inicial() != null && !data.hora_inicial().equals(agendamentoOriginal.getHoraInicial());
 
-        Agendamento agendamentoOriginal = agendamentoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Não existe agendamento com este ID"));
-
-        if (user.getRole() == RoleUser.CLIENTE) {
-            throw new IsNotYoursException("Clientes não possuem permissão para editar por este caminho");
-        }
-
-        if (user.getRole() == RoleUser.BARBEIRO) {
-            if (!agendamentoOriginal.getBarbeiro().getId().equals(user.getBarbeiro().getId())) {
-                throw new IsNotYoursException("Você não tem permissão para alterar a agenda de outro profissional");
-            }
-        }
-
-        if (user.getRole() == RoleUser.BARBEARIA) {
-            if (!agendamentoOriginal.getBarbearia().getId().equals(user.getBarbearia().getId())) {
-                throw new IsNotYoursException("Este agendamento pertence a outra barbearia");
-            }
-        }
-
-        if (data.idBarbeiro() != null && !data.idBarbeiro().equals(agendamentoOriginal.getBarbeiro().getId())) {
-            Barbeiro novoBarbeiro = barbeiroRepository.findById(data.idBarbeiro())
-                    .orElseThrow(() -> new NotFoundException("Novo barbeiro não encontrado"));
-            agendamentoOriginal.setBarbeiro(novoBarbeiro);
-        }
-
-        if (data.hora_inicial() != null && !data.hora_inicial().equals(agendamentoOriginal.getHoraInicial())) {
-
-            LocalDateTime novoInicio = data.hora_inicial();
-            LocalDateTime novoFinal = novoInicio.plusMinutes(30);
+        if(barbeiroChanged || horaChanged){
+            Long idBarbeiroAlvo = data.idBarbeiro() != null ? data.idBarbeiro() : agendamentoOriginal.getBarbeiro().getId();
+            LocalDateTime inicioAlvo = data.hora_inicial() != null ? data.hora_inicial() : agendamentoOriginal.getHoraInicial();
+            LocalDateTime finalAlvo = inicioAlvo.plusMinutes(30);
 
             List<Agendamento> conflitos = agendamentoRepository.findByBarbeiroIdAndHoraInicialBetween(
-                    agendamentoOriginal.getBarbeiro().getId(), novoInicio, novoFinal.minusSeconds(1));
+                    idBarbeiroAlvo, inicioAlvo, finalAlvo.minusSeconds(1));
 
             boolean ocupadoPorOutro = conflitos.stream()
                     .anyMatch(a -> !a.getId().equals(agendamentoOriginal.getId()));
 
             if (ocupadoPorOutro) {
-                throw new RuntimeException("O novo horário escolhido já está ocupado");
+                throw new RuntimeException("O barbeiro escolhido já possui um agendamento neste horário");
             }
+        }
 
-            agendamentoOriginal.setHoraInicial(novoInicio);
-            agendamentoOriginal.setHoraFinal(novoFinal);
+        if (barbeiroChanged) {
+            Barbeiro novoBarbeiro = barbeiroRepository.findById(data.idBarbeiro())
+                    .orElseThrow(() -> new NotFoundException("Novo barbeiro não encontrado"));
+            agendamentoOriginal.setBarbeiro(novoBarbeiro);
+        }
+
+        if (horaChanged) {
+            agendamentoOriginal.setHoraInicial(data.hora_inicial());
+            agendamentoOriginal.setHoraFinal(data.hora_inicial().plusMinutes(30));
         }
 
         if (data.idServico() != null) {
@@ -251,14 +156,17 @@ public class AgendamentoService {
         }
 
         if (data.statusCorte() != null) {
-            if (data.statusCorte() == StatusCorte.CONCLUIDO && user.getRole() == RoleUser.CLIENTE) {
-                throw new IsNotYoursException("Clientes não podem concluir agendamentos.");
-            }
             agendamentoOriginal.setStatus(data.statusCorte());
         }
 
         Agendamento salvo = agendamentoRepository.save(agendamentoOriginal);
         return new AgendamentoResponseDTO(salvo);
+    }
+
+    @Transactional
+    public void deleteAgendamento(Long id) {
+        Agendamento agendamento = findAgendamentoById(id);
+        agendamentoRepository.delete(agendamento);
     }
 
     private DiasSemana converterDataEnum(DayOfWeek dayOfWeek){
