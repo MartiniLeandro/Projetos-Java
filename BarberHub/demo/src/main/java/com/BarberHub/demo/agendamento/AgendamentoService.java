@@ -118,8 +118,7 @@ public class AgendamentoService {
     }
 
     @Transactional
-    public AgendamentoResponseDTO updateAgendamento(Long id, AgendamentoRequestDTO data) {
-        Agendamento agendamentoOriginal = agendamentoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe agendamento com este ID"));
+    public AgendamentoResponseDTO updateAgendamento(Agendamento agendamentoOriginal, AgendamentoRequestDTO data) {
         boolean barbeiroChanged = data.idBarbeiro() != null && !data.idBarbeiro().equals(agendamentoOriginal.getBarbeiro().getId());
         boolean horaChanged = data.hora_inicial() != null && !data.hora_inicial().equals(agendamentoOriginal.getHoraInicial());
 
@@ -164,8 +163,7 @@ public class AgendamentoService {
     }
 
     @Transactional
-    public void deleteAgendamento(Long id) {
-        Agendamento agendamento = findAgendamentoById(id);
+    public void deleteAgendamento(Agendamento agendamento) {
         agendamentoRepository.delete(agendamento);
     }
 
