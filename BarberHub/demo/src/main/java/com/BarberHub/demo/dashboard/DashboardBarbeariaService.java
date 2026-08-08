@@ -2,7 +2,6 @@
 
     import com.BarberHub.demo.agendamento.dtos.*;
     import com.BarberHub.demo.dashboard.dtos.DashboardBarbeariaDataDTO;
-    import com.BarberHub.demo.dashboard.dtos.ResumeDayDTO;
     import com.BarberHub.demo.agendamento.Agendamento;
     import com.BarberHub.demo.authentication.RoleUser;
     import com.BarberHub.demo.agendamento.StatusCorte;
@@ -104,12 +103,4 @@
             if(user.getRole() != RoleUser.BARBEARIA || user.getBarbearia() == null) throw new InvalidRoleException("Você não pode realizar esta ação");
             return user.getBarbearia().getId();
         }
-
-        public ResumeDayDTO getResumeDay(LocalDate date, Long barbeariaId){
-            LocalDateTime starDay = date.atStartOfDay();
-            LocalDateTime endDay = date.atTime(LocalTime.MAX);
-            return new ResumeDayDTO(agendamentoRepository.findResumeDay(barbeariaId,starDay,endDay));
-        }
-
-
     }

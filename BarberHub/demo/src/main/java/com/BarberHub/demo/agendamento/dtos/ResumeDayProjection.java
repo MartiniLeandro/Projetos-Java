@@ -1,4 +1,4 @@
-package com.BarberHub.demo.dashboard.dtos;
+package com.BarberHub.demo.agendamento.dtos;
 
 public interface ResumeDayProjection {
     Integer getAgendamentos();

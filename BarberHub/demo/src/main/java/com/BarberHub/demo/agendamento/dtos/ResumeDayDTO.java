@@ -1,4 +1,4 @@
-package com.BarberHub.demo.dashboard.dtos;
+package com.BarberHub.demo.agendamento.dtos;
 
 public record ResumeDayDTO(Integer agendamentos, Integer clientes, Double faturamentoPrevisto) {
     public ResumeDayDTO(ResumeDayProjection projection){
