@@ -7,7 +7,7 @@ import com.BarberHub.demo.agendamento.dtos.AgendamentoResumeInterface;
 import com.BarberHub.demo.agendamento.dtos.CortesQuantityPerDayByWeekInterface;
 import com.BarberHub.demo.agendamento.dtos.FinancialResumoInterface;
 import com.BarberHub.demo.agendamento.dtos.ServicosQuantidadeInterface;
-import com.BarberHub.demo.dashboard.dtos.ResumeDayProjection;
+import com.BarberHub.demo.agendamento.dtos.ResumeDayProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
