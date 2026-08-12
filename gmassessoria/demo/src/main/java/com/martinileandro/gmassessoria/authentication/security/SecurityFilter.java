@@ -1,6 +1,6 @@
-package com.martinileandro.demo.authentication.security;
+package com.martinileandro.gmassessoria.authentication.security;
 
-import com.martinileandro.demo.authentication.UserRepository;
+import com.martinileandro.gmassessoria.authentication.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.martinileandro.demo.authentication;
+package com.martinileandro.gmassessoria.authentication;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

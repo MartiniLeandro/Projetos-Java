@@ -1,4 +1,4 @@
-package com.martinileandro.demo.authentication.dtos;
+package com.martinileandro.gmassessoria.authentication.dtos;
 
 public record LoginRequestDTO(String email, String senha) {
 }

@@ -1,4 +1,4 @@
-package com.martinileandro.demo;
+package com.martinileandro.gmassessoria;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

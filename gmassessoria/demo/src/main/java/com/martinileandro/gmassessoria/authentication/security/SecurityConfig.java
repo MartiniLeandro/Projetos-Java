@@ -1,4 +1,4 @@
-package com.martinileandro.demo.authentication.security;
+package com.martinileandro.gmassessoria.authentication.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

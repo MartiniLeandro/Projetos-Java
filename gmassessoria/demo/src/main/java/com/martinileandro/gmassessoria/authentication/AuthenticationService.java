@@ -1,4 +1,4 @@
-package com.martinileandro.demo.authentication;
+package com.martinileandro.gmassessoria.authentication;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

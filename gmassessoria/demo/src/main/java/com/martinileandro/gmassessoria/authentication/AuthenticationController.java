@@ -1,8 +1,8 @@
-package com.martinileandro.demo.authentication;
+package com.martinileandro.gmassessoria.authentication;
 
-import com.martinileandro.demo.authentication.dtos.LoginRequestDTO;
-import com.martinileandro.demo.authentication.dtos.LoginResponseDTO;
-import com.martinileandro.demo.authentication.security.TokenService;
+import com.martinileandro.gmassessoria.authentication.dtos.LoginRequestDTO;
+import com.martinileandro.gmassessoria.authentication.dtos.LoginResponseDTO;
+import com.martinileandro.gmassessoria.authentication.security.TokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

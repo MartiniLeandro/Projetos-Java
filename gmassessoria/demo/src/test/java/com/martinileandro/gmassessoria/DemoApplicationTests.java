@@ -1,4 +1,4 @@
-package com.martinileandro.demo;
+package com.martinileandro.gmassessoria;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
