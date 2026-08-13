@@ -1,4 +1,4 @@
-package com.martinileandro.gmassessoria.aluno;
+package com.martinileandro.gmassessoria.aluno.listagem;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

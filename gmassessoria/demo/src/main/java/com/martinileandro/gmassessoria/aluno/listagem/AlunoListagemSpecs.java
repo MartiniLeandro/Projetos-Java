@@ -1,4 +1,4 @@
-package com.martinileandro.gmassessoria.aluno;
+package com.martinileandro.gmassessoria.aluno.listagem;
 
 import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;

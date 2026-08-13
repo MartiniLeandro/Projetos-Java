@@ -4,6 +4,9 @@ import com.martinileandro.gmassessoria.aluno.dtos.AlunoRequestDTO;
 import com.martinileandro.gmassessoria.aluno.dtos.AlunoListagemFilterDTO;
 import com.martinileandro.gmassessoria.aluno.dtos.AlunoNomeResponseDTO;
 import com.martinileandro.gmassessoria.aluno.dtos.AlunoResponseDTO;
+import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemRepository;
+import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemSpecs;
+import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemView;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +38,14 @@ public class AlunoService {
                 .and(AlunoListagemSpecs.dataFimEntre(data.fimMin(), data.fimMax()));
 
         return alunoListagemRepository.findAll(specs);
+    }
+
+    public AlunoListagemView getById(Long id){
+        return alunoListagemRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe Aluno com este ID"));
+    }
+
+    public Long getTotalAlunos(){
+        return alunoRepository.count();
     }
 
     public AlunoResponseDTO create(AlunoRequestDTO data){

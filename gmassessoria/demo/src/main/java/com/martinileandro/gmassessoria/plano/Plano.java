@@ -3,13 +3,11 @@ package com.martinileandro.gmassessoria.plano;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -31,5 +29,8 @@ public class Plano {
 
     @NotNull(message = "o valor_base não pode ser nulo")
     private BigDecimal valorBase;
+
+    @Enumerated(EnumType.STRING)
+    private PlanoStatus planoStatus = PlanoStatus.ATIVO;
 
 }

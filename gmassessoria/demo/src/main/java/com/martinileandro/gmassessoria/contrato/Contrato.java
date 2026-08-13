@@ -3,15 +3,15 @@ package com.martinileandro.gmassessoria.contrato;
 import com.martinileandro.gmassessoria.aluno.Aluno;
 import com.martinileandro.gmassessoria.plano.Plano;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -32,13 +32,14 @@ public class Contrato {
     @JoinColumn(name = "plano_id", nullable = false)
     private Plano plano;
 
-
     @NotNull(message = "a dataInicio não pode ser nula")
     private LocalDate dataInicio;
 
     @NotNull(message = "a dataFim não pode ser nula")
     private LocalDate dataFim;
 
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "100.0")
     private BigDecimal desconto = BigDecimal.ZERO;
 
     @NotNull(message = "o valorTotal não pode ser nulo")

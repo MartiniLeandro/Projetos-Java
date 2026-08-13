@@ -1,0 +1,28 @@
+package com.martinileandro.gmassessoria.fatura;
+
+import com.martinileandro.gmassessoria.contrato.Contrato;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+@Service
+public class FaturaService {
+
+    private final FaturaRepository faturaRepository;
+
+    public FaturaService(FaturaRepository faturaRepository) {
+        this.faturaRepository = faturaRepository;
+    }
+
+    @Transactional
+    public void create(Contrato contrato){
+        Integer quantidadeParcelas = contrato.getNumeroParcelas();
+        BigDecimal valorPorFatura = contrato.getValorTotal().divide(BigDecimal.valueOf(quantidadeParcelas),2, RoundingMode.HALF_UP);
+        for(int i = 0; i < quantidadeParcelas; i++){
+            Fatura novaFatura = Fatura.builder().contrato(contrato).valorCobrado(valorPorFatura).dataVencimento(contrato.getDataInicio().plusMonths(i)).status(FaturaStatus.PENDENTE).formaPagamento(contrato.getFormaPagamento()).build();
+            faturaRepository.save(novaFatura);
+        }
+    }
+}
