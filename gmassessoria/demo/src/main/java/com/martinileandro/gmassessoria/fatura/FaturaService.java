@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 
 @Service
 public class FaturaService {
@@ -24,5 +25,10 @@ public class FaturaService {
             Fatura novaFatura = Fatura.builder().contrato(contrato).valorCobrado(valorPorFatura).dataVencimento(contrato.getDataInicio().plusMonths(i)).status(FaturaStatus.PENDENTE).formaPagamento(contrato.getFormaPagamento()).build();
             faturaRepository.save(novaFatura);
         }
+    }
+
+    public long contratosInadimplencia(){
+        LocalDate dataAtual = LocalDate.now();
+        return faturaRepository.countByStatusAndDataVencimentoBefore(FaturaStatus.VENCIDA, dataAtual);
     }
 }

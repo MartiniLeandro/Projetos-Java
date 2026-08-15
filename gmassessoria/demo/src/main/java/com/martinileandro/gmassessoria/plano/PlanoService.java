@@ -5,7 +5,9 @@ import com.martinileandro.gmassessoria.plano.dtos.PlanoRequestDTO;
 import com.martinileandro.gmassessoria.plano.dtos.PlanoResponseDTO;
 import com.martinileandro.gmassessoria.plano.dtos.PlanoResponseProjection;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -26,15 +28,30 @@ public class PlanoService {
         return planoRepository.count();
     }
 
+    public long getTotalPlanosAtivos(){
+        return planoRepository.countByStatus(PlanoStatus.ATIVO);
+    }
+
+    public BigDecimal getMediaValorBase(){
+        return planoRepository.getMediaValorBase();
+    }
+
+    public BigDecimal getMaiorValorBase(){
+        return planoRepository.getMaiorValorBase();
+    }
+
     public PlanoResponseDTO getById(Long id){
         return new PlanoResponseDTO(planoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe plano com este ID")));
     }
 
+    @Transactional
     public PlanoResponseDTO create(PlanoRequestDTO data){
+        if(data.valorBase().signum() < 0) throw new RuntimeException("O valor não pode ser negativo");
         Plano createdPlano = Plano.builder().nome(data.nome()).ciclo(data.ciclo()).valorBase(data.valorBase()).planoStatus(PlanoStatus.ATIVO).build();
         return new PlanoResponseDTO(planoRepository.save(createdPlano));
     }
 
+    @Transactional
     public PlanoResponseDTO update(PlanoRequestDTO data, Long id){
         Plano updatedPlano = planoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe plano com este Id"));
 
@@ -44,19 +61,21 @@ public class PlanoService {
         if (data.ciclo() != null) {
             updatedPlano.setCiclo(data.ciclo());
         }
-        if(data.valorBase() != null){
+        if(data.valorBase() != null && data.valorBase().signum() >= 0){
             updatedPlano.setValorBase(data.valorBase());
-        }
+        }else {throw new RuntimeException("O valor não pode sre negativo ou nulo");}
 
         return new PlanoResponseDTO(planoRepository.save(updatedPlano));
     }
 
+    @Transactional
     public void inativar(Long id){
         Plano plano = planoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe plano com este Id"));
         plano.setPlanoStatus(PlanoStatus.INATIVO);
         planoRepository.save(plano);
     }
 
+    @Transactional
     public void reativar(Long id){
         Plano plano = planoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe plano com este Id"));
         plano.setPlanoStatus(PlanoStatus.ATIVO);

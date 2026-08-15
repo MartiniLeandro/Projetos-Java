@@ -9,6 +9,7 @@ import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemSpecs;
 import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemView;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -48,11 +49,13 @@ public class AlunoService {
         return alunoRepository.count();
     }
 
+    @Transactional
     public AlunoResponseDTO create(AlunoRequestDTO data){
         Aluno createdAluno = Aluno.builder().nome(data.nome()).telefone(data.telefone()).imagem(data.imagem()).status(AlunoStatus.ATIVO).build();
         return new AlunoResponseDTO(alunoRepository.save(createdAluno));
     }
 
+    @Transactional
     public AlunoResponseDTO update(Long id, AlunoRequestDTO data) {
         Aluno aluno = alunoRepository.findById(id).orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
 
@@ -69,6 +72,7 @@ public class AlunoService {
         return new AlunoResponseDTO(alunoRepository.save(aluno));
     }
 
+    @Transactional
     public void reativar(Long id) {
         Aluno aluno = alunoRepository.findById(id).orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
 
@@ -76,14 +80,11 @@ public class AlunoService {
         alunoRepository.save(aluno);
     }
 
+    @Transactional
     public void inativar(Long id) {
         Aluno aluno = alunoRepository.findById(id).orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
 
         aluno.setStatus(AlunoStatus.INATIVO);
         alunoRepository.save(aluno);
     }
-
-    //MÉTODO QUE MOSTRA APENAS UM COM TODOS OS DADOS NECESSÁRIOS
-
-
 }

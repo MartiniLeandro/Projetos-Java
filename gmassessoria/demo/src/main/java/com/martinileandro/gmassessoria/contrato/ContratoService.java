@@ -2,6 +2,7 @@ package com.martinileandro.gmassessoria.contrato;
 
 import com.martinileandro.gmassessoria.aluno.Aluno;
 import com.martinileandro.gmassessoria.aluno.AlunoRepository;
+import com.martinileandro.gmassessoria.aluno.AlunoStatus;
 import com.martinileandro.gmassessoria.contrato.dtos.ContratoListagemFilterDTO;
 import com.martinileandro.gmassessoria.contrato.dtos.ContratoRequestDTO;
 import com.martinileandro.gmassessoria.contrato.dtos.ContratoResponseDTO;
@@ -11,6 +12,7 @@ import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemView;
 import com.martinileandro.gmassessoria.fatura.FaturaService;
 import com.martinileandro.gmassessoria.plano.Plano;
 import com.martinileandro.gmassessoria.plano.PlanoRepository;
+import com.martinileandro.gmassessoria.plano.PlanoStatus;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,10 +56,24 @@ public class ContratoService {
         return contratoListagemRepository.findById(id).orElseThrow(() -> new RuntimeException("Contrato não encontrado com este ID."));
     }
 
+    public long contratosProximosFim(){
+        LocalDate hoje = LocalDate.now();
+        LocalDate fim = hoje.plusDays(15);
+        return contratoRepository.countByStatusAndDataFimBetween(ContratoStatus.ATIVO, hoje, fim);
+    }
+
+    public long contratosAtivos(){
+        return contratoRepository.countByStatus(ContratoStatus.ATIVO);
+    }
+
+
     @Transactional
     public ContratoResponseDTO create(ContratoRequestDTO data){
+        if(data.numeroParcelas() < 1) throw new RuntimeException("O pagamento deve ser em no mínimo uma parcela");
         Aluno aluno = alunoRepository.findById(data.alunoId()).orElseThrow(() -> new RuntimeException("Aluno não encontrado com este ID."));
         Plano plano = planoRepository.findById(data.planoId()).orElseThrow(() -> new RuntimeException("Plano não encontrado com este ID."));
+        if(plano.getPlanoStatus() == PlanoStatus.INATIVO) throw new RuntimeException("Este plano está inativo");
+        if(aluno.getStatus() == AlunoStatus.INATIVO || aluno.getStatus() == AlunoStatus.PAUSADO) throw new RuntimeException("Este aluno está inativo ou pausado");
 
         LocalDate dataFim = switch (plano.getCiclo()){
             case MENSAL -> data.dataInicio().plusMonths(1);
@@ -74,4 +90,7 @@ public class ContratoService {
         faturaService.create(savedContrato);
         return new ContratoResponseDTO(savedContrato);
     }
+
+
+
 }
