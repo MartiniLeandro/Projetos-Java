@@ -21,8 +21,8 @@ public class FaturaService {
     public void create(Contrato contrato){
         Integer quantidadeParcelas = contrato.getNumeroParcelas();
         BigDecimal valorPorFatura = contrato.getValorTotal().divide(BigDecimal.valueOf(quantidadeParcelas),2, RoundingMode.HALF_UP);
-        for(int i = 0; i < quantidadeParcelas; i++){
-            Fatura novaFatura = Fatura.builder().contrato(contrato).valorCobrado(valorPorFatura).dataVencimento(contrato.getDataInicio().plusMonths(i)).status(FaturaStatus.PENDENTE).formaPagamento(contrato.getFormaPagamento()).build();
+        for(int i = 1; i < quantidadeParcelas; i++){
+            Fatura novaFatura = Fatura.builder().contrato(contrato).valorCobrado(valorPorFatura).dataVencimento(contrato.getDataInicio().plusMonths(i)).numeroParcela(i).status(FaturaStatus.PENDENTE).formaPagamento(contrato.getFormaPagamento()).build();
             faturaRepository.save(novaFatura);
         }
     }

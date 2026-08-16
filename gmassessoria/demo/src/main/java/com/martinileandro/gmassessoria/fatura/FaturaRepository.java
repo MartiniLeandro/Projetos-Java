@@ -1,5 +1,6 @@
 package com.martinileandro.gmassessoria.fatura;
 
+import com.martinileandro.gmassessoria.fatura.dtos.ListagemFaturasProjection;
 import com.martinileandro.gmassessoria.financeiro.dtos.FluxoCaixaProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +25,7 @@ public interface FaturaRepository extends JpaRepository<Fatura,Long> {
 
     @Query(value = "select extract(month from fa.data_vencimento) as mes, extract(year from fa.data_vencimento) as ano, coalesce(sum(fa.valor_cobrado), 0) as previsto, coalesce(sum(case when fa.status = 'PAGO' then fa.valor_cobrado else 0 end), 0) as recebido from faturas as fa where fa.data_vencimento >= :dataInicial and fa.data_vencimento <= :dataFinal group by extract(year from fa.data_vencimento), extract(month from fa.data_vencimento) order by ano asc, mes asc", nativeQuery = true)
     List<FluxoCaixaProjection> getFluxoCaixaMensal(@Param("dataInicial") LocalDate dataInicial, @Param("dataFinal") LocalDate dataFinal);
+
+    @Query(value = "SELECT fa.data_vencimento AS dataVencimento, fa.numero_parcela AS numeroParcela,al.nome AS aluno, pl.nome AS plano, pl.ciclo AS ciclo, fa.valor_cobrado AS valorCobrado, fa.status AS status FROM faturas AS fa INNER JOIN contratos AS co ON fa.contrato_id = co.id INNER JOIN planos AS pl ON co.plano_id = pl.id INNER JOIN alunos AS al ON co.aluno_id = al.id WHERE EXTRACT(MONTH FROM fa.data_vencimento) = :mes AND EXTRACT(YEAR FROM fa.data_vencimento) = :ano ORDER BY fa.data_vencimento ASC", nativeQuery = true)
+    List<ListagemFaturasProjection> getListagemFaturas(int mes, int ano);
 }

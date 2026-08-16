@@ -14,7 +14,7 @@ public interface PlanoRepository extends JpaRepository<Plano,Long> {
     @Query(value = "SELECT pl.*, (SELECT COUNT(co.id) FROM contratos AS co WHERE co.plano_id = pl.id) AS quantidade_alunos FROM planos AS pl where (:nome is null or nome like concat('%', :nome, '%')) and (:ciclo is null or ciclo = :ciclo);",nativeQuery = true)
     List<PlanoResponseProjection> findAllWithFilters(@Param("nome") String nome, @Param("ciclo") String ciclo);
 
-    long countByStatus(PlanoStatus status);
+    long countByPlanoStatus(PlanoStatus status);
 
     @Query(value = "select coalesce(avg(p.valor_base), 0) as valor_medio from planos as p", nativeQuery = true)
     BigDecimal getMediaValorBase();

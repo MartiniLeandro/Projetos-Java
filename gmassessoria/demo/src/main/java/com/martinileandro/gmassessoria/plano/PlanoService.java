@@ -29,7 +29,7 @@ public class PlanoService {
     }
 
     public long getTotalPlanosAtivos(){
-        return planoRepository.countByStatus(PlanoStatus.ATIVO);
+        return planoRepository.countByPlanoStatus(PlanoStatus.ATIVO);
     }
 
     public BigDecimal getMediaValorBase(){

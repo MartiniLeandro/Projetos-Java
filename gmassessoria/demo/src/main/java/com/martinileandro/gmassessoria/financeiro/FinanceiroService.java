@@ -1,6 +1,7 @@
 package com.martinileandro.gmassessoria.financeiro;
 
 import com.martinileandro.gmassessoria.fatura.FaturaRepository;
+import com.martinileandro.gmassessoria.fatura.dtos.ListagemFaturasDTO;
 import com.martinileandro.gmassessoria.financeiro.dtos.FluxoCaixaDTO;
 import com.martinileandro.gmassessoria.financeiro.dtos.RecebimentoPorPlanoDTO;
 import com.martinileandro.gmassessoria.plano.PlanoRepository;
@@ -44,7 +45,11 @@ public class FinanceiroService {
         return planoRepository.getRecebimentoPorPlano(mes, ano).stream().map(RecebimentoPorPlanoDTO::new).toList();
     }
 
+    public List<ListagemFaturasDTO> getListagemFaturas(int mes, int ano){
+        return faturaRepository.getListagemFaturas(mes,ano).stream().map(ListagemFaturasDTO::new).toList();
+    }
 
 
-    //SUBTRAIR O FATURAMENTO PREVISTO COM O RECEBIDO, LISTAGEM DAS FATURAS
+
+    //SUBTRAIR O FATURAMENTO PREVISTO COM O RECEBIDO
 }

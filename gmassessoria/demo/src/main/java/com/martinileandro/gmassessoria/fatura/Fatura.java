@@ -38,6 +38,8 @@ public class Fatura {
 
     private LocalDate dataPagamento;
 
+    private Integer numeroParcela;
+
     @Enumerated(EnumType.STRING)
     @NotNull(message = "O status da fatura é obrigatório")
     private FaturaStatus status;
