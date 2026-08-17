@@ -1,12 +1,11 @@
 package com.martinileandro.gmassessoria.aluno;
 
-import com.martinileandro.gmassessoria.aluno.dtos.AlunoRequestDTO;
-import com.martinileandro.gmassessoria.aluno.dtos.AlunoListagemFilterDTO;
-import com.martinileandro.gmassessoria.aluno.dtos.AlunoNomeResponseDTO;
-import com.martinileandro.gmassessoria.aluno.dtos.AlunoResponseDTO;
+import com.martinileandro.gmassessoria.aluno.dtos.*;
 import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemRepository;
 import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemSpecs;
 import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemView;
+import com.martinileandro.gmassessoria.contrato.ContratoService;
+import com.martinileandro.gmassessoria.fatura.FaturaService;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +17,14 @@ public class AlunoService {
 
     private final AlunoRepository alunoRepository;
     private final AlunoListagemRepository alunoListagemRepository;
+    private final ContratoService contratoService;
+    private final FaturaService faturaService;
 
-    public AlunoService(AlunoRepository alunoRepository, AlunoListagemRepository alunoListagemRepository) {
+    public AlunoService(AlunoRepository alunoRepository, AlunoListagemRepository alunoListagemRepository, ContratoService contratoService, FaturaService faturaService) {
         this.alunoRepository = alunoRepository;
         this.alunoListagemRepository = alunoListagemRepository;
+        this.contratoService = contratoService;
+        this.faturaService = faturaService;
     }
 
     public List<AlunoNomeResponseDTO> getAllNomes(){
@@ -86,5 +89,13 @@ public class AlunoService {
 
         aluno.setStatus(AlunoStatus.INATIVO);
         alunoRepository.save(aluno);
+    }
+
+    public AlunoCardsDTO getCardsResumos(){
+        Long quantidadeAlunos = getTotalAlunos();
+        Long contratosAtivos = contratoService.contratosAtivos();
+        Long contratosProximosFim = contratoService.contratosProximosFim();
+        Long contratosInadimplencia = faturaService.contratosInadimplencia();
+        return new AlunoCardsDTO(quantidadeAlunos,contratosAtivos,contratosProximosFim,contratosInadimplencia);
     }
 }
