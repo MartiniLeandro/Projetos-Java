@@ -11,7 +11,6 @@ public record PlanoResponseDTO(Long id, String nome, Ciclo ciclo, BigDecimal val
         this(
                 plano.getId(), plano.getNome(), plano.getCiclo(), plano.getValorBase(), plano.getPlanoStatus()
         );
-
     }
 
 }

@@ -44,12 +44,16 @@ public class AlunoService {
         return alunoListagemRepository.findAll(specs);
     }
 
+    public Aluno findById(Long id){
+        return alunoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe Aluno com este ID"));
+    }
+
     public AlunoListagemView getById(Long id){
         return alunoListagemRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe Aluno com este ID"));
     }
 
-    public Long getTotalAlunos(){
-        return alunoRepository.count();
+    public Long getTotalAlunos(String nomePlano){
+        return alunoRepository.contarAlunosAtivosPorPlano(nomePlano);
     }
 
     @Transactional
@@ -91,11 +95,11 @@ public class AlunoService {
         alunoRepository.save(aluno);
     }
 
-    public AlunoCardsDTO getCardsResumos(){
-        Long quantidadeAlunos = getTotalAlunos();
-        Long contratosAtivos = contratoService.contratosAtivos();
-        Long contratosProximosFim = contratoService.contratosProximosFim();
-        Long contratosInadimplencia = faturaService.contratosInadimplencia();
+    public AlunoCardsDTO getCardsResumos(String nomePlano){
+        Long quantidadeAlunos = getTotalAlunos(nomePlano);
+        Long contratosAtivos = contratoService.contratosAtivos(nomePlano);
+        Long contratosProximosFim = contratoService.contratosProximosFim(nomePlano);
+        Long contratosInadimplencia = faturaService.contratosInadimplencia(nomePlano);
         return new AlunoCardsDTO(quantidadeAlunos,contratosAtivos,contratosProximosFim,contratosInadimplencia);
     }
 }

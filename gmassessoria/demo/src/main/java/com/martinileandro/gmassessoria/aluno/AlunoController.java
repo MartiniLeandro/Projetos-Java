@@ -32,8 +32,8 @@ public class AlunoController {
     }
 
     @GetMapping("/resumo")
-    public ResponseEntity<AlunoCardsDTO> getCardsResumos(){
-        return ResponseEntity.ok().body(alunoService.getCardsResumos());
+    public ResponseEntity<AlunoCardsDTO> getCardsResumos(@RequestParam(required = false) String nomePlano){
+        return ResponseEntity.ok().body(alunoService.getCardsResumos(nomePlano));
     }
 
     @PostMapping

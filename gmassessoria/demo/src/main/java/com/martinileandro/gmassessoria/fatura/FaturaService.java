@@ -27,8 +27,7 @@ public class FaturaService {
         }
     }
 
-    public long contratosInadimplencia(){
-        LocalDate dataAtual = LocalDate.now();
-        return faturaRepository.countByStatusAndDataVencimentoBefore(FaturaStatus.VENCIDA, dataAtual);
+    public long contratosInadimplencia(String nomePlano){
+        return faturaRepository.contratosInadimplentesPorPlano(nomePlano);
     }
 }

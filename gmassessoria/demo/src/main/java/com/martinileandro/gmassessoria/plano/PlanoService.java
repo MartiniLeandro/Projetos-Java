@@ -1,9 +1,6 @@
 package com.martinileandro.gmassessoria.plano;
 
-import com.martinileandro.gmassessoria.plano.dtos.PlanoFiltersDTO;
-import com.martinileandro.gmassessoria.plano.dtos.PlanoRequestDTO;
-import com.martinileandro.gmassessoria.plano.dtos.PlanoResponseDTO;
-import com.martinileandro.gmassessoria.plano.dtos.PlanoResponseProjection;
+import com.martinileandro.gmassessoria.plano.dtos.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,16 +16,16 @@ public class PlanoService {
         this.planoRepository = planoRepository;
     }
 
-    public List<PlanoResponseProjection> getAllWithFilters(PlanoFiltersDTO data){
+    public List<PlanoResponseListagemDTO> getAllWithFilters(PlanoFiltersDTO data){
         String cicloString = data.ciclo() != null ? data.ciclo().name() : null;
-        return planoRepository.findAllWithFilters(data.nome(), cicloString);
+        return planoRepository.findAllWithFilters(data.nome(), cicloString).stream().map(PlanoResponseListagemDTO::new).toList();
     }
 
     public Long getTotalPlanos(){
         return planoRepository.count();
     }
 
-    public long getTotalPlanosAtivos(){
+    public Long getTotalPlanosAtivos(){
         return planoRepository.countByPlanoStatus(PlanoStatus.ATIVO);
     }
 
@@ -40,8 +37,12 @@ public class PlanoService {
         return planoRepository.getMaiorValorBase();
     }
 
+    public Plano findById(Long id){
+        return planoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe plano com este ID"));
+    }
+
     public PlanoResponseDTO getById(Long id){
-        return new PlanoResponseDTO(planoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe plano com este ID")));
+        return new PlanoResponseDTO(findById(id));
     }
 
     @Transactional
@@ -80,5 +81,13 @@ public class PlanoService {
         Plano plano = planoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe plano com este Id"));
         plano.setPlanoStatus(PlanoStatus.ATIVO);
         planoRepository.save(plano);
+    }
+
+    public PlanoCardsDTO getResumoCards(){
+        Long totalPlanos = getTotalPlanos();
+        Long planosAtivos = getTotalPlanosAtivos();
+        BigDecimal mediaValor = getMediaValorBase();
+        BigDecimal maiorValor = getMaiorValorBase();
+        return new PlanoCardsDTO(totalPlanos,planosAtivos,mediaValor,maiorValor);
     }
 }

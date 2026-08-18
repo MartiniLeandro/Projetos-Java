@@ -2,7 +2,9 @@ package com.martinileandro.gmassessoria.contrato;
 
 import com.martinileandro.gmassessoria.aluno.Aluno;
 import com.martinileandro.gmassessoria.aluno.AlunoRepository;
+import com.martinileandro.gmassessoria.aluno.AlunoService;
 import com.martinileandro.gmassessoria.aluno.AlunoStatus;
+import com.martinileandro.gmassessoria.contrato.dtos.ContratoCardsDTO;
 import com.martinileandro.gmassessoria.contrato.dtos.ContratoListagemFilterDTO;
 import com.martinileandro.gmassessoria.contrato.dtos.ContratoRequestDTO;
 import com.martinileandro.gmassessoria.contrato.dtos.ContratoResponseDTO;
@@ -12,6 +14,7 @@ import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemView;
 import com.martinileandro.gmassessoria.fatura.FaturaService;
 import com.martinileandro.gmassessoria.plano.Plano;
 import com.martinileandro.gmassessoria.plano.PlanoRepository;
+import com.martinileandro.gmassessoria.plano.PlanoService;
 import com.martinileandro.gmassessoria.plano.PlanoStatus;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -27,15 +30,15 @@ public class ContratoService {
 
     private final ContratoListagemRepository contratoListagemRepository;
     private final ContratoRepository contratoRepository;
-    private final AlunoRepository alunoRepository;
-    private final PlanoRepository planoRepository;
+    private final AlunoService alunoService;
+    private final PlanoService planoService;
     private final FaturaService faturaService;
 
-    public ContratoService(ContratoListagemRepository contratoListagemRepository, ContratoRepository contratoRepository, AlunoRepository alunoRepository, PlanoRepository planoRepository, FaturaService faturaService) {
+    public ContratoService(ContratoListagemRepository contratoListagemRepository, AlunoService alunoService, PlanoService planoService, ContratoRepository contratoRepository, FaturaService faturaService) {
         this.contratoListagemRepository = contratoListagemRepository;
         this.contratoRepository = contratoRepository;
-        this.alunoRepository = alunoRepository;
-        this.planoRepository = planoRepository;
+        this.alunoService = alunoService;
+        this.planoService = planoService;
         this.faturaService = faturaService;
     }
 
@@ -56,22 +59,20 @@ public class ContratoService {
         return contratoListagemRepository.findById(id).orElseThrow(() -> new RuntimeException("Contrato não encontrado com este ID."));
     }
 
-    public long contratosProximosFim(){
-        LocalDate hoje = LocalDate.now();
-        LocalDate fim = hoje.plusDays(15);
-        return contratoRepository.countByStatusAndDataFimBetween(ContratoStatus.ATIVO, hoje, fim);
+    public long contratosProximosFim(String nomePlano){
+        return contratoRepository.contratosProximosDoFimPorPlano(nomePlano,15);
     }
 
-    public long contratosAtivos(){
-        return contratoRepository.countByStatus(ContratoStatus.ATIVO);
+    public long contratosAtivos(String nomePlano){
+        return contratoRepository.contratosAtivosPorPlano(nomePlano);
     }
 
 
     @Transactional
     public ContratoResponseDTO create(ContratoRequestDTO data){
         if(data.numeroParcelas() < 1) throw new RuntimeException("O pagamento deve ser em no mínimo uma parcela");
-        Aluno aluno = alunoRepository.findById(data.alunoId()).orElseThrow(() -> new RuntimeException("Aluno não encontrado com este ID."));
-        Plano plano = planoRepository.findById(data.planoId()).orElseThrow(() -> new RuntimeException("Plano não encontrado com este ID."));
+        Aluno aluno = alunoService.findById(data.alunoId());
+        Plano plano = planoService.findById(data.planoId());
         if(plano.getPlanoStatus() == PlanoStatus.INATIVO) throw new RuntimeException("Este plano está inativo");
         if(aluno.getStatus() == AlunoStatus.INATIVO || aluno.getStatus() == AlunoStatus.PAUSADO) throw new RuntimeException("Este aluno está inativo ou pausado");
 
@@ -91,6 +92,12 @@ public class ContratoService {
         return new ContratoResponseDTO(savedContrato);
     }
 
-
+    public ContratoCardsDTO getContratoCards(String nomePlano){
+        Long totalAlunos = alunoService.getTotalAlunos(nomePlano);
+        Long contratosAtivos = contratosAtivos(nomePlano);
+        Long contratosProximosDoFim = contratosProximosFim(nomePlano);
+        Long contratosInadimplencia =  faturaService.contratosInadimplencia(nomePlano);
+        return new ContratoCardsDTO(totalAlunos,contratosAtivos,contratosProximosDoFim,contratosInadimplencia);
+    }
 
 }
