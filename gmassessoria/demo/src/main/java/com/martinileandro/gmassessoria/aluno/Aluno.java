@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDate;
 
 @Builder
 @NoArgsConstructor
@@ -28,4 +31,8 @@ public class Aluno {
     @Enumerated(EnumType.STRING)
     @NotNull(message = "o Status do aluno não pode ser nulo")
     private AlunoStatus status;
+
+    @CreationTimestamp
+    @Column(name = "data_cadastro", updatable = false)
+    private LocalDate dataCadastro;
 }

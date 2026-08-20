@@ -4,12 +4,15 @@ import com.martinileandro.gmassessoria.aluno.dtos.*;
 import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemRepository;
 import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemSpecs;
 import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemView;
+import com.martinileandro.gmassessoria.contrato.ContratoRepository;
 import com.martinileandro.gmassessoria.contrato.ContratoService;
 import com.martinileandro.gmassessoria.fatura.FaturaService;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -17,13 +20,13 @@ public class AlunoService {
 
     private final AlunoRepository alunoRepository;
     private final AlunoListagemRepository alunoListagemRepository;
-    private final ContratoService contratoService;
+    private final ContratoRepository contratoRepository;
     private final FaturaService faturaService;
 
-    public AlunoService(AlunoRepository alunoRepository, AlunoListagemRepository alunoListagemRepository, ContratoService contratoService, FaturaService faturaService) {
+    public AlunoService(AlunoRepository alunoRepository, AlunoListagemRepository alunoListagemRepository, ContratoRepository contratoRepository, FaturaService faturaService) {
         this.alunoRepository = alunoRepository;
         this.alunoListagemRepository = alunoListagemRepository;
-        this.contratoService = contratoService;
+        this.contratoRepository = contratoRepository;
         this.faturaService = faturaService;
     }
 
@@ -54,6 +57,33 @@ public class AlunoService {
 
     public Long getTotalAlunos(String nomePlano){
         return alunoRepository.contarAlunosAtivosPorPlano(nomePlano);
+    }
+
+    public Long novosAlunos(int mes, int ano){
+        return alunoRepository.contarNovosAlunos(mes,ano);
+    }
+
+    public List<AlunosPorPlanoDTO> getQuantidadeAlunosPorPlano(int mes, int ano){
+        return alunoRepository.contarAlunosAtivosAgrupadosPorPlano(mes,ano).stream().map(AlunosPorPlanoDTO::new).toList();
+    }
+
+    public List<EvolucaoAlunosDTO> getEvolucaoAlunos(int ano){
+        int anoAtual = LocalDate.now().getYear();
+        int mesLimite;
+
+        if(ano == anoAtual){
+            mesLimite = LocalDate.now().getMonthValue();
+        }else if(ano < anoAtual){
+            mesLimite = 12;
+        }else{
+            return Collections.emptyList();
+        }
+
+        return alunoRepository.getEvolucaoAlunosPorAno(ano, mesLimite).stream().map(EvolucaoAlunosDTO::new).toList();
+    }
+
+    public List<AlunosContratosProximoFimListagemDTO> getListagemContratosProximoFim(Integer mes, Integer ano){
+        return alunoRepository.getListagemAlunosProximoFimDashboard(mes,ano).stream().map(AlunosContratosProximoFimListagemDTO::new).toList();
     }
 
     @Transactional
@@ -97,8 +127,8 @@ public class AlunoService {
 
     public AlunoCardsDTO getCardsResumos(String nomePlano){
         Long quantidadeAlunos = getTotalAlunos(nomePlano);
-        Long contratosAtivos = contratoService.contratosAtivos(nomePlano);
-        Long contratosProximosFim = contratoService.contratosProximosFim(nomePlano);
+        Long contratosAtivos = contratoRepository.contratosAtivosPorPlano(nomePlano);
+        Long contratosProximosFim = contratoRepository.contratosProximosDoFimPorPlano(nomePlano,15);
         Long contratosInadimplencia = faturaService.contratosInadimplencia(nomePlano);
         return new AlunoCardsDTO(quantidadeAlunos,contratosAtivos,contratosProximosFim,contratosInadimplencia);
     }

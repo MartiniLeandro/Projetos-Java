@@ -18,7 +18,7 @@ public class PlanoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PlanoResponseListagemDTO>> getPlanosWithFilters(@RequestParam PlanoFiltersDTO data){
+    public ResponseEntity<List<PlanoResponseListagemDTO>> getPlanosWithFilters(@ModelAttribute PlanoFiltersDTO data){
         return ResponseEntity.ok().body(planoService.getAllWithFilters(data));
     }
 

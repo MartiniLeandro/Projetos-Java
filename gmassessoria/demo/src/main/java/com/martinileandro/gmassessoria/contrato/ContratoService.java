@@ -67,7 +67,6 @@ public class ContratoService {
         return contratoRepository.contratosAtivosPorPlano(nomePlano);
     }
 
-
     @Transactional
     public ContratoResponseDTO create(ContratoRequestDTO data){
         if(data.numeroParcelas() < 1) throw new RuntimeException("O pagamento deve ser em no mínimo uma parcela");
