@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface FaturaRepository extends JpaRepository<Fatura,Long> {
 
-    @Query(value = "select count(distinct co.id) from faturas fa inner join contratos co on fa.contrato_id  = co.id inner join planos pl on co.plano_id = pl.id where (:nomePlano is null or pl.nome ilike concat('%', :nomePlano, '%')) and co.status = 'ATIVO' and fa.status = 'VENCIDA' and fa.data_vencimento < current_date", nativeQuery = true)
+    @Query(value = "select count(distinct co.id) from faturas fa left join contratos co on fa.contrato_id  = co.id left join planos pl on co.plano_id = pl.id where (:nomePlano is null or pl.nome ilike concat('%', :nomePlano, '%')) and co.status = 'ATIVO' and fa.status = 'VENCIDA' and fa.data_vencimento < current_date", nativeQuery = true)
     Long contratosInadimplentesPorPlano(@Param("nomePlano") String nomePlano);
 
     @Query(value = "select coalesce(sum(fa.valor_cobrado),0) from faturas as fa where extract(month from fa.data_vencimento) = :mes and extract(year from fa.data_vencimento) = :ano", nativeQuery = true)
@@ -24,7 +24,7 @@ public interface FaturaRepository extends JpaRepository<Fatura,Long> {
     @Query(value = "select coalesce(sum(fa.valor_cobrado),0) from faturas as fa where fa.status = 'VENCIDA'", nativeQuery = true)
     BigDecimal getInadimplenciaTotal();
 
-    @Query(value = "select extract(month from fa.data_vencimento) as mes, extract(year from fa.data_vencimento) as ano, coalesce(sum(fa.valor_cobrado), 0) as previsto, coalesce(sum(case when fa.status = 'PAGO' then fa.valor_cobrado else 0 end), 0) as recebido from faturas as fa where fa.data_vencimento >= :dataInicial and fa.data_vencimento <= :dataFinal group by extract(year from fa.data_vencimento), extract(month from fa.data_vencimento) order by ano asc, mes asc", nativeQuery = true)
+    @Query(value = "SELECT EXTRACT(MONTH FROM s.mes_base) AS mes, EXTRACT(YEAR FROM s.mes_base) AS ano, COALESCE(SUM(fa.valor_cobrado), 0) AS previsto, COALESCE(SUM(CASE WHEN fa.status = 'PAGO' THEN fa.valor_cobrado ELSE 0 END), 0) AS recebido FROM generate_series(CAST(:dataInicial AS date), CAST(:dataFinal AS date), '1 month'::interval) AS s(mes_base) LEFT JOIN faturas AS fa ON EXTRACT(YEAR FROM fa.data_vencimento) = EXTRACT(YEAR FROM s.mes_base) AND EXTRACT(MONTH FROM fa.data_vencimento) = EXTRACT(MONTH FROM s.mes_base) GROUP BY ano, mes ORDER BY ano ASC, mes ASC", nativeQuery = true)
     List<FluxoCaixaProjection> getFluxoCaixaMensal(@Param("dataInicial") LocalDate dataInicial, @Param("dataFinal") LocalDate dataFinal);
 
     @Query(value = "SELECT fa.data_vencimento AS dataVencimento, fa.numero_parcela AS numeroParcela, al.nome AS aluno, pl.nome AS plano, pl.ciclo AS ciclo, fa.valor_cobrado AS valorCobrado, fa.status AS status FROM faturas AS fa INNER JOIN contratos AS co ON fa.contrato_id = co.id INNER JOIN planos AS pl ON co.plano_id = pl.id INNER JOIN alunos AS al ON co.aluno_id = al.id WHERE EXTRACT(MONTH FROM fa.data_vencimento) = :mes AND EXTRACT(YEAR FROM fa.data_vencimento) = :ano AND (:nomeAluno IS NULL OR al.nome ILIKE CONCAT('%', :nomeAluno, '%')) AND (:statusFatura IS NULL OR fa.status = :statusFatura) ORDER BY fa.data_vencimento ASC", nativeQuery = true)

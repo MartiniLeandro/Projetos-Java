@@ -40,4 +40,6 @@ public class ContratoController {
     public ResponseEntity<ContratoResponseDTO> create(@RequestBody ContratoRequestDTO data){
         return ResponseEntity.ok().body(contratoService.create(data));
     }
+
+    //FALTA UPDATE, DESATIVAR, ENTENDER A REGRA DE NEGÓCIO ALÉM DO CREATE
 }

@@ -131,5 +131,6 @@ public class AlunoService {
         Long contratosProximosFim = contratoRepository.contratosProximosDoFimPorPlano(nomePlano,15);
         Long contratosInadimplencia = faturaService.contratosInadimplencia(nomePlano);
         return new AlunoCardsDTO(quantidadeAlunos,contratosAtivos,contratosProximosFim,contratosInadimplencia);
+        //ALTERAR CARD PARA TOTAL DE ALUNOS ATIVOS
     }
 }

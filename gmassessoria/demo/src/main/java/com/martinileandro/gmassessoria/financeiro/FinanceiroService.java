@@ -36,11 +36,11 @@ public class FinanceiroService {
         return faturaRepository.getInadimplenciaTotal();
     }
 
-    public List<FluxoCaixaDTO> getFluxoCaixa(){
-        LocalDate dataAtual = LocalDate.now();
-        LocalDate dataFinal = dataAtual.withDayOfMonth(dataAtual.lengthOfMonth());
-        LocalDate dataInicial = dataAtual.minusMonths(5).withDayOfMonth(1);
-        return faturaRepository.getFluxoCaixaMensal(dataInicial,dataFinal).stream().map(FluxoCaixaDTO::new).toList();
+    public List<FluxoCaixaDTO> getFluxoCaixa(int mes, int ano) {
+        LocalDate dataReferencia = LocalDate.of(ano, mes, 1);
+        LocalDate dataFinal = dataReferencia.withDayOfMonth(dataReferencia.lengthOfMonth());
+        LocalDate dataInicial = dataReferencia.minusMonths(5);
+        return faturaRepository.getFluxoCaixaMensal(dataInicial, dataFinal).stream().map(FluxoCaixaDTO::new).toList();
     }
 
     public List<RecebimentoPorPlanoDTO> getRecebimentoPorPlanoMes(int mes, int ano){
@@ -58,7 +58,7 @@ public class FinanceiroService {
         BigDecimal faturamentoRecebido = getFaturamentoRecebidoMes(mes,ano);
         BigDecimal faturamentoReceber = faturamentoPrevisto.subtract(faturamentoRecebido);
         BigDecimal inadimplencia = getInadimplenciaTotal();
-        List<FluxoCaixaDTO> fluxoCaixa = getFluxoCaixa();
+        List<FluxoCaixaDTO> fluxoCaixa = getFluxoCaixa(mes, ano);
         List<RecebimentoPorPlanoDTO> recebimentoPorPlano = getRecebimentoPorPlanoMes(mes,ano);
         return new FinanceiroResumoDTO(faturamentoPrevisto,faturamentoRecebido,faturamentoReceber,inadimplencia,fluxoCaixa,recebimentoPorPlano);
     }
