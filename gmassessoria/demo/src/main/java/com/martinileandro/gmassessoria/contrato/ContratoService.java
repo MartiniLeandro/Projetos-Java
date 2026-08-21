@@ -12,10 +12,7 @@ import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemReposit
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemSpecs;
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemView;
 import com.martinileandro.gmassessoria.fatura.FaturaService;
-import com.martinileandro.gmassessoria.plano.Plano;
-import com.martinileandro.gmassessoria.plano.PlanoRepository;
-import com.martinileandro.gmassessoria.plano.PlanoService;
-import com.martinileandro.gmassessoria.plano.PlanoStatus;
+import com.martinileandro.gmassessoria.plano.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +41,7 @@ public class ContratoService {
 
     public List<ContratoListagemView> listarAlunosPlanosComFiltros(ContratoListagemFilterDTO filtros){
         Specification<ContratoListagemView> spec = Specification
-                .where(ContratoListagemSpecs.nomePlanoIgual(filtros.nomePlano()))
+                .where(ContratoListagemSpecs.planoCategoriaIgual(filtros.planoCategoria()))
                 .and(ContratoListagemSpecs.nomeAlunoContem(filtros.nomeAluno()))
                 .and(ContratoListagemSpecs.cicloPlanoIgual(filtros.cicloPlano()))
                 .and(ContratoListagemSpecs.statusContratoIgual(filtros.statusContrato()))
@@ -59,12 +56,13 @@ public class ContratoService {
         return contratoListagemRepository.findById(id).orElseThrow(() -> new RuntimeException("Contrato não encontrado com este ID."));
     }
 
-    public long contratosProximosFim(String nomePlano){
-        return contratoRepository.contratosProximosDoFimPorPlano(nomePlano,15);
+    public long contratosProximosFim(PlanoCategoria planoCategoria){
+        String categoriaPlano = planoCategoria != null ? planoCategoria.name() : null;
+        return contratoRepository.contratosProximosDoFimPorPlano(categoriaPlano,15);
     }
 
-    public long contratosAtivos(String nomePlano){
-        return contratoRepository.contratosAtivosPorPlano(nomePlano);
+    public long contratosAtivos(PlanoCategoria planoCategoria){
+        return contratoRepository.contratosAtivosPorPlano(planoCategoria.name());
     }
 
     @Transactional
@@ -91,11 +89,11 @@ public class ContratoService {
         return new ContratoResponseDTO(savedContrato);
     }
 
-    public ContratoCardsDTO getContratoCards(String nomePlano){
-        Long totalAlunos = alunoService.getTotalAlunos(nomePlano);
-        Long contratosAtivos = contratosAtivos(nomePlano);
-        Long contratosProximosDoFim = contratosProximosFim(nomePlano);
-        Long contratosInadimplencia =  faturaService.contratosInadimplencia(nomePlano);
+    public ContratoCardsDTO getContratoCards(PlanoCategoria planoCategoria){
+        Long totalAlunos = alunoService.getTotalAlunos(planoCategoria);
+        Long contratosAtivos = contratosAtivos(planoCategoria);
+        Long contratosProximosDoFim = contratosProximosFim(planoCategoria);
+        Long contratosInadimplencia =  faturaService.contratosInadimplencia(planoCategoria);
         return new ContratoCardsDTO(totalAlunos,contratosAtivos,contratosProximosDoFim,contratosInadimplencia);
     }
 

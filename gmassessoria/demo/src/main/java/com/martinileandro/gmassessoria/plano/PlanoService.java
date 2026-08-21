@@ -18,7 +18,8 @@ public class PlanoService {
 
     public List<PlanoResponseListagemDTO> getAllWithFilters(PlanoFiltersDTO data){
         String cicloString = data.ciclo() != null ? data.ciclo().name() : null;
-        return planoRepository.findAllWithFilters(data.nome(), cicloString).stream().map(PlanoResponseListagemDTO::new).toList();
+        String planoCategoria = data.planoCategoria() != null ? data.planoCategoria().name() : null;
+        return planoRepository.findAllWithFilters(data.nome(), cicloString, planoCategoria).stream().map(PlanoResponseListagemDTO::new).toList();
     }
 
     public Long getTotalPlanos(){
@@ -64,7 +65,7 @@ public class PlanoService {
         }
         if(data.valorBase() != null && data.valorBase().signum() >= 0){
             updatedPlano.setValorBase(data.valorBase());
-        }else {throw new RuntimeException("O valor não pode sre negativo ou nulo");}
+        }else {throw new RuntimeException("O valor não pode ser negativo ou nulo");}
 
         return new PlanoResponseDTO(planoRepository.save(updatedPlano));
     }

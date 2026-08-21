@@ -12,8 +12,8 @@ import java.util.List;
 
 public interface FaturaRepository extends JpaRepository<Fatura,Long> {
 
-    @Query(value = "select count(distinct co.id) from faturas fa left join contratos co on fa.contrato_id  = co.id left join planos pl on co.plano_id = pl.id where (:nomePlano is null or pl.nome ilike concat('%', :nomePlano, '%')) and co.status = 'ATIVO' and fa.status = 'VENCIDA' and fa.data_vencimento < current_date", nativeQuery = true)
-    Long contratosInadimplentesPorPlano(@Param("nomePlano") String nomePlano);
+    @Query(value = "select count(distinct co.id) from faturas fa left join contratos co on fa.contrato_id  = co.id left join planos pl on co.plano_id = pl.id where (:categoria is null or pl.categoria ilike concat('%', :categoria, '%')) and fa.status = 'VENCIDA' and fa.data_vencimento < current_date", nativeQuery = true)
+    Long contratosInadimplentesPorPlano(@Param("categoria") String categoria);
 
     @Query(value = "select coalesce(sum(fa.valor_cobrado),0) from faturas as fa where extract(month from fa.data_vencimento) = :mes and extract(year from fa.data_vencimento) = :ano", nativeQuery = true)
     BigDecimal getFaturamentoPrevistoMes(@Param("mes") int mes, @Param("ano") int ano);

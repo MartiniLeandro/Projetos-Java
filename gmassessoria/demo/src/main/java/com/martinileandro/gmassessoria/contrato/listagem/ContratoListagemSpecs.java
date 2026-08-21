@@ -1,5 +1,6 @@
 package com.martinileandro.gmassessoria.contrato.listagem;
 
+import com.martinileandro.gmassessoria.plano.PlanoCategoria;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -10,9 +11,9 @@ public class ContratoListagemSpecs {
                 nome == null || nome.isBlank() ? null : cb.like(cb.lower(root.get("nomeAluno")), "%" + nome.toLowerCase() + "%");
     }
 
-    public static Specification<ContratoListagemView> nomePlanoIgual(String nomePlano) {
+    public static Specification<ContratoListagemView> planoCategoriaIgual(PlanoCategoria categoria) {
         return (root, query, cb) ->
-                nomePlano == null || nomePlano.isBlank() ? null : cb.equal(root.get("nomePlano"), nomePlano);
+                categoria == null ? null : cb.equal(root.get("planoCategoria"), categoria);
     }
 
     public static Specification<ContratoListagemView> cicloPlanoIgual(String ciclo) {
@@ -35,7 +36,7 @@ public class ContratoListagemSpecs {
             if (minDias != null && maxDias != null) return cb.between(root.get("tempoRestante"), minDias, maxDias);
             if (minDias != null) return cb.greaterThanOrEqualTo(root.get("tempoRestante"), minDias);
             if (maxDias != null) return cb.lessThanOrEqualTo(root.get("tempoRestante"), maxDias);
-            return null; // Se os dois forem nulos, não filtra por dia
+            return null;
         };
     }
 

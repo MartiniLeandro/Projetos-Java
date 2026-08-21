@@ -1,6 +1,7 @@
 package com.martinileandro.gmassessoria.fatura;
 
 import com.martinileandro.gmassessoria.contrato.Contrato;
+import com.martinileandro.gmassessoria.plano.PlanoCategoria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +28,8 @@ public class FaturaService {
         }
     }
 
-    public long contratosInadimplencia(String nomePlano){
-        return faturaRepository.contratosInadimplentesPorPlano(nomePlano);
+    public long contratosInadimplencia(PlanoCategoria planoCategoria){
+        String categoriaPlano = planoCategoria != null ? planoCategoria.name() : null;
+        return faturaRepository.contratosInadimplentesPorPlano(categoriaPlano);
     }
 }

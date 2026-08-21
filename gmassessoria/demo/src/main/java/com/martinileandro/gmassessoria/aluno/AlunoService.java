@@ -7,6 +7,7 @@ import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemView;
 import com.martinileandro.gmassessoria.contrato.ContratoRepository;
 import com.martinileandro.gmassessoria.contrato.ContratoService;
 import com.martinileandro.gmassessoria.fatura.FaturaService;
+import com.martinileandro.gmassessoria.plano.PlanoCategoria;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,8 +56,9 @@ public class AlunoService {
         return alunoListagemRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe Aluno com este ID"));
     }
 
-    public Long getTotalAlunos(String nomePlano){
-        return alunoRepository.contarAlunosAtivosPorPlano(nomePlano);
+    public Long getTotalAlunos(PlanoCategoria planoCategoria){
+        String categoriaPlano = planoCategoria != null ? planoCategoria.name() : null;
+        return alunoRepository.contarAlunosAtivosPorPlano(categoriaPlano);
     }
 
     public Long novosAlunos(int mes, int ano){
@@ -125,11 +127,12 @@ public class AlunoService {
         alunoRepository.save(aluno);
     }
 
-    public AlunoCardsDTO getCardsResumos(String nomePlano){
-        Long quantidadeAlunos = getTotalAlunos(nomePlano);
-        Long contratosAtivos = contratoRepository.contratosAtivosPorPlano(nomePlano);
-        Long contratosProximosFim = contratoRepository.contratosProximosDoFimPorPlano(nomePlano,15);
-        Long contratosInadimplencia = faturaService.contratosInadimplencia(nomePlano);
+    public AlunoCardsDTO getCardsResumos(PlanoCategoria planoCategoria){
+        String categoriaPlano = planoCategoria != null ? planoCategoria.name() : null;
+        Long quantidadeAlunos = getTotalAlunos(planoCategoria);
+        Long contratosAtivos = contratoRepository.contratosAtivosPorPlano(categoriaPlano);
+        Long contratosProximosFim = contratoRepository.contratosProximosDoFimPorPlano(categoriaPlano,15);
+        Long contratosInadimplencia = faturaService.contratosInadimplencia(planoCategoria);
         return new AlunoCardsDTO(quantidadeAlunos,contratosAtivos,contratosProximosFim,contratosInadimplencia);
         //ALTERAR CARD PARA TOTAL DE ALUNOS ATIVOS
     }

@@ -11,6 +11,7 @@ import com.martinileandro.gmassessoria.dashboard.dtos.ResumoCardsDashboardDTO;
 import com.martinileandro.gmassessoria.fatura.FaturaRepository;
 import com.martinileandro.gmassessoria.fatura.FaturaService;
 import com.martinileandro.gmassessoria.financeiro.FinanceiroService;
+import com.martinileandro.gmassessoria.plano.PlanoCategoria;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -31,12 +32,12 @@ public class DashboardService {
         this.financeiroService = financeiroService;
     }
 
-    public ResumoCardsDashboardDTO getResumoCards(int mes, int ano, String nomePlano){
+    public ResumoCardsDashboardDTO getResumoCards(int mes, int ano, PlanoCategoria planoCategoria){
         BigDecimal faturamentoPrevisto = financeiroService.getFaturamentoPrevistoMes(mes,ano);
         BigDecimal faturamentoRecebido = financeiroService.getFaturamentoRecebidoMes(mes,ano);
         BigDecimal inadimplenciaTotal = financeiroService.getInadimplenciaTotal();
-        Long alunosAtivos = alunoService.getTotalAlunos(nomePlano);
-        Long contratosVencendo = contratoService.contratosProximosFim(nomePlano);
+        Long alunosAtivos = alunoService.getTotalAlunos(planoCategoria);
+        Long contratosVencendo = contratoService.contratosProximosFim(planoCategoria);
         Long novosAlunos = alunoService.novosAlunos(mes,ano);
         return new ResumoCardsDashboardDTO(faturamentoPrevisto,faturamentoRecebido,inadimplenciaTotal,alunosAtivos,contratosVencendo,novosAlunos);
     }

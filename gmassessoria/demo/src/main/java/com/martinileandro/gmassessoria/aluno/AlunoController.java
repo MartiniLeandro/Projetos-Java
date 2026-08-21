@@ -5,6 +5,7 @@ import com.martinileandro.gmassessoria.aluno.dtos.AlunoListagemFilterDTO;
 import com.martinileandro.gmassessoria.aluno.dtos.AlunoRequestDTO;
 import com.martinileandro.gmassessoria.aluno.dtos.AlunoResponseDTO;
 import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemView;
+import com.martinileandro.gmassessoria.plano.PlanoCategoria;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +33,8 @@ public class AlunoController {
     }
 
     @GetMapping("/resumo")
-    public ResponseEntity<AlunoCardsDTO> getCardsResumos(@RequestParam(required = false) String nomePlano){
-        return ResponseEntity.ok().body(alunoService.getCardsResumos(nomePlano));
+    public ResponseEntity<AlunoCardsDTO> getCardsResumos(@RequestParam(required = false) PlanoCategoria planoCategoria){
+        return ResponseEntity.ok().body(alunoService.getCardsResumos(planoCategoria));
     }
 
     @PostMapping

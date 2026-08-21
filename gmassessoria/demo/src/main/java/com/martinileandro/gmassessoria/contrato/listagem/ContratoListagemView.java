@@ -1,9 +1,7 @@
 package com.martinileandro.gmassessoria.contrato.listagem;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.martinileandro.gmassessoria.plano.PlanoCategoria;
+import jakarta.persistence.*;
 import lombok.Getter;
 import org.hibernate.annotations.Immutable;
 import java.time.LocalDate;
@@ -18,14 +16,18 @@ public class ContratoListagemView {
     @Column(name = "contrato_id")
     private Long contratoId;
 
-    @Column(name = "nome_aluno")
-    private String nomeAluno;
-
     @Column(name = "imagem_aluno")
     private String imagemAluno;
 
+    @Column(name = "nome_aluno")
+    private String nomeAluno;
+
     @Column(name = "nome_plano")
     private String nomePlano;
+
+    @Column(name = "categoria_plano")
+    @Enumerated(EnumType.STRING)
+    private PlanoCategoria planoCategoria;
 
     @Column(name = "ciclo_plano")
     private String cicloPlano;

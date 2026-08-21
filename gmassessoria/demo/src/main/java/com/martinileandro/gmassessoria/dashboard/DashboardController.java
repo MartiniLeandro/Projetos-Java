@@ -4,6 +4,7 @@ import com.martinileandro.gmassessoria.aluno.dtos.AlunosContratosProximoFimLista
 import com.martinileandro.gmassessoria.aluno.dtos.AlunosPorPlanoDTO;
 import com.martinileandro.gmassessoria.aluno.dtos.EvolucaoAlunosDTO;
 import com.martinileandro.gmassessoria.dashboard.dtos.ResumoCardsDashboardDTO;
+import com.martinileandro.gmassessoria.plano.PlanoCategoria;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +24,8 @@ public class DashboardController {
     }
 
     @GetMapping("/resumo")
-    public ResponseEntity<ResumoCardsDashboardDTO> getResumoCards(@RequestParam int mes, @RequestParam int ano, @RequestParam(required = false) String nomePlano){
-        return ResponseEntity.ok().body(dashboardService.getResumoCards(mes,ano,nomePlano));
+    public ResponseEntity<ResumoCardsDashboardDTO> getResumoCards(@RequestParam int mes, @RequestParam int ano, @RequestParam(required = false) PlanoCategoria planoCategoria){
+        return ResponseEntity.ok().body(dashboardService.getResumoCards(mes,ano,planoCategoria));
     }
 
     @GetMapping("/plano-grafico")

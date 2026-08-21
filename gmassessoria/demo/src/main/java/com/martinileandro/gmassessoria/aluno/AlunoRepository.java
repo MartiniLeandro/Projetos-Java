@@ -12,13 +12,13 @@ import java.util.List;
 
 public interface AlunoRepository extends JpaRepository<Aluno,Long> {
 
-    @Query(value = "select count(distinct al.id) as totalAlunos from alunos al left join contratos as co on co.aluno_id = al.id left join planos as pl on co.plano_id = pl.id where (:nomePlano is null or pl.nome ilike concat('%', :nomePlano, '%')) and al.status = 'ATIVO'", nativeQuery = true)
-    Long contarAlunosAtivosPorPlano(@Param("nomePlano") String nomePlano);
+    @Query(value = "select count(distinct al.id) as totalAlunos from alunos al left join contratos as co on co.aluno_id = al.id left join planos as pl on co.plano_id = pl.id where (:categoria is null or pl.categoria ilike concat('%', :categoria, '%')) and al.status = 'ATIVO'", nativeQuery = true)
+    Long contarAlunosAtivosPorPlano(@Param("categoria") String categoria);
 
     @Query(value = "select count(id) from alunos where EXTRACT(MONTH FROM data_cadastro) = :mes  and EXTRACT(YEAR FROM data_cadastro) = :ano", nativeQuery = true)
     Long contarNovosAlunos(@Param("mes") Integer mes, @Param("ano") Integer ano);
 
-    @Query(value = "SELECT pl.nome AS plano, COUNT(DISTINCT al.id) AS quantidade FROM alunos AS al INNER JOIN contratos AS co ON al.id = co.aluno_id INNER JOIN planos AS pl ON co.plano_id = pl.id WHERE al.status = 'ATIVO' AND co.status = 'ATIVO' AND (EXTRACT(YEAR FROM co.data_inicio) * 12 + EXTRACT(MONTH FROM co.data_inicio)) <= (:ano * 12 + :mes) AND (EXTRACT(YEAR FROM co.data_fim) * 12 + EXTRACT(MONTH FROM co.data_fim)) >= (:ano * 12 + :mes) GROUP BY pl.nome", nativeQuery = true)
+    @Query(value = "SELECT pl.categoria AS plano, COUNT(DISTINCT al.id) AS quantidade FROM alunos AS al INNER JOIN contratos AS co ON al.id = co.aluno_id INNER JOIN planos AS pl ON co.plano_id = pl.id WHERE al.status = 'ATIVO' AND (EXTRACT(YEAR FROM co.data_inicio) * 12 + EXTRACT(MONTH FROM co.data_inicio)) <= (:ano * 12 + :mes) AND (EXTRACT(YEAR FROM co.data_fim) * 12 + EXTRACT(MONTH FROM co.data_fim)) >= (:ano * 12 + :mes) GROUP BY pl.categoria", nativeQuery = true)
     List<AlunosPorPlanoProjection> contarAlunosAtivosAgrupadosPorPlano(@Param("mes") Integer mes, @Param("ano") Integer ano);
 
     @Query(value = "SELECT m.mes AS mes, (SELECT COUNT(id) FROM alunos WHERE EXTRACT(YEAR FROM data_cadastro) = :ano AND EXTRACT(MONTH FROM data_cadastro) = m.mes) AS novosAlunos, (SELECT COUNT(id) FROM alunos WHERE status = 'ATIVO' AND (EXTRACT(YEAR FROM data_cadastro) * 12 + EXTRACT(MONTH FROM data_cadastro)) <= (:ano * 12 + m.mes)) AS alunosAtivos FROM generate_series(1, :mesLimite) AS m(mes) ORDER BY m.mes ASC", nativeQuery = true)

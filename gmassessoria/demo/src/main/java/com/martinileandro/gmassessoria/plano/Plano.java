@@ -31,6 +31,11 @@ public class Plano {
     private BigDecimal valorBase;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private PlanoStatus planoStatus = PlanoStatus.ATIVO;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "categoria")
+    private PlanoCategoria planoCategoria;
 
 }

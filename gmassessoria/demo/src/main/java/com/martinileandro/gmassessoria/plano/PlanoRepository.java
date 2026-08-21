@@ -11,8 +11,11 @@ import java.util.List;
 
 public interface PlanoRepository extends JpaRepository<Plano,Long> {
 
-    @Query(value = "SELECT pl.*, (SELECT COUNT(co.id) FROM contratos AS co WHERE co.plano_id = pl.id) AS quantidade_alunos FROM planos AS pl where (:nome is null or nome like concat('%', :nome, '%')) and (:ciclo is null or ciclo = :ciclo);",nativeQuery = true)
-    List<PlanoResponseProjection> findAllWithFilters(@Param("nome") String nome, @Param("ciclo") String ciclo);
+    @Query(value = "SELECT pl.*, (SELECT COUNT(co.id) FROM contratos AS co WHERE co.plano_id = pl.id and co.status = 'ATIVO') AS quantidade_alunos FROM planos AS pl where (:nome is null or nome like concat('%', :nome, '%')) and (:ciclo is null or ciclo = :ciclo) and (:categoria is null or categoria = :categoria);",nativeQuery = true)
+    List<PlanoResponseProjection> findAllWithFilters(@Param("nome") String nome, @Param("ciclo") String ciclo, @Param("categoria") String categoria);
+
+    @Query(value = "select exists(select 1 from contratos where plano_id = :planoId) as possuiAlunos", nativeQuery = true)
+    Boolean PlanoPossuiAlunoVinculado(@Param("planoId") Long planoId);
 
     long countByPlanoStatus(PlanoStatus status);
 
@@ -22,6 +25,6 @@ public interface PlanoRepository extends JpaRepository<Plano,Long> {
     @Query(value = "select coalesce(max(p.valor_base), 0) as valor_maior from planos as p", nativeQuery = true)
     BigDecimal getMaiorValorBase();
 
-    @Query(value = "select pl.nome as plano, coalesce(sum(fa.valor_cobrado),0) as valor_recebido from planos as pl left join contratos as co on pl.id = co.plano_id left join faturas as fa on co.id = fa.contrato_id and fa.status = 'PAGO' and extract(month from fa.data_vencimento) = :mes and extract(year from fa.data_vencimento) = :ano group by pl.nome", nativeQuery = true)
+    @Query(value = "select pl.categoria as plano, coalesce(sum(fa.valor_cobrado),0) as valor_recebido from planos as pl left join contratos as co on pl.id = co.plano_id left join faturas as fa on co.id = fa.contrato_id and fa.status = 'PAGO' and extract(month from fa.data_vencimento) = :mes and extract(year from fa.data_vencimento) = :ano group by pl.categoria", nativeQuery = true)
     List<RecebimentoPorPlanoProjection> getRecebimentoPorPlano(@Param("mes") int mes, @Param("ano") int ano);
 }

@@ -5,6 +5,7 @@ import com.martinileandro.gmassessoria.contrato.dtos.ContratoListagemFilterDTO;
 import com.martinileandro.gmassessoria.contrato.dtos.ContratoRequestDTO;
 import com.martinileandro.gmassessoria.contrato.dtos.ContratoResponseDTO;
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemView;
+import com.martinileandro.gmassessoria.plano.PlanoCategoria;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +33,8 @@ public class ContratoController {
     }
 
     @GetMapping("/resumo")
-    public ResponseEntity<ContratoCardsDTO> getContratoCards(@RequestParam String nomePlano){
-        return ResponseEntity.ok().body(contratoService.getContratoCards(nomePlano));
+    public ResponseEntity<ContratoCardsDTO> getContratoCards(@RequestParam PlanoCategoria planoCategoria){
+        return ResponseEntity.ok().body(contratoService.getContratoCards(planoCategoria));
     }
 
     @PostMapping

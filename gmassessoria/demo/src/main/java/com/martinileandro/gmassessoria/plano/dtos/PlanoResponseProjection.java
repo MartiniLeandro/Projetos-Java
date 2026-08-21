@@ -7,6 +7,6 @@ public interface PlanoResponseProjection {
     String getCiclo();
     String getNome();
     BigDecimal getValorBase();
-    String getPlanoStatus();
+    String getStatus();
     Long getQuantidadeAlunos();
 }
