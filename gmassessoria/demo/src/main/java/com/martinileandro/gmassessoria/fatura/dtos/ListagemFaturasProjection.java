@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public interface ListagemFaturasProjection{
+    Long getId();
     LocalDate getDataVencimento();
     Integer getNumeroParcela();
     String getAluno();

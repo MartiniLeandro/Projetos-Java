@@ -32,4 +32,28 @@ public class FaturaService {
         String categoriaPlano = planoCategoria != null ? planoCategoria.name() : null;
         return faturaRepository.contratosInadimplentesPorPlano(categoriaPlano);
     }
+
+    @Transactional
+    public void registrarPagamento(Long id){
+        LocalDate dataPagamento = LocalDate.now();
+        Fatura fatura = faturaRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe fatura com este ID"));
+        if(fatura.getStatus() == FaturaStatus.VENCIDA || fatura.getStatus() == FaturaStatus.PENDENTE){
+            fatura.setStatus(FaturaStatus.PAGO);
+        }
+        fatura.setDataPagamento(dataPagamento);
+        faturaRepository.save(fatura);
+    }
+
+    @Transactional
+    public void estornarPagamento(Long id){
+        LocalDate dataAtual = LocalDate.now();
+        Fatura fatura = faturaRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe fatura com este ID"));
+        if(fatura.getStatus() == FaturaStatus.PAGO && fatura.getDataVencimento().isAfter(dataAtual)){
+            fatura.setStatus(FaturaStatus.PENDENTE);
+        }else{
+            fatura.setStatus(FaturaStatus.VENCIDA);
+        }
+        fatura.setDataPagamento(null);
+        faturaRepository.save(fatura);
+    }
 }

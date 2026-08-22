@@ -27,4 +27,16 @@ public class FinanceiroController {
     public ResponseEntity<List<ListagemFaturasDTO>> getListagemFaturas(@ModelAttribute ListagemFinanceiroFilterDTO filtros){
         return ResponseEntity.ok().body(financeiroService.getListagemFaturas(filtros));
     }
+
+    @PatchMapping("/fatura/pagar/{id}")
+    public ResponseEntity<Void> pagamentoFatura(@PathVariable Long id){
+        financeiroService.pagamentoFatura(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/fatura/estornar/{id}")
+    public ResponseEntity<Void> estornarFatura(@PathVariable Long id){
+        financeiroService.estornarFatura(id);
+        return ResponseEntity.noContent().build();
+    }
 }

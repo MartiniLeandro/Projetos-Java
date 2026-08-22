@@ -1,6 +1,7 @@
 package com.martinileandro.gmassessoria.financeiro;
 
 import com.martinileandro.gmassessoria.fatura.FaturaRepository;
+import com.martinileandro.gmassessoria.fatura.FaturaService;
 import com.martinileandro.gmassessoria.fatura.dtos.ListagemFaturasDTO;
 import com.martinileandro.gmassessoria.financeiro.dtos.FinanceiroResumoDTO;
 import com.martinileandro.gmassessoria.financeiro.dtos.FluxoCaixaDTO;
@@ -18,10 +19,12 @@ public class FinanceiroService {
 
     private final FaturaRepository faturaRepository;
     private final PlanoRepository planoRepository;
+    private final FaturaService faturaService;
 
-    public FinanceiroService(FaturaRepository faturaRepository, PlanoRepository planoRepository) {
+    public FinanceiroService(FaturaRepository faturaRepository, PlanoRepository planoRepository, FaturaService faturaService) {
         this.faturaRepository = faturaRepository;
         this.planoRepository = planoRepository;
+        this.faturaService = faturaService;
     }
 
     public BigDecimal getFaturamentoPrevistoMes(int mes, int ano){
@@ -61,6 +64,14 @@ public class FinanceiroService {
         List<FluxoCaixaDTO> fluxoCaixa = getFluxoCaixa(mes, ano);
         List<RecebimentoPorPlanoDTO> recebimentoPorPlano = getRecebimentoPorPlanoMes(mes,ano);
         return new FinanceiroResumoDTO(faturamentoPrevisto,faturamentoRecebido,faturamentoReceber,inadimplencia,fluxoCaixa,recebimentoPorPlano);
+    }
+
+    public void pagamentoFatura(Long id){
+        faturaService.registrarPagamento(id);
+    }
+
+    public void estornarFatura(Long id){
+        faturaService.estornarPagamento(id);
     }
 
 }

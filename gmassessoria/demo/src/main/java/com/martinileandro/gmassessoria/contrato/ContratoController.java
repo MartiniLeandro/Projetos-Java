@@ -6,6 +6,7 @@ import com.martinileandro.gmassessoria.contrato.dtos.ContratoRequestDTO;
 import com.martinileandro.gmassessoria.contrato.dtos.ContratoResponseDTO;
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemView;
 import com.martinileandro.gmassessoria.plano.PlanoCategoria;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +39,7 @@ public class ContratoController {
     }
 
     @PostMapping
-    public ResponseEntity<ContratoResponseDTO> create(@RequestBody ContratoRequestDTO data){
+    public ResponseEntity<ContratoResponseDTO> create(@RequestBody @Valid ContratoRequestDTO data){
         return ResponseEntity.ok().body(contratoService.create(data));
     }
 
