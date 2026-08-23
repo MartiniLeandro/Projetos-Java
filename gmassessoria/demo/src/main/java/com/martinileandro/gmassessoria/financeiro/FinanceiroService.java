@@ -60,10 +60,10 @@ public class FinanceiroService {
         BigDecimal faturamentoPrevisto = getFaturamentoPrevistoMes(mes,ano);
         BigDecimal faturamentoRecebido = getFaturamentoRecebidoMes(mes,ano);
         BigDecimal faturamentoReceber = faturamentoPrevisto.subtract(faturamentoRecebido);
-        BigDecimal inadimplencia = getInadimplenciaTotal();
+        BigDecimal inadimplenciaTotal = getInadimplenciaTotal();
         List<FluxoCaixaDTO> fluxoCaixa = getFluxoCaixa(mes, ano);
         List<RecebimentoPorPlanoDTO> recebimentoPorPlano = getRecebimentoPorPlanoMes(mes,ano);
-        return new FinanceiroResumoDTO(faturamentoPrevisto,faturamentoRecebido,faturamentoReceber,inadimplencia,fluxoCaixa,recebimentoPorPlano);
+        return new FinanceiroResumoDTO(faturamentoPrevisto,faturamentoRecebido,faturamentoReceber,inadimplenciaTotal,fluxoCaixa,recebimentoPorPlano);
     }
 
     public void pagamentoFatura(Long id){

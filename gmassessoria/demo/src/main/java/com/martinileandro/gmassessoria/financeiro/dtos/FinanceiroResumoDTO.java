@@ -7,7 +7,7 @@ public record FinanceiroResumoDTO(
         BigDecimal faturamentoPrevisto,
         BigDecimal faturamentoRecebido,
         BigDecimal faturamentoReceber,
-        BigDecimal InadimplenciaTotal,
+        BigDecimal inadimplenciaTotal,
         List<FluxoCaixaDTO> fluxoCaixa,
         List<RecebimentoPorPlanoDTO> recebimentoPorPlano) {
 }
