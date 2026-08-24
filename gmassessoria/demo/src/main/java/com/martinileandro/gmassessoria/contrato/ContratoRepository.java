@@ -16,7 +16,7 @@ public interface ContratoRepository extends JpaRepository<Contrato,Long> {
     Long contratosProximosDoFimPorPlano(@Param("categoria") String categoria, @Param("diasAlerta") Integer diasAlerta);
 
     @Modifying
-    @Query("UPDATE contratos c SET c.status = 'ENCERRADO' WHERE c.status = 'ATIVO' AND c.dataFim < CURRENT_DATE")
+    @Query("UPDATE Contrato c SET c.status = 'ENCERRADO' WHERE c.status = 'ATIVO' AND c.dataFim < CURRENT_DATE")
     int encerrarContratosVencidos();
 
 }

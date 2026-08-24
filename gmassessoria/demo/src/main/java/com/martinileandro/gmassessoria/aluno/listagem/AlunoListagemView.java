@@ -42,4 +42,10 @@ public class AlunoListagemView {
 
     @Column(name = "status_aluno")
     private String statusAluno;
+
+    @Column(name = "data_cadastro")
+    private LocalDate dataCadastro;
+
+    @Column(name = "data_proxima_fatura")
+    private LocalDate dataProximaFatura;
 }

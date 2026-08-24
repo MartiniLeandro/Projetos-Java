@@ -32,6 +32,6 @@ public interface FaturaRepository extends JpaRepository<Fatura,Long> {
     List<ListagemFaturasProjection> getListagemFaturas(@Param("mes") Integer mes, @Param("ano") Integer ano, @Param("nomeAluno") String nomeAluno, @Param("statusFatura") String statusFatura);
 
     @Modifying
-    @Query("UPDATE faturas f SET f.status = 'VENCIDA' WHERE f.status = 'PENDENTE' AND f.dataVencimento < CURRENT_DATE")
+    @Query("UPDATE Fatura f SET f.status = 'VENCIDA' WHERE f.status = 'PENDENTE' AND f.dataVencimento < CURRENT_DATE")
     int atualizarFaturasVencidas();
 }
