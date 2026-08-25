@@ -1,9 +1,6 @@
 package com.martinileandro.gmassessoria.contrato;
 
-import com.martinileandro.gmassessoria.contrato.dtos.ContratoCardsDTO;
-import com.martinileandro.gmassessoria.contrato.dtos.ContratoListagemFilterDTO;
-import com.martinileandro.gmassessoria.contrato.dtos.ContratoRequestDTO;
-import com.martinileandro.gmassessoria.contrato.dtos.ContratoResponseDTO;
+import com.martinileandro.gmassessoria.contrato.dtos.*;
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemView;
 import com.martinileandro.gmassessoria.plano.PlanoCategoria;
 import jakarta.validation.Valid;
@@ -41,6 +38,17 @@ public class ContratoController {
     @PostMapping
     public ResponseEntity<ContratoResponseDTO> create(@RequestBody @Valid ContratoRequestDTO data){
         return ResponseEntity.ok().body(contratoService.create(data));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ContratoResponseDTO> update(@RequestBody @Valid ContratoRequestUpdateDTO data, @PathVariable Long id){
+        return ResponseEntity.ok().body(contratoService.update(data,id));
+    }
+
+    @PatchMapping("/encerrar/{id}")
+    public ResponseEntity<Void> encerrarContrato(@PathVariable Long id){
+        contratoService.encerrarContrato(id);
+        return ResponseEntity.noContent().build();
     }
 
     //FALTA UPDATE, DESATIVAR, ENTENDER A REGRA DE NEGÓCIO ALÉM DO CREATE

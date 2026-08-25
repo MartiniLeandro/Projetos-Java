@@ -4,10 +4,7 @@ import com.martinileandro.gmassessoria.aluno.Aluno;
 import com.martinileandro.gmassessoria.aluno.AlunoRepository;
 import com.martinileandro.gmassessoria.aluno.AlunoService;
 import com.martinileandro.gmassessoria.aluno.AlunoStatus;
-import com.martinileandro.gmassessoria.contrato.dtos.ContratoCardsDTO;
-import com.martinileandro.gmassessoria.contrato.dtos.ContratoListagemFilterDTO;
-import com.martinileandro.gmassessoria.contrato.dtos.ContratoRequestDTO;
-import com.martinileandro.gmassessoria.contrato.dtos.ContratoResponseDTO;
+import com.martinileandro.gmassessoria.contrato.dtos.*;
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemRepository;
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemSpecs;
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemView;
@@ -88,6 +85,22 @@ public class ContratoService {
         faturaService.create(savedContrato);
         return new ContratoResponseDTO(savedContrato);
     }
+
+    @Transactional
+    public ContratoResponseDTO update(ContratoRequestUpdateDTO data, Long id){ //sem alteração de dados do financeiro
+        Contrato contrato = contratoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe contrato com este ID"));
+        contrato.setFormaPagamento(data.formaPagamento());
+        contrato.setStatus(data.status());
+        Contrato savedContrato = contratoRepository.save(contrato);
+        return new ContratoResponseDTO(savedContrato);
+    }
+
+    @Transactional
+    public void encerrarContrato(Long id){
+        Contrato contrato = contratoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe contrato com este ID"));
+        contrato.setStatus(ContratoStatus.ENCERRADO);
+    }
+
 
     public ContratoCardsDTO getContratoCards(PlanoCategoria planoCategoria){
         Long totalAlunos = alunoService.getTotalAlunos(planoCategoria);
