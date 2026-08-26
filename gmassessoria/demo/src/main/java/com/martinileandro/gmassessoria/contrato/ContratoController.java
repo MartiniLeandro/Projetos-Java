@@ -35,6 +35,11 @@ public class ContratoController {
         return ResponseEntity.ok().body(contratoService.getContratoCards(planoCategoria));
     }
 
+    @GetMapping("/detalhes/{id}")
+    public ResponseEntity<ContratoDetalhesDTO> getDetalhesContrato(@PathVariable Long id){
+        return ResponseEntity.ok().body(contratoService.getDetalhesContrato(id));
+    }
+
     @PostMapping
     public ResponseEntity<ContratoResponseDTO> create(@RequestBody @Valid ContratoRequestDTO data){
         return ResponseEntity.ok().body(contratoService.create(data));

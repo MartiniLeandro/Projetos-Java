@@ -1,6 +1,7 @@
 package com.martinileandro.gmassessoria.fatura;
 
 import com.martinileandro.gmassessoria.contrato.Contrato;
+import com.martinileandro.gmassessoria.fatura.dtos.HistoricoPagamentosDTO;
 import com.martinileandro.gmassessoria.plano.PlanoCategoria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class FaturaService {
@@ -55,5 +57,9 @@ public class FaturaService {
         }
         fatura.setDataPagamento(null);
         faturaRepository.save(fatura);
+    }
+
+    public List<HistoricoPagamentosDTO> getHistoricoPagamentos(Long contratoId){
+        return faturaRepository.getHistoricoPagamento(contratoId).stream().map(HistoricoPagamentosDTO::new).toList();
     }
 }

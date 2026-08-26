@@ -12,4 +12,5 @@ public interface ListagemFaturasProjection{
     String getCiclo();
     BigDecimal getValorCobrado();
     String getStatus();
+    String getFormaPagamento();
 }

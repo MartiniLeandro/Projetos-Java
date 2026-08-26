@@ -9,6 +9,8 @@ import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemReposit
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemSpecs;
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemView;
 import com.martinileandro.gmassessoria.fatura.FaturaService;
+import com.martinileandro.gmassessoria.fatura.dtos.HistoricoPagamentosDTO;
+import com.martinileandro.gmassessoria.fatura.dtos.HistoricoPagamentosProjection;
 import com.martinileandro.gmassessoria.plano.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -108,6 +110,14 @@ public class ContratoService {
         Long contratosProximosDoFim = contratosProximosFim(planoCategoria);
         Long contratosInadimplencia =  faturaService.contratosInadimplencia(planoCategoria);
         return new ContratoCardsDTO(totalAlunos,contratosAtivos,contratosProximosDoFim,contratosInadimplencia);
+    }
+
+    public ContratoDetalhesDTO getDetalhesContrato(Long contratoId){
+        Contrato contrato = contratoRepository.findById(contratoId).orElseThrow(() -> new RuntimeException("Não existe contrato com este ID"));
+        Aluno aluno = contrato.getAluno();
+        Plano plano = contrato.getPlano();
+        List<HistoricoPagamentosDTO> faturas = faturaService.getHistoricoPagamentos(contratoId);
+        return new ContratoDetalhesDTO(contrato,aluno,plano,faturas);
     }
 
 }
