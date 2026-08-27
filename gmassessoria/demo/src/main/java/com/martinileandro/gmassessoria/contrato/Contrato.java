@@ -42,6 +42,8 @@ public class Contrato {
     @DecimalMax(value = "100.0")
     private BigDecimal desconto = BigDecimal.ZERO;
 
+    private String motivoDesconto;
+
     @NotNull(message = "o valorTotal não pode ser nulo")
     private BigDecimal valorTotal;
 

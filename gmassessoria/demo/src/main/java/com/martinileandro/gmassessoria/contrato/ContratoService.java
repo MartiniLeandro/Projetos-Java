@@ -82,7 +82,7 @@ public class ContratoService {
 
         BigDecimal descontoSeguro = data.desconto() != null ? data.desconto() : BigDecimal.ZERO;
         BigDecimal valorTotal = plano.getValorBase().subtract(plano.getValorBase().multiply(descontoSeguro).divide(BigDecimal.valueOf(100),2, RoundingMode.HALF_UP));
-        Contrato contrato = Contrato.builder().aluno(aluno).plano(plano).dataInicio(data.dataInicio()).dataFim(dataFim).desconto(descontoSeguro).valorTotal(valorTotal).numeroParcelas(data.numeroParcelas()).formaPagamento(data.formaPagamento()).status(ContratoStatus.ATIVO).build();
+        Contrato contrato = Contrato.builder().aluno(aluno).plano(plano).dataInicio(data.dataInicio()).dataFim(dataFim).desconto(descontoSeguro).motivoDesconto(data.motivoDesconto()).valorTotal(valorTotal).numeroParcelas(data.numeroParcelas()).formaPagamento(data.formaPagamento()).status(ContratoStatus.ATIVO).build();
         Contrato savedContrato = contratoRepository.save(contrato);
         faturaService.create(savedContrato);
         return new ContratoResponseDTO(savedContrato);
@@ -93,6 +93,7 @@ public class ContratoService {
         Contrato contrato = contratoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe contrato com este ID"));
         contrato.setFormaPagamento(data.formaPagamento());
         contrato.setStatus(data.status());
+        contrato.setMotivoDesconto(data.motivoDesconto());
         Contrato savedContrato = contratoRepository.save(contrato);
         return new ContratoResponseDTO(savedContrato);
     }

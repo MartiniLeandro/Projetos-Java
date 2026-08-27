@@ -24,6 +24,7 @@ public record ContratoDetalhesDTO(
         BigDecimal valorContrato,
         FormaPagamento formaPagamento,
         BigDecimal descontoContrato,
+        String motivoDesconto,
         List<HistoricoPagamentosDTO> historicoPagamento
 ) {
     public ContratoDetalhesDTO(Contrato contrato, Aluno aluno, Plano plano, List<HistoricoPagamentosDTO> faturas){
@@ -39,6 +40,7 @@ public record ContratoDetalhesDTO(
                 contrato.getValorTotal(),
                 contrato.getFormaPagamento(),
                 contrato.getDesconto(),
+                contrato.getMotivoDesconto(),
                 faturas
         );
     }
