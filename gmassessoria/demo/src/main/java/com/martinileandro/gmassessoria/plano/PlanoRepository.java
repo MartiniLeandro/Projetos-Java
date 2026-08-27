@@ -1,7 +1,7 @@
 package com.martinileandro.gmassessoria.plano;
 
-import com.martinileandro.gmassessoria.plano.dtos.PlanoResponseProjection;
 import com.martinileandro.gmassessoria.plano.dtos.RecebimentoPorPlanoProjection;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface PlanoRepository extends JpaRepository<Plano,Long> {
 
-    @Query(value = "SELECT pl.*, (SELECT COUNT(co.id) FROM contratos AS co WHERE co.plano_id = pl.id and co.status = 'ATIVO') AS quantidade_alunos FROM planos AS pl where (:nome is null or nome like concat('%', :nome, '%')) and (:ciclo is null or ciclo = :ciclo) and (:categoria is null or categoria = :categoria);",nativeQuery = true)
-    List<PlanoResponseProjection> findAllWithFilters(@Param("nome") String nome, @Param("ciclo") String ciclo, @Param("categoria") String categoria);
+    @Query("SELECT p FROM Plano p WHERE (:nome IS NULL OR LOWER(p.nome) LIKE LOWER(CONCAT('%', CAST(:nome AS String), '%'))) AND (:ciclo IS NULL OR p.ciclo = :ciclo) AND (:planoCategoria IS NULL OR p.planoCategoria = :planoCategoria) AND (:planoStatus IS NULL OR p.planoStatus = :planoStatus)")
+    List<Plano> findAllWithFilters(@Param("nome") String nome, @Param("ciclo") String ciclo, @Param("planoCategoria") PlanoCategoria planoCategoria,@Param("planoStatus") PlanoStatus planoStatus, Sort sort);
 
     @Query(value = "select exists(select 1 from contratos where plano_id = :planoId) as possuiAlunos", nativeQuery = true)
     Boolean PlanoPossuiAlunoVinculado(@Param("planoId") Long planoId);

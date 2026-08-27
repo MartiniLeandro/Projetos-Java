@@ -6,6 +6,7 @@ import com.martinileandro.gmassessoria.aluno.dtos.AlunoRequestDTO;
 import com.martinileandro.gmassessoria.aluno.dtos.AlunoResponseDTO;
 import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemView;
 import com.martinileandro.gmassessoria.plano.PlanoCategoria;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,8 @@ public class AlunoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AlunoListagemView>> getAlunosWithFilters(@ModelAttribute AlunoListagemFilterDTO filtro){
-        return ResponseEntity.ok().body(alunoService.getAllUsersWithFilters(filtro));
+    public ResponseEntity<List<AlunoListagemView>> getAlunosWithFilters(@ModelAttribute AlunoListagemFilterDTO filtro, Sort sort){
+        return ResponseEntity.ok().body(alunoService.getAllUsersWithFilters(filtro, sort));
     }
 
     @GetMapping("/{id}")

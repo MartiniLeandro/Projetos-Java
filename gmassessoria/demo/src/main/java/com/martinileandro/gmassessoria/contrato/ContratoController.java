@@ -4,6 +4,7 @@ import com.martinileandro.gmassessoria.contrato.dtos.*;
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemView;
 import com.martinileandro.gmassessoria.plano.PlanoCategoria;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +22,8 @@ public class ContratoController {
 
 
     @GetMapping
-    public ResponseEntity<List<ContratoListagemView>> getContratosWithFilters(@ModelAttribute ContratoListagemFilterDTO filtros){
-        return ResponseEntity.ok().body(contratoService.listarAlunosPlanosComFiltros(filtros));
+    public ResponseEntity<List<ContratoListagemView>> getContratosWithFilters(@ModelAttribute ContratoListagemFilterDTO filtros, Sort sort){
+        return ResponseEntity.ok().body(contratoService.listarAlunosPlanosComFiltros(filtros, sort));
     }
 
     @GetMapping("/{id}")

@@ -12,6 +12,7 @@ import com.martinileandro.gmassessoria.fatura.FaturaService;
 import com.martinileandro.gmassessoria.fatura.dtos.HistoricoPagamentosDTO;
 import com.martinileandro.gmassessoria.fatura.dtos.HistoricoPagamentosProjection;
 import com.martinileandro.gmassessoria.plano.*;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +39,7 @@ public class ContratoService {
         this.faturaService = faturaService;
     }
 
-    public List<ContratoListagemView> listarAlunosPlanosComFiltros(ContratoListagemFilterDTO filtros){
+    public List<ContratoListagemView> listarAlunosPlanosComFiltros(ContratoListagemFilterDTO filtros, Sort sort){
         Specification<ContratoListagemView> spec = Specification
                 .where(ContratoListagemSpecs.planoCategoriaIgual(filtros.planoCategoria()))
                 .and(ContratoListagemSpecs.nomeAlunoContem(filtros.nomeAluno()))
@@ -48,7 +49,7 @@ public class ContratoService {
                 .and(ContratoListagemSpecs.tempoRestanteEntre(filtros.minDiasRestantes(), filtros.maxDiasRestantes()))
                 .and(ContratoListagemSpecs.dataInicioEntre(filtros.inicioMin(), filtros.inicioMax()));
 
-        return contratoListagemRepository.findAll(spec);
+        return contratoListagemRepository.findAll(spec, sort);
     }
 
     public ContratoListagemView getById(Long id){

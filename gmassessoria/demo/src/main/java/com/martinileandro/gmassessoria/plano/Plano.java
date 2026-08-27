@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 
 import java.math.BigDecimal;
 
@@ -37,5 +38,8 @@ public class Plano {
     @Enumerated(EnumType.STRING)
     @Column(name = "categoria")
     private PlanoCategoria planoCategoria;
+
+    @Formula("(SELECT COUNT(c.id) FROM contratos c WHERE c.plano_id = id AND c.status = 'ATIVO')")
+    private Long quantidadeAlunos;
 
 }

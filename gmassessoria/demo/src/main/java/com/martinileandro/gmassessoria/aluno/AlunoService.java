@@ -8,6 +8,7 @@ import com.martinileandro.gmassessoria.contrato.ContratoRepository;
 import com.martinileandro.gmassessoria.contrato.ContratoService;
 import com.martinileandro.gmassessoria.fatura.FaturaService;
 import com.martinileandro.gmassessoria.plano.PlanoCategoria;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +36,7 @@ public class AlunoService {
         return alunoRepository.findAll().stream().map(AlunoNomeResponseDTO::new).toList();
     }
 
-    public List<AlunoListagemView> getAllUsersWithFilters(AlunoListagemFilterDTO data){
+    public List<AlunoListagemView> getAllUsersWithFilters(AlunoListagemFilterDTO data, Sort sort){
         Specification<AlunoListagemView> specs = Specification
                 .where(AlunoListagemSpecs.nomeContem(data.nome()))
                 .and(AlunoListagemSpecs.planoIgual(data.plano()))
@@ -45,7 +46,7 @@ public class AlunoService {
                 .and(AlunoListagemSpecs.dataInicioEntre(data.inicioMin(), data.inicioMax()))
                 .and(AlunoListagemSpecs.dataFimEntre(data.fimMin(), data.fimMax()));
 
-        return alunoListagemRepository.findAll(specs);
+        return alunoListagemRepository.findAll(specs, sort);
     }
 
     public Aluno findById(Long id){

@@ -1,6 +1,7 @@
 package com.martinileandro.gmassessoria.plano;
 
 import com.martinileandro.gmassessoria.plano.dtos.*;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +19,8 @@ public class PlanoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PlanoResponseListagemDTO>> getPlanosWithFilters(@ModelAttribute PlanoFiltersDTO data){
-        return ResponseEntity.ok().body(planoService.getAllWithFilters(data));
+    public ResponseEntity<List<PlanoResponseListagemDTO>> getPlanosWithFilters(@ModelAttribute PlanoFiltersDTO data, Sort sort){
+        return ResponseEntity.ok().body(planoService.getAllWithFilters(data, sort));
     }
 
     @GetMapping("/{id}")

@@ -1,6 +1,7 @@
 package com.martinileandro.gmassessoria.plano;
 
 import com.martinileandro.gmassessoria.plano.dtos.*;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +17,11 @@ public class PlanoService {
         this.planoRepository = planoRepository;
     }
 
-    public List<PlanoResponseListagemDTO> getAllWithFilters(PlanoFiltersDTO data){
+    public List<PlanoResponseListagemDTO> getAllWithFilters(PlanoFiltersDTO data, Sort sort){
         String cicloString = data.ciclo() != null ? data.ciclo().name() : null;
-        String planoCategoria = data.planoCategoria() != null ? data.planoCategoria().name() : null;
-        return planoRepository.findAllWithFilters(data.nome(), cicloString, planoCategoria).stream().map(PlanoResponseListagemDTO::new).toList();
+        PlanoCategoria planoCategoria = data.planoCategoria() != null ? data.planoCategoria() : null;
+        PlanoStatus planoStatus = data.status() != null ? data.status() : null;
+        return planoRepository.findAllWithFilters(data.nome(), cicloString, planoCategoria, planoStatus, sort).stream().map(PlanoResponseListagemDTO::new).toList();
     }
 
     public Long getTotalPlanos(){
