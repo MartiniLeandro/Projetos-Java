@@ -3,6 +3,7 @@ package com.martinileandro.gmassessoria.financeiro;
 import com.martinileandro.gmassessoria.fatura.dtos.ListagemFaturasDTO;
 import com.martinileandro.gmassessoria.financeiro.dtos.FinanceiroResumoDTO;
 import com.martinileandro.gmassessoria.financeiro.dtos.ListagemFinanceiroFilterDTO;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +25,8 @@ public class FinanceiroController {
     }
 
     @GetMapping("/listagem")
-    public ResponseEntity<List<ListagemFaturasDTO>> getListagemFaturas(@ModelAttribute ListagemFinanceiroFilterDTO filtros){
-        return ResponseEntity.ok().body(financeiroService.getListagemFaturas(filtros));
+    public ResponseEntity<List<ListagemFaturasDTO>> getListagemFaturas(@ModelAttribute ListagemFinanceiroFilterDTO filtros, Sort sort){
+        return ResponseEntity.ok().body(financeiroService.getListagemFaturas(filtros, sort));
     }
 
     @PatchMapping("/fatura/pagar/{id}")

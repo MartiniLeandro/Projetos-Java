@@ -8,10 +8,12 @@ import com.martinileandro.gmassessoria.financeiro.dtos.FluxoCaixaDTO;
 import com.martinileandro.gmassessoria.financeiro.dtos.ListagemFinanceiroFilterDTO;
 import com.martinileandro.gmassessoria.financeiro.dtos.RecebimentoPorPlanoDTO;
 import com.martinileandro.gmassessoria.plano.PlanoRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @Service
@@ -35,6 +37,10 @@ public class FinanceiroService {
         return faturaRepository.getFaturamentoRecebidoMes(mes, ano);
     }
 
+    public BigDecimal getFaturamentoReceberMes(int mes, int ano, LocalDate ultimoDiaMes){
+        return faturaRepository.getFaturamentoReceberMes(mes,ano,ultimoDiaMes);
+    }
+
     public BigDecimal getInadimplenciaTotal(){
         return faturaRepository.getInadimplenciaTotal();
     }
@@ -50,16 +56,18 @@ public class FinanceiroService {
         return planoRepository.getRecebimentoPorPlano(mes, ano).stream().map(RecebimentoPorPlanoDTO::new).toList();
     }
 
-    public List<ListagemFaturasDTO> getListagemFaturas(ListagemFinanceiroFilterDTO data){
+    public List<ListagemFaturasDTO> getListagemFaturas(ListagemFinanceiroFilterDTO data, Sort sort){
         String faturaStatusString = data.status() != null ? data.status().name() : null;
-        return faturaRepository.getListagemFaturas(data.mes(), data.ano(), data.nomeAluno(), faturaStatusString).stream().map(ListagemFaturasDTO::new).toList();
+        return faturaRepository.getListagemFaturas(data.mes(), data.ano(), data.nomeAluno(), faturaStatusString, sort).stream().map(ListagemFaturasDTO::new).toList();
     }
 
 
     public FinanceiroResumoDTO getResumoFinanceiro(int mes, int ano){
+        LocalDate ultimoDiaDoMes = LocalDate.of(ano,mes,1).with(TemporalAdjusters.lastDayOfMonth());
+
         BigDecimal faturamentoPrevisto = getFaturamentoPrevistoMes(mes,ano);
         BigDecimal faturamentoRecebido = getFaturamentoRecebidoMes(mes,ano);
-        BigDecimal faturamentoReceber = faturamentoPrevisto.subtract(faturamentoRecebido);
+        BigDecimal faturamentoReceber = getFaturamentoReceberMes(mes,ano,ultimoDiaDoMes);
         BigDecimal inadimplenciaTotal = getInadimplenciaTotal();
         List<FluxoCaixaDTO> fluxoCaixa = getFluxoCaixa(mes, ano);
         List<RecebimentoPorPlanoDTO> recebimentoPorPlano = getRecebimentoPorPlanoMes(mes,ano);

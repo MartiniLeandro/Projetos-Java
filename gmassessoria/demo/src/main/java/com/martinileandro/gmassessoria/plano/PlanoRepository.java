@@ -25,6 +25,5 @@ public interface PlanoRepository extends JpaRepository<Plano,Long> {
     @Query(value = "select coalesce(max(p.valor_base), 0) as valor_maior from planos as p", nativeQuery = true)
     BigDecimal getMaiorValorBase();
 
-    @Query(value = "select pl.categoria as plano, coalesce(sum(fa.valor_cobrado),0) as valor_recebido from planos as pl left join contratos as co on pl.id = co.plano_id left join faturas as fa on co.id = fa.contrato_id and fa.status = 'PAGO' and extract(month from fa.data_vencimento) = :mes and extract(year from fa.data_vencimento) = :ano group by pl.categoria", nativeQuery = true)
-    List<RecebimentoPorPlanoProjection> getRecebimentoPorPlano(@Param("mes") int mes, @Param("ano") int ano);
-}
+    @Query(value = "select pl.categoria as plano, coalesce(sum(fa.valor_cobrado),0) as valor_recebido from planos as pl left join contratos as co on pl.id = co.plano_id left join faturas as fa on co.id = fa.contrato_id and fa.status = 'PAGO' and extract(month from fa.data_pagamento) = :mes and extract(year from fa.data_pagamento) = :ano group by pl.categoria", nativeQuery = true)
+    List<RecebimentoPorPlanoProjection> getRecebimentoPorPlano(@Param("mes") int mes, @Param("ano") int ano);}

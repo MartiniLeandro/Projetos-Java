@@ -6,6 +6,7 @@ import java.time.LocalDate;
 public interface ListagemFaturasProjection{
     Long getId();
     LocalDate getDataVencimento();
+    LocalDate getDataPagamento();
     Integer getNumeroParcela();
     String getAluno();
     String getPlano();
