@@ -20,13 +20,11 @@ import java.util.List;
 @Service
 public class DashboardService {
 
-    private final FaturaService faturaService;
     private final AlunoService alunoService;
     private final ContratoService contratoService;
     private final FinanceiroService financeiroService;
 
-    public DashboardService(FaturaService faturaService, AlunoService alunoService, ContratoService contratoService, FinanceiroService financeiroService) {
-        this.faturaService = faturaService;
+    public DashboardService(AlunoService alunoService, ContratoService contratoService, FinanceiroService financeiroService) {
         this.alunoService = alunoService;
         this.contratoService = contratoService;
         this.financeiroService = financeiroService;

@@ -1,6 +1,7 @@
 package com.martinileandro.gmassessoria.fatura;
 
 import com.martinileandro.gmassessoria.contrato.Contrato;
+import com.martinileandro.gmassessoria.exception.NotFoundException;
 import com.martinileandro.gmassessoria.fatura.dtos.HistoricoPagamentosDTO;
 import com.martinileandro.gmassessoria.plano.PlanoCategoria;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class FaturaService {
     @Transactional
     public void registrarPagamento(Long id){
         LocalDate dataPagamento = LocalDate.now();
-        Fatura fatura = faturaRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe fatura com este ID"));
+        Fatura fatura = faturaRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe fatura com este ID"));
         if(fatura.getStatus() == FaturaStatus.VENCIDA || fatura.getStatus() == FaturaStatus.PENDENTE){
             fatura.setStatus(FaturaStatus.PAGO);
         }
@@ -49,7 +50,7 @@ public class FaturaService {
     @Transactional
     public void estornarPagamento(Long id){
         LocalDate dataAtual = LocalDate.now();
-        Fatura fatura = faturaRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe fatura com este ID"));
+        Fatura fatura = faturaRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe fatura com este ID"));
         if(fatura.getStatus() == FaturaStatus.PAGO && fatura.getDataVencimento().isAfter(dataAtual)){
             fatura.setStatus(FaturaStatus.PENDENTE);
         }else{

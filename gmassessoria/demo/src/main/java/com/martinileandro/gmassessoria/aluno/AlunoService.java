@@ -6,6 +6,7 @@ import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemSpecs;
 import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemView;
 import com.martinileandro.gmassessoria.contrato.ContratoRepository;
 import com.martinileandro.gmassessoria.contrato.ContratoService;
+import com.martinileandro.gmassessoria.exception.NotFoundException;
 import com.martinileandro.gmassessoria.fatura.FaturaService;
 import com.martinileandro.gmassessoria.plano.PlanoCategoria;
 import org.springframework.data.domain.Sort;
@@ -50,11 +51,11 @@ public class AlunoService {
     }
 
     public Aluno findById(Long id){
-        return alunoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe Aluno com este ID"));
+        return alunoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe Aluno com este ID"));
     }
 
     public AlunoListagemView getById(Long id){
-        return alunoListagemRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe Aluno com este ID"));
+        return alunoListagemRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe Aluno com este ID"));
     }
 
     public Long getTotalAlunos(PlanoCategoria planoCategoria){
@@ -97,7 +98,7 @@ public class AlunoService {
 
     @Transactional
     public AlunoResponseDTO update(Long id, AlunoRequestDTO data) {
-        Aluno aluno = alunoRepository.findById(id).orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+        Aluno aluno = alunoRepository.findById(id).orElseThrow(() -> new NotFoundException("Aluno não encontrado"));
 
         if (data.nome() != null && !data.nome().isBlank()) {
             aluno.setNome(data.nome());
@@ -114,7 +115,7 @@ public class AlunoService {
 
     @Transactional
     public void reativar(Long id) {
-        Aluno aluno = alunoRepository.findById(id).orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+        Aluno aluno = alunoRepository.findById(id).orElseThrow(() -> new NotFoundException("Aluno não encontrado"));
 
         aluno.setStatus(AlunoStatus.ATIVO);
         alunoRepository.save(aluno);
@@ -122,7 +123,7 @@ public class AlunoService {
 
     @Transactional
     public void inativar(Long id) {
-        Aluno aluno = alunoRepository.findById(id).orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+        Aluno aluno = alunoRepository.findById(id).orElseThrow(() -> new NotFoundException("Aluno não encontrado"));
 
         aluno.setStatus(AlunoStatus.INATIVO);
         alunoRepository.save(aluno);

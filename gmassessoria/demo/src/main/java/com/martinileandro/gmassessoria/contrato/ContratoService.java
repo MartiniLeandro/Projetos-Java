@@ -8,6 +8,8 @@ import com.martinileandro.gmassessoria.contrato.dtos.*;
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemRepository;
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemSpecs;
 import com.martinileandro.gmassessoria.contrato.listagem.ContratoListagemView;
+import com.martinileandro.gmassessoria.exception.NotFoundException;
+import com.martinileandro.gmassessoria.exception.RegraDeNegocioException;
 import com.martinileandro.gmassessoria.fatura.FaturaService;
 import com.martinileandro.gmassessoria.fatura.dtos.HistoricoPagamentosDTO;
 import com.martinileandro.gmassessoria.fatura.dtos.HistoricoPagamentosProjection;
@@ -53,7 +55,7 @@ public class ContratoService {
     }
 
     public ContratoListagemView getById(Long id){
-        return contratoListagemRepository.findById(id).orElseThrow(() -> new RuntimeException("Contrato não encontrado com este ID."));
+        return contratoListagemRepository.findById(id).orElseThrow(() -> new NotFoundException("Contrato não encontrado com este ID."));
     }
 
     public long contratosProximosFim(PlanoCategoria planoCategoria){
@@ -67,12 +69,12 @@ public class ContratoService {
 
     @Transactional
     public ContratoResponseDTO create(ContratoRequestDTO data){
-        if(data.numeroParcelas() < 1) throw new RuntimeException("O pagamento deve ser em no mínimo uma parcela");
+        if(data.numeroParcelas() < 1) throw new RegraDeNegocioException("O pagamento deve ser em no mínimo uma parcela");
         Aluno aluno = alunoService.findById(data.alunoId());
         Plano plano = planoService.findById(data.planoId());
-        if(plano.getPlanoStatus() == PlanoStatus.INATIVO) throw new RuntimeException("Este plano está inativo");
-        if(aluno.getStatus() == AlunoStatus.INATIVO || aluno.getStatus() == AlunoStatus.PAUSADO) throw new RuntimeException("Este aluno está inativo ou pausado");
-        if(contratoRepository.existsByAlunoIdAndStatus(aluno.getId(), ContratoStatus.ATIVO.name())) throw new RuntimeException("Este aluno já tem um contrato ativo no momento");
+        if(plano.getPlanoStatus() == PlanoStatus.INATIVO) throw new RegraDeNegocioException("Este plano está inativo");
+        if(aluno.getStatus() == AlunoStatus.INATIVO || aluno.getStatus() == AlunoStatus.PAUSADO) throw new RegraDeNegocioException("Este aluno está inativo ou pausado");
+        if(contratoRepository.existsByAlunoIdAndStatus(aluno.getId(), ContratoStatus.ATIVO)) throw new RegraDeNegocioException("Este aluno já tem um contrato ativo no momento");
 
         LocalDate dataFim = switch (plano.getCiclo()){
             case MENSAL -> data.dataInicio().plusMonths(1);
@@ -92,7 +94,7 @@ public class ContratoService {
 
     @Transactional
     public ContratoResponseDTO update(ContratoRequestUpdateDTO data, Long id){ //sem alteração de dados do financeiro
-        Contrato contrato = contratoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe contrato com este ID"));
+        Contrato contrato = contratoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe contrato com este ID"));
         contrato.setFormaPagamento(data.formaPagamento());
         contrato.setStatus(data.status());
         contrato.setMotivoDesconto(data.motivoDesconto());
@@ -102,7 +104,7 @@ public class ContratoService {
 
     @Transactional
     public void encerrarContrato(Long id){
-        Contrato contrato = contratoRepository.findById(id).orElseThrow(() -> new RuntimeException("Não existe contrato com este ID"));
+        Contrato contrato = contratoRepository.findById(id).orElseThrow(() -> new NotFoundException("Não existe contrato com este ID"));
         contrato.setStatus(ContratoStatus.ENCERRADO);
     }
 
@@ -116,7 +118,7 @@ public class ContratoService {
     }
 
     public ContratoDetalhesDTO getDetalhesContrato(Long contratoId){
-        Contrato contrato = contratoRepository.findById(contratoId).orElseThrow(() -> new RuntimeException("Não existe contrato com este ID"));
+        Contrato contrato = contratoRepository.findById(contratoId).orElseThrow(() -> new NotFoundException("Não existe contrato com este ID"));
         Aluno aluno = contrato.getAluno();
         Plano plano = contrato.getPlano();
         List<HistoricoPagamentosDTO> faturas = faturaService.getHistoricoPagamentos(contratoId);

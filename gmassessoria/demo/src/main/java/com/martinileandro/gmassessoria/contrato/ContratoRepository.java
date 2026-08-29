@@ -19,6 +19,6 @@ public interface ContratoRepository extends JpaRepository<Contrato,Long> {
     @Query("UPDATE Contrato c SET c.status = 'ENCERRADO' WHERE c.status = 'ATIVO' AND c.dataFim <= CURRENT_DATE")
     int encerrarContratosVencidos();
 
-    boolean existsByAlunoIdAndStatus(Long alunoId, String status);
+    boolean existsByAlunoIdAndStatus(Long alunoId, ContratoStatus contratoStatus);
 
 }
