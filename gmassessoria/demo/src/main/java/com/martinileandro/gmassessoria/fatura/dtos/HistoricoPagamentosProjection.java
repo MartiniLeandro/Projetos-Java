@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public interface HistoricoPagamentosProjection {
+    LocalDate getDataVencimento();
     LocalDate getDataPagamento();
     BigDecimal getValorCobrado();
     FaturaStatus getStatus();

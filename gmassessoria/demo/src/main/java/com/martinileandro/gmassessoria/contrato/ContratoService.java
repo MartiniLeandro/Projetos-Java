@@ -72,6 +72,7 @@ public class ContratoService {
         Plano plano = planoService.findById(data.planoId());
         if(plano.getPlanoStatus() == PlanoStatus.INATIVO) throw new RuntimeException("Este plano está inativo");
         if(aluno.getStatus() == AlunoStatus.INATIVO || aluno.getStatus() == AlunoStatus.PAUSADO) throw new RuntimeException("Este aluno está inativo ou pausado");
+        if(contratoRepository.existsByAlunoIdAndStatus(aluno.getId(), ContratoStatus.ATIVO.name())) throw new RuntimeException("Este aluno já tem um contrato ativo no momento");
 
         LocalDate dataFim = switch (plano.getCiclo()){
             case MENSAL -> data.dataInicio().plusMonths(1);

@@ -6,10 +6,10 @@ import com.martinileandro.gmassessoria.fatura.FaturaStatus;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record HistoricoPagamentosDTO(LocalDate dataPagamento, BigDecimal valorPagamento, FaturaStatus statusPagamento, FormaPagamento formaPagamento) {
+public record HistoricoPagamentosDTO(LocalDate dataVencimento, LocalDate dataPagamento, BigDecimal valorPagamento, FaturaStatus statusPagamento, FormaPagamento formaPagamento) {
     public HistoricoPagamentosDTO(HistoricoPagamentosProjection data){
         this(
-                data.getDataPagamento(), data.getValorCobrado(), data.getStatus(), data.getFormaPagamento()
+                data.getDataVencimento(), data.getDataPagamento(), data.getValorCobrado(), data.getStatus(), data.getFormaPagamento()
         );
     }
 }

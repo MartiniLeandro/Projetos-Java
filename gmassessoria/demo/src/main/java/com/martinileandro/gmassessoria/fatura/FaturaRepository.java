@@ -36,7 +36,7 @@ public interface FaturaRepository extends JpaRepository<Fatura,Long> {
     @Query(value = "SELECT fa.id as id, fa.data_vencimento AS dataVencimento, fa.data_pagamento as dataPagamento, fa.numero_parcela AS numeroParcela, al.nome AS aluno, pl.nome AS plano, pl.ciclo AS ciclo, fa.valor_cobrado AS valorCobrado, fa.status AS status, fa.forma_pagamento AS formaPagamento FROM faturas AS fa INNER JOIN contratos AS co ON fa.contrato_id = co.id INNER JOIN planos AS pl ON co.plano_id = pl.id INNER JOIN alunos AS al ON co.aluno_id = al.id WHERE EXTRACT(MONTH FROM fa.data_vencimento) = :mes AND EXTRACT(YEAR FROM fa.data_vencimento) = :ano AND (:nomeAluno IS NULL OR al.nome ILIKE CONCAT('%', :nomeAluno, '%')) AND (:statusFatura IS NULL OR fa.status = :statusFatura)", nativeQuery = true)
     List<ListagemFaturasProjection> getListagemFaturas(@Param("mes") Integer mes, @Param("ano") Integer ano, @Param("nomeAluno") String nomeAluno, @Param("statusFatura") String statusFatura, Sort sort);
 
-    @Query(value = "select fa.data_pagamento as dataPagamento, fa.valor_cobrado as valorCobrado, fa.status as status, fa.forma_pagamento as formaPagamento from faturas as fa where fa.contrato_id = :contratoId", nativeQuery = true)
+    @Query(value = "select fa.data_vencimento as dataVencimento, fa.data_pagamento as dataPagamento, fa.valor_cobrado as valorCobrado, fa.status as status, fa.forma_pagamento as formaPagamento from faturas as fa where fa.contrato_id = :contratoId", nativeQuery = true)
     List<HistoricoPagamentosProjection> getHistoricoPagamento(@Param("contratoId") Long contratoId);
 
 
