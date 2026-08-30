@@ -25,8 +25,8 @@ public class RotinaDiariaScheduled {
         int faturasAtualizadas = faturaRepository.atualizarFaturasVencidas();
         System.out.println("[ROTINA] Faturas marcadas como VENCIDAS: " + faturasAtualizadas);
 
-        int contratosEncerrados = contratoRepository.encerrarContratosVencidos();
-        System.out.println("[ROTINA] Contratos marcados como ENCERRADOS: " + contratosEncerrados);
+        //int contratosEncerrados = contratoRepository.encerrarContratosVencidos();
+        //System.out.println("[ROTINA] Contratos marcados como ENCERRADOS: " + contratosEncerrados);
 
         System.out.println("[ROTINA] Manutenção diária concluída com sucesso.");
     }
