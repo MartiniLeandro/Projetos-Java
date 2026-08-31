@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -25,12 +26,14 @@ public class AlunoService {
     private final AlunoListagemRepository alunoListagemRepository;
     private final ContratoRepository contratoRepository;
     private final FaturaService faturaService;
+    private final ArmazenarImagemAlunoService armazenarImagemAlunoService;
 
-    public AlunoService(AlunoRepository alunoRepository, AlunoListagemRepository alunoListagemRepository, ContratoRepository contratoRepository, FaturaService faturaService) {
+    public AlunoService(AlunoRepository alunoRepository, AlunoListagemRepository alunoListagemRepository, ContratoRepository contratoRepository, FaturaService faturaService, ArmazenarImagemAlunoService armazenarImagemAlunoService) {
         this.alunoRepository = alunoRepository;
         this.alunoListagemRepository = alunoListagemRepository;
         this.contratoRepository = contratoRepository;
         this.faturaService = faturaService;
+        this.armazenarImagemAlunoService = armazenarImagemAlunoService;
     }
 
     public List<AlunoNomeResponseDTO> getAllNomes(){
@@ -91,8 +94,12 @@ public class AlunoService {
     }
 
     @Transactional
-    public AlunoResponseDTO create(AlunoRequestDTO data){
-        Aluno createdAluno = Aluno.builder().nome(data.nome()).telefone(data.telefone()).imagem(data.imagem()).status(AlunoStatus.ATIVO).build();
+    public AlunoResponseDTO create(AlunoRequestDTO data, MultipartFile imagem){
+        Aluno createdAluno = Aluno.builder().nome(data.nome()).telefone(data.telefone()).status(AlunoStatus.ATIVO).build();
+        if(imagem != null && !imagem.isEmpty()){
+            String rotaImagem = armazenarImagemAlunoService.salvarImagem(imagem);
+            createdAluno.setImagem(rotaImagem);
+        }
         return new AlunoResponseDTO(alunoRepository.save(createdAluno));
     }
 
@@ -105,9 +112,6 @@ public class AlunoService {
         }
         if (data.telefone() != null && !data.telefone().isBlank()) {
             aluno.setTelefone(data.telefone());
-        }
-        if (data.imagem() != null && !data.imagem().isBlank()) {
-            aluno.setImagem(data.imagem());
         }
 
         return new AlunoResponseDTO(alunoRepository.save(aluno));

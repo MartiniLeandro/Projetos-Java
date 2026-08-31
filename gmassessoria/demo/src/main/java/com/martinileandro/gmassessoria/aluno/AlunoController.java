@@ -7,8 +7,11 @@ import com.martinileandro.gmassessoria.aluno.dtos.AlunoResponseDTO;
 import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemView;
 import com.martinileandro.gmassessoria.plano.PlanoCategoria;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -38,9 +41,10 @@ public class AlunoController {
         return ResponseEntity.ok().body(alunoService.getCardsResumos(planoCategoria));
     }
 
-    @PostMapping
-    public ResponseEntity<AlunoResponseDTO> createAluno(@RequestBody AlunoRequestDTO data){
-        return ResponseEntity.ok().body(alunoService.create(data));
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AlunoResponseDTO> createAluno(@RequestPart("data") AlunoRequestDTO data, @RequestPart(value = "imagem", required = false)MultipartFile imagem){
+        AlunoResponseDTO response = alunoService.create(data,imagem);
+        return ResponseEntity.ok().body(response);
     }
 
     @PutMapping("/{id}")
