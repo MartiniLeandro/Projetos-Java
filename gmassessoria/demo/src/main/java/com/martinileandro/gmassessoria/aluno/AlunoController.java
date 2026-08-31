@@ -47,9 +47,12 @@ public class AlunoController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AlunoResponseDTO> updateAluno(@RequestBody AlunoRequestDTO data, @PathVariable Long id){
-        return ResponseEntity.ok().body(alunoService.update(id,data));
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AlunoResponseDTO> updateAluno(
+            @RequestPart("data") AlunoRequestDTO data,
+            @RequestPart(value = "imagem",required = false) MultipartFile imagem,
+            @PathVariable Long id){
+        return ResponseEntity.ok().body(alunoService.update(id,data,imagem));
     }
 
     @PatchMapping("/{id}/inativar")

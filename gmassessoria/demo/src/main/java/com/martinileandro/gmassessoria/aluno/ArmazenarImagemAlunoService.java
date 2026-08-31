@@ -31,4 +31,15 @@ public class ArmazenarImagemAlunoService {
             throw new RuntimeException("Erro ao processar o arquivo de imagem no servidor", e);
         }
     }
+
+    public void deletarImagemAntiga(String rotaImagemAntiga) {
+        try {
+            String nomeArquivo = rotaImagemAntiga.replace("/imagens/", "");
+            Path caminhoCompleto = Paths.get(diretorioUpload).resolve(nomeArquivo);
+
+            Files.deleteIfExists(caminhoCompleto);
+        } catch (IOException e) {
+            System.err.println("Aviso: Falha ao deletar imagem antiga: " + rotaImagemAntiga);
+        }
+    }
 }

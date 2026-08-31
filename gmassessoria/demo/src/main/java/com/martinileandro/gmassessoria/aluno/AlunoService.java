@@ -104,7 +104,7 @@ public class AlunoService {
     }
 
     @Transactional
-    public AlunoResponseDTO update(Long id, AlunoRequestDTO data) {
+    public AlunoResponseDTO update(Long id, AlunoRequestDTO data, MultipartFile imagem) {
         Aluno aluno = alunoRepository.findById(id).orElseThrow(() -> new NotFoundException("Aluno não encontrado"));
 
         if (data.nome() != null && !data.nome().isBlank()) {
@@ -112,6 +112,13 @@ public class AlunoService {
         }
         if (data.telefone() != null && !data.telefone().isBlank()) {
             aluno.setTelefone(data.telefone());
+        }
+        if(imagem != null && !imagem.isEmpty()){
+            if(aluno.getImagem() != null){
+                armazenarImagemAlunoService.deletarImagemAntiga(aluno.getImagem());
+            }
+            String rotaImagem = armazenarImagemAlunoService.salvarImagem(imagem);
+            aluno.setImagem(rotaImagem);
         }
 
         return new AlunoResponseDTO(alunoRepository.save(aluno));
