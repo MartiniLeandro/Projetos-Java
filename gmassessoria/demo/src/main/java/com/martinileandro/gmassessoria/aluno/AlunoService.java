@@ -120,24 +120,11 @@ public class AlunoService {
             String rotaImagem = armazenarImagemAlunoService.salvarImagem(imagem);
             aluno.setImagem(rotaImagem);
         }
+        if(data.status() != null){
+            aluno.setStatus(data.status());
+        }
 
         return new AlunoResponseDTO(alunoRepository.save(aluno));
-    }
-
-    @Transactional
-    public void reativar(Long id) {
-        Aluno aluno = alunoRepository.findById(id).orElseThrow(() -> new NotFoundException("Aluno não encontrado"));
-
-        aluno.setStatus(AlunoStatus.ATIVO);
-        alunoRepository.save(aluno);
-    }
-
-    @Transactional
-    public void inativar(Long id) {
-        Aluno aluno = alunoRepository.findById(id).orElseThrow(() -> new NotFoundException("Aluno não encontrado"));
-
-        aluno.setStatus(AlunoStatus.INATIVO);
-        alunoRepository.save(aluno);
     }
 
     public AlunoCardsDTO getCardsResumos(PlanoCategoria planoCategoria){

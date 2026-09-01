@@ -55,16 +55,4 @@ public class AlunoController {
         return ResponseEntity.ok().body(alunoService.update(id,data,imagem));
     }
 
-    @PatchMapping("/{id}/inativar")
-    public ResponseEntity<Void> inativarAluno(@PathVariable Long id) {
-        alunoService.inativar(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PatchMapping("/{id}/reativar")
-    public ResponseEntity<Void> reativarAluno(@PathVariable Long id) {
-        alunoService.reativar(id);
-        return ResponseEntity.noContent().build();
-    }
-
 }
