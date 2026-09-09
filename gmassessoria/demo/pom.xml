@@ -92,6 +92,15 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.graalvm.buildtools</groupId>
+				<artifactId>native-maven-plugin</artifactId>
+				<configuration>
+					<buildArgs>
+						<buildArg>--initialize-at-build-time=org.apache.logging,ch.qos.logback,org.slf4j,org.apache.commons.logging,org.springframework.core.SpringProperties</buildArg>
+					</buildArgs>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>

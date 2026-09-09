@@ -1,4 +1,4 @@
-FROM ghcr.io/graalvm/native-image-community:21-ol9 AS build
+FROM container-registry.oracle.com/graalvm/native-image:21-ol9 AS build
 WORKDIR /app
 
 COPY mvnw .
@@ -10,9 +10,9 @@ RUN ./mvnw dependency:go-offline
 
 COPY src src
 
-RUN ./mvnw native:compile -Pnative -DskipTests
+RUN ./mvnw clean package -Pnative -DskipTests
 
-FROM oraclelinux:9-micro
+FROM oraclelinux:9-slim
 WORKDIR /app
 
 COPY --from=build /app/target/demo ./app-nativo
