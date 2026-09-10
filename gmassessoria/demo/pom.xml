@@ -100,6 +100,11 @@
 			<plugin>
 				<groupId>org.graalvm.buildtools</groupId>
 				<artifactId>native-maven-plugin</artifactId>
+				<configuration>
+					<buildArgs>
+						<buildArg>-J-Xmx6g</buildArg>
+					</buildArgs>
+				</configuration>
 			</plugin>
 
 			<plugin>
