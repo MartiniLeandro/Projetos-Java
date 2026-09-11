@@ -3,6 +3,9 @@ name: Build and Push GraalVM Image
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'gmassessoria/**'
+      - '.github/workflows/deploy.yml'
 
 jobs:
   build:
