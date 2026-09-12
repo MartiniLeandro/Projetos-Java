@@ -1,13 +1,10 @@
 package com.martinileandro.gmassessoria.aluno;
 
-import com.martinileandro.gmassessoria.aluno.dtos.AlunoCardsDTO;
-import com.martinileandro.gmassessoria.aluno.dtos.AlunoListagemFilterDTO;
-import com.martinileandro.gmassessoria.aluno.dtos.AlunoRequestDTO;
-import com.martinileandro.gmassessoria.aluno.dtos.AlunoResponseDTO;
+import com.martinileandro.gmassessoria.aluno.dtos.*;
 import com.martinileandro.gmassessoria.aluno.listagem.AlunoListagemView;
 import com.martinileandro.gmassessoria.plano.PlanoCategoria;
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/alunos")
+@RegisterReflectionForBinding({AlunoListagemFilterDTO.class, AlunoListagemView.class, AlunoCardsDTO.class, PlanoCategoria.class, AlunoResponseDTO.class, AlunoRequestDTO.class, MultipartFile.class, AlunosPorPlanoProjection.class, EvolucaoAlunosProjection.class, AlunosContratosProximoFimProjection.class})
 public class AlunoController {
 
     private final AlunoService alunoService;

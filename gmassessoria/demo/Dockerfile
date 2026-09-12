@@ -6,7 +6,6 @@ COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 COPY src src
-
 RUN sed -i 's/\r$//' mvnw && chmod +x mvnw
 
 RUN ./mvnw clean -Pnative native:compile -DskipTests

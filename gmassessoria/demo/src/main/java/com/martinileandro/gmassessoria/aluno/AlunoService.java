@@ -36,10 +36,6 @@ public class AlunoService {
         this.armazenarImagemAlunoService = armazenarImagemAlunoService;
     }
 
-    public List<AlunoNomeResponseDTO> getAllNomes(){
-        return alunoRepository.findAll().stream().map(AlunoNomeResponseDTO::new).toList();
-    }
-
     public List<AlunoListagemView> getAllUsersWithFilters(AlunoListagemFilterDTO data, Sort sort){
         Specification<AlunoListagemView> specs = Specification
                 .where(AlunoListagemSpecs.nomeContem(data.nome()))
