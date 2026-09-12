@@ -102,7 +102,7 @@
 				<artifactId>native-maven-plugin</artifactId>
 				<configuration>
 					<buildArgs>
-						<!--<buildArg>-J-Xmx6g</buildArg>-->
+						<buildArg>-J-Xmx6g</buildArg>
 					</buildArgs>
 				</configuration>
 			</plugin>
